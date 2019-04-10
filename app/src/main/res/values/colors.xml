@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="cyanBlue">#007aff</color>
+    <color name="backgroundRecyclerView">#efeff4</color>
+    <color name="lightGrey">#9a9a9a</color>
 </resources>

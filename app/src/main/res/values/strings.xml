@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">DoraNewsVerMain</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_hot">Hot</string>
+    <string name="title_latest_news">Latest news</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="title_more">More</string>
 </resources>
