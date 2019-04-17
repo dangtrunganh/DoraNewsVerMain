@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_pick_category"
+    android:orientation="vertical"
+    tools:context=".activity.PickCategoryActivity">
+
+    <Button
+        android:id="@+id/btn_pick_done"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#66282525"
+        android:enabled="false"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="CHỌN CHỦ ĐỀ BẠN QUAN TÂM"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/text_pick_done"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="(Đã chọn 0/3)"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_pick_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="10dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</LinearLayout>

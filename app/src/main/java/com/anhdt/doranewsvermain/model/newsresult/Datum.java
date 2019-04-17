@@ -18,7 +18,7 @@ public class Datum {
     private Stories stories;
     @SerializedName("event")
     @Expose
-    private Event_ event;
+    private Event event;
     @SerializedName("articles")
     @Expose
     private List<Article> articles = null;
@@ -47,11 +47,11 @@ public class Datum {
         this.stories = stories;
     }
 
-    public Event_ getEvent() {
+    public Event getEvent() {
         return event;
     }
 
-    public void setEvent(Event_ event) {
+    public void setEvent(Event event) {
         this.event = event;
     }
 

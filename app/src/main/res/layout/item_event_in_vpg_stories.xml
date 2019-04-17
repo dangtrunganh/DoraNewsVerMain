@@ -17,6 +17,7 @@
             android:layout_height="wrap_content">
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraint_layout_item_event_vpg"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -60,7 +61,7 @@
                         android:paddingEnd="10dp"
                         android:paddingBottom="5dp"
                         android:text="Ngày 23/3, Ủy ban Nhân dân Tp. Hồ Chí Minh tổ chức Hội nghị gặp gỡ giữa lãnh đạo thành phố và doanh nghiệp có vốn đầu tư nước ngoài (FDI) năm 2019 với chủ đề “Thành phố Hồ Chí Minh: Hội tụ nguồn lực, kiến tạo tương."
-                        android:textColor="#fff"
+                        android:textColor="#00000000"
                         android:textSize="16sp" />
 
                 </FrameLayout>

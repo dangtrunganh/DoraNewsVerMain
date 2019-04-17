@@ -2,6 +2,8 @@ package com.anhdt.doranewsvermain.adapter.recyclerview;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +13,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anhdt.doranewsvermain.R;
+import com.anhdt.doranewsvermain.constant.ConstGeneral;
 import com.anhdt.doranewsvermain.constant.ConstParam;
+import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
+import com.anhdt.doranewsvermain.fragment.HomeFragment;
+import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralHomeFragment;
+import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralLatestNewsFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -26,10 +35,18 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
     private ArrayList<Article> mArrayArticles;
 
     private LayoutInflater mLayoutInflater;
+    private FragmentManager fragmentManager;
 
-    public ArticleItemAdapter(Context mContext, ArrayList<Article> mArrayArticles) {
+    private int typeTabContent;
+
+    private AddFragmentCallback addFragmentCallback;
+
+    public ArticleItemAdapter(Context mContext, ArrayList<Article> mArrayArticles/*, FragmentManager fragmentManager*/, int typeTabContent, AddFragmentCallback addFragmentCallback) {
         this.mContext = mContext;
         this.mArrayArticles = mArrayArticles;
+//        this.fragmentManager = fragmentManager;
+        this.typeTabContent = typeTabContent;
+        this.addFragmentCallback = addFragmentCallback;
     }
 
     @NonNull
@@ -112,6 +129,33 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
         public void onClick(View v) {
             //Sự kiện khi kích vào một bài báo thường
             int position = getAdapterPosition();
+
+            //Chuyển sang màn hình Chi tiết các bài báo
+            Gson gson = new Gson();
+            String jsonListArticles = gson.toJson(mArrayArticles);
+            DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position);
+            detailNewsFragment.setAddFragmentCallback(addFragmentCallback);
+//            FragmentTransaction ft = fragmentManager.beginTransaction();
+            if (typeTabContent == ConstGeneral.TYPE_TAB_HOME) {
+//                ft.replace(R.id.main_container_frg_home, detailNewsFragment);
+//                ft.addToBackStack(detailNewsFragment.getClass().getName());
+//                ft.commit();
+                Log.e("home-", "home");
+                Log.e("home-jsonList", jsonListArticles);
+                Log.e("home-position", String.valueOf(position));
+                detailNewsFragment.setFragmentManager(GeneralHomeFragment.fragmentManagerHome);
+                addFragmentCallback.addFrgCallback(detailNewsFragment);
+            } else if (typeTabContent == ConstGeneral.TYPE_TAB_LATEST_HOME) {
+                Log.e("latest-", "latest");
+                Log.e("latest-jsonList", jsonListArticles);
+                Log.e("latest-position", String.valueOf(position));
+                detailNewsFragment.setFragmentManager(GeneralLatestNewsFragment.fragmentManagerLatest);
+                addFragmentCallback.addFrgCallback(detailNewsFragment);
+            }
         }
+    }
+    public void updateListArticles(ArrayList<Article> articles) {
+        mArrayArticles.addAll(articles);
+        notifyDataSetChanged();
     }
 }
