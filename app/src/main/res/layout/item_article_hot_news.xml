@@ -6,7 +6,7 @@
     android:layout_marginBottom="15dp"
     android:background="@android:color/white"
     android:paddingStart="15dp"
-    android:paddingTop="15dp"
+    android:paddingTop="10dp"
     android:paddingEnd="15dp">
 
     <android.support.v7.widget.RecyclerView

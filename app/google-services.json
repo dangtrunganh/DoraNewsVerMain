@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "13003580547",
+    "firebase_url": "https://dora-news.firebaseio.com",
+    "project_id": "dora-news",
+    "storage_bucket": "dora-news.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13003580547:android:0147760afb5f23ec",
+        "android_client_info": {
+          "package_name": "com.anhdt.doranewsvermain"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13003580547-i7ml48p65a51vca29vgkia5n0ip6qjh4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKiymBLFRTmF3RMGlFeRNfAQat3KVyt6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "13003580547-i7ml48p65a51vca29vgkia5n0ip6qjh4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "13003580547-7oudi1vulgn776n9r4fd7d0440kvsmbq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.doratech.DoraNews"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13003580547:android:fde05eea913eebc9",
+        "android_client_info": {
+          "package_name": "com.dt.anh.doranews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13003580547-i7ml48p65a51vca29vgkia5n0ip6qjh4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKiymBLFRTmF3RMGlFeRNfAQat3KVyt6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "13003580547-i7ml48p65a51vca29vgkia5n0ip6qjh4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "13003580547-7oudi1vulgn776n9r4fd7d0440kvsmbq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.doratech.DoraNews"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

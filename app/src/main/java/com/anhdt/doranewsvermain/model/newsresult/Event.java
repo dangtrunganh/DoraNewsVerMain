@@ -4,6 +4,8 @@ package com.anhdt.doranewsvermain.model.newsresult;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Event {
 
     @SerializedName("id")
@@ -33,6 +35,14 @@ public class Event {
     @SerializedName("category")
     @Expose
     private Category category;
+
+    @SerializedName("long_event_id")
+    @Expose
+    private String longEventId;
+
+    @SerializedName("articles_list")
+    @Expose
+    private List<Article> listArticles;
 
     public String getId() {
         return id;
@@ -106,6 +116,22 @@ public class Event {
         this.category = category;
     }
 
+    public List<Article> getListArticles() {
+        return listArticles;
+    }
+
+    public void setListArticles(List<Article> listArticles) {
+        this.listArticles = listArticles;
+    }
+
+    public String getLongEventId() {
+        return longEventId;
+    }
+
+    public void setLongEventId(String longEventId) {
+        this.longEventId = longEventId;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
@@ -118,6 +144,8 @@ public class Event {
                 ", readableTime='" + readableTime + '\'' +
                 ", date='" + date + '\'' +
                 ", category=" + category +
+                ", longEventId='" + longEventId + '\'' +
+                ", listArticles=" + listArticles +
                 '}';
     }
 }

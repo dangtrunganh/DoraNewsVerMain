@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    app:layout_collapseMode="parallax"
+    tools:showIn="@layout/fragment_detail_event">
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/relative_invisible_item_cover_event"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/image_cover_detail_event"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:scaleType="centerCrop"-->
+            <!--android:src="@drawable/image_default" />-->
+
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="#8C262626" />-->
+    <!--</FrameLayout>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/text_title_detail_event"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginBottom="20dp"-->
+        <!--android:maxLines="3"-->
+        <!--android:paddingStart="30dp"-->
+        <!--android:paddingEnd="30dp"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="22sp"-->
+        <!--android:textStyle="italic|bold" />-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:paddingStart="10dp"-->
+        <!--android:paddingEnd="10dp">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/text_category_detail_event"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/colorBlueBold"-->
+            <!--android:paddingStart="10dp"-->
+            <!--android:paddingTop="5dp"-->
+            <!--android:paddingEnd="10dp"-->
+            <!--android:paddingBottom="5dp"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="16sp" />-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:gravity="center_vertical|end"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<ImageView-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:padding="10dp"-->
+                <!--app:srcCompat="@drawable/ic_eye_orange"-->
+                <!--tools:ignore="VectorDrawableCompat" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/text_number_news_detail_event"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textColor="#fff"-->
+                <!--android:textSize="14sp"-->
+                <!--android:textStyle="bold" />-->
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
+</FrameLayout>

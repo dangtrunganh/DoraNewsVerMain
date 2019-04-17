@@ -3,10 +3,16 @@ package com.anhdt.doranewsvermain.adapter.autoviewpager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,21 +23,43 @@ import android.widget.TextView;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.customview.NewsBackgroundLayout;
+import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
+import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
+
 public class StoryAdapter extends PagerAdapter {
     private ArrayList<Event> arrayEvents;
     private LayoutInflater inflater;
     private Context mContext;
+    private AutoScrollViewPager viewPager;
+    private boolean isTextAnimating; //true nếu animation đang chạy, false nếu animation tắt rồi
 
+    private String idStory;
+    private int typeTabContent;
+    private AddFragmentCallback addFragmentCallback;
 
-    public StoryAdapter(ArrayList<Event> arrayEvents, Context context) {
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public StoryAdapter(ArrayList<Event> arrayEvents, Context context, AutoScrollViewPager viewPager, String idStory, int typeTabContent, AddFragmentCallback addFragmentCallback) {
         this.arrayEvents = arrayEvents;
         this.mContext = context;
-        inflater = LayoutInflater.from(context);
+        this.inflater = LayoutInflater.from(context);
+        this.viewPager = viewPager;
+        this.idStory = idStory;
+        this.typeTabContent = typeTabContent;
+        this.addFragmentCallback = addFragmentCallback;
+
+//        ViewPager view = new ViewPager(mContext);
+        this.viewPager.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+//            int posi = this.viewPager.getCurrentItem();
+//            Log.e("posi-", String.valueOf(posi));
+//            View view = viewPager.findViewWithTag(String.valueOf(posi));
+//            view.
+        });
     }
 
     @Override
@@ -42,7 +70,7 @@ public class StoryAdapter extends PagerAdapter {
     @SuppressLint("SetTextI18n")
     @NonNull
     @Override
-    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+    public View instantiateItem(@NonNull ViewGroup container, int position) {
         View itemView = inflater.inflate(
                 R.layout.item_event_in_vpg_stories, container, false);
 
@@ -52,35 +80,73 @@ public class StoryAdapter extends PagerAdapter {
         TextView tvNumberArticles = itemView.findViewById(R.id.text_number_articles_item_event_in_vpg);
         TextView tvTimeReadable = itemView.findViewById(R.id.text_time_item_event_in_vpg);
         TextView tvTitleEvent = itemView.findViewById(R.id.text_title_event_item_event_in_vpg);
+        ConstraintLayout constraintLayout = itemView.findViewById(R.id.constraint_layout_item_event_vpg);
+
+        //Tạo chiều rộng của Viewpager = width màn hình
+        //Tạo chiều cao của ViewPager = height * 0.9
+        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        ViewGroup.LayoutParams layoutParams = constraintLayout.getLayoutParams();
+        layoutParams.width = width;
+        layoutParams.height = (int) (width * 0.9);
+        constraintLayout.setLayoutParams(layoutParams);
 
         Event event = arrayEvents.get(position);
-        Picasso.get().load(event.getImage()).into(newsBackgroundLayout);
+
+//        CustomView customView = new CustomView(mContext, itemView);
+        if (event.getImage() != null) {
+            Picasso.get().load(event.getImage()).into(newsBackgroundLayout);
+        }
         tvCategory.setText(event.getCategory().getName());
         tvNumberArticles.setText(String.valueOf(event.getNumArticles()) + " bài báo");
         tvTimeReadable.setText(event.getReadableTime());
         tvTitleEvent.setText(event.getTitle());
 
-        //summary
+        //Summary
+        BackgroundColorSpan backgroundColorSpanBlack = new BackgroundColorSpan(Color.parseColor("#B3000000"));
+//        BackgroundColorSpan backgroundColorSpanNull = new BackgroundColorSpan(Color.parseColor("#00000000"));
+
         String summaryContent = event.getContent();
         SpannableString str = new SpannableString(summaryContent);
         if (!summaryContent.equals("")) {
-            BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor("#B3000000"));
-            str.setSpan(backgroundColorSpan, 0, summaryContent.length(), 0);
+            str.setSpan(backgroundColorSpanBlack, 0, summaryContent.length(), 0);
         }
 
         Animation mAnimation;
-        tvSum.setText(str);
+        //Nếu cần tắt animation đi
         mAnimation = AnimationUtils.loadAnimation(mContext, R.anim.move_summary);
         mAnimation.setFillAfter(true);
+        tvSum.setText(str);
+        tvSum.setTextColor(0xffffffff);
         tvSum.setAnimation(mAnimation);
+        mAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+//                tvSum.setVisibility(View.VISIBLE);
+            }
 
+            @Override
+            public void onAnimationEnd(Animation animation) {
+//                tvSum.setTextColor(0x00000000);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
 
         container.addView(itemView);
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Có position rồi này
-            }
+        itemView.setOnClickListener(v -> {
+            //Có position rồi này
+            //Bật lên DetailEventFrg, chú ý truyền vào Type = DetailEventFragment.TYPE_IN
+            String idEvent = event.getId();
+//            String titleEvent = event.getTitle();
+
+            //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là DEFAULT
+            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory);
+            detailEventFragment.setAddFragmentCallback(addFragmentCallback);
+            addFragmentCallback.addFrgCallback(detailEventFragment);
         });
         return itemView;
     }
@@ -97,6 +163,4 @@ public class StoryAdapter extends PagerAdapter {
     public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
         return o.equals(view);
     }
-
-
 }

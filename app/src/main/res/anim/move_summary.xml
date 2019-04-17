@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:fillAfter="true"
-    >
+    android:fillAfter="true">
     <!--<scale-->
     <!--android:duration="1600"-->
     <!--android:fromXScale="3.0"-->
@@ -12,8 +11,15 @@
     <!--android:toYScale="1.0">-->
     <!--</scale>-->
     <alpha
-        android:duration="5000"
+        android:duration="2000"
         android:fromAlpha="0.0"
         android:interpolator="@android:anim/accelerate_interpolator"
+        android:startOffset="2000"
+        android:toAlpha="1.0" />
+    <alpha
+        android:duration="1000"
+        android:fromAlpha="1.0"
+        android:interpolator="@android:anim/accelerate_interpolator"
+        android:startOffset="4000"
         android:toAlpha="1.0" />
 </set>

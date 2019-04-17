@@ -16,6 +16,15 @@ public class Category {
     @Expose
     private String urlImage;
 
+    private boolean isSelected;
+
+    public Category(String id, String name, String urlImage) {
+        this.id = id;
+        this.name = name;
+        this.urlImage = urlImage;
+        this.isSelected = false;
+    }
+
     public String getId() {
         return id;
     }
@@ -40,12 +49,21 @@ public class Category {
         this.urlImage = urlImage;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
     @Override
     public String toString() {
         return "Category{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", urlImage='" + urlImage + '\'' +
+                ", isSelected=" + isSelected +
                 '}';
     }
 }

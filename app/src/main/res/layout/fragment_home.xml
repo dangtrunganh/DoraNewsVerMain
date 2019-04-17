@@ -1,30 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/actionBar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_frg_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contentInsetEnd="0dp"
-        app:contentInsetStart="0dp">
+        android:orientation="vertical"
+        app:elevation="0dp">
 
-        <include layout="@layout/content_toolbar_activity_main" />
-    </android.support.v7.widget.Toolbar>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/actionBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+
+            <include layout="@layout/content_toolbar_activity_main" />
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_hot_news"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="@color/backgroundRecyclerView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/actionBar">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     </android.support.v7.widget.RecyclerView>
 
-</android.support.constraint.ConstraintLayout>
+    <include
+        android:id="@+id/shimmer_view_container"
+        layout="@layout/skeleton_data_place_holder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_frg_home" />
+
+</android.support.design.widget.CoordinatorLayout>

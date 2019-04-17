@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_frg_latest_news"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/actionbar_latest_news"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+
+            <include layout="@layout/content_toolbar_latest_fragment" />
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout_category"
+            style="@style/MyCustomTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            app:tabGravity="fill"
+            app:tabMode="scrollable" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tab_layout_category" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>

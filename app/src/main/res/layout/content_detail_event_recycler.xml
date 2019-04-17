@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:overScrollMode="never"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.anhdt.doranewsvermain.MainActivity"
+    tools:showIn="@layout/fragment_detail_event">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraint_layout_frg_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/text_title_list_event_in_stories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:text="Dòng sự kiện"
+                android:textColor="@color/cyanBlue"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/image_show_all_event_in_stories"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_chevron_right"
+                app:layout_constraintBottom_toBottomOf="@id/text_title_list_event_in_stories"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_title_list_event_in_stories" />
+
+            <TextView
+                android:id="@+id/text_show_all_event_in_stories"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="Xem tất cả"
+                android:textColor="@color/lightGrey"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/text_title_list_event_in_stories"
+                app:layout_constraintRight_toLeftOf="@id/image_show_all_event_in_stories"
+                app:layout_constraintTop_toTopOf="@id/text_title_list_event_in_stories" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_list_articles_in_stories_detail_event"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_title_list_event_in_stories" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_news_detail_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/constraint_layout_frg_home"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <TextView
+            android:id="@+id/text_load_more_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/recycler_news_detail_event"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="10dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="2dp"
+            android:text="Xem thêm"
+            android:textColor="#007aff"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            tools:ignore="RtlSymmetry" />
+    </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>
