@@ -14,6 +14,7 @@ import com.anhdt.doranewsvermain.activity.ReadOriginalArticleActivity;
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
@@ -81,13 +82,14 @@ public class ArticleFramentInDetailNewsFragment extends BaseFragment implements 
         txtTitleNews.setText(currentArticles.getTitle());
 
         //Summary
-        for (int i = 0; i < currentArticles.getMedias().size(); i++) {
-            if (currentArticles.getMedias().get(i).getType().equals(ConstParam.MEDIUM)) {
-                String summarization = currentArticles.getMedias().get(i).getBody().get(0).getContent();
-                txtContentNews.setText(summarization);
-                break;
-            }
-        }
+        txtContentNews.setText(GeneralTool.getSummaryOfArticle(currentArticles, ConstParam.MEDIUM));
+//        for (int i = 0; i < currentArticles.getMedias().size(); i++) {
+//            if (currentArticles.getMedias().get(i).getType().equals(ConstParam.MEDIUM)) {
+//                String summarization = currentArticles.getMedias().get(i).getBody().get(0).getContent();
+//                txtContentNews.setText(summarization);
+//                break;
+//            }
+//        }
 
         btnReadMore.setOnClickListener(view1 -> {
             //Xử lý sự kiện khi click vào button xem chi tiết bài báo, mở ra 1 activity riêng, tạm thời show

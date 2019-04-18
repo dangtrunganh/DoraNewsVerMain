@@ -6,11 +6,22 @@ import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.model.DatumStory;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
+import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+
+import static java.time.ZoneOffset.UTC;
 
 public class GeneralTool {
     public static boolean checkIfChildOutIParent(float yChildTop, float yChildBottom, float yParentTop, float yParentBottom) {
@@ -49,14 +60,177 @@ public class GeneralTool {
         return android_id;
     }
 
-    public static ArrayList<ItemDetailStory> convertToListDatumStory(ArrayList<Event> listEventToConvert) {
-        ArrayList<ItemDetailStory> itemDetailStories = new ArrayList<>();
-        ArrayList<Event> array;
+    private static String getCurrentDay() {
+        Date myDate = new Date();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat mdyFormat = new SimpleDateFormat("dd MM yyyy");
+        return mdyFormat.format(myDate);
+    }
 
+    private static String convertUTCTimeToLocalTime(String timeUTC) {
+        String timeUTCBefore = timeUTC.split("T")[0];
+        SimpleDateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = utcDateFormat.parse(timeUTCBefore);
+            @SuppressLint("SimpleDateFormat") DateFormat out = new SimpleDateFormat("dd MM yyyy");
+            return out.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //startDay ở dạng UTC time, đầu ra là số ngày giữa 2 ngày
+    public static long countDayToNow(String startDay) {
+        String today = GeneralTool.getCurrentDay(); //today là end day
+        String startDayFormatted = GeneralTool.convertUTCTimeToLocalTime(startDay);
+        Log.e("result-start", startDayFormatted);
+        Log.e("result-today", today);
+        if (startDayFormatted == null) {
+            return -1;
+        }
+        return GeneralTool.countDayBetweenTime(startDayFormatted, today);
+    }
+
+    private static long countDayBetweenTime(String startDay, String endDay) {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
+//        DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+//        String inputString1 = "23 01 1997";
+//        String inputString2 = "27 04 1997";
+        try {
+            Date date1 = myFormat.parse(startDay);
+            Date date2 = myFormat.parse(endDay);
+            long diff = date2.getTime() - date1.getTime();
+            return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * Hàm này truyền vào một article và type, trả về summary của article đó
+     * @param article
+     * @param type - type: ConstParam.MEDIUM, SHORT, LONG
+     * @return summary of article
+     */
+    public static String getSummaryOfArticle(Article article, String type) {
+        //type: ConstParam.MEDIUM - "medium"
+        for (int i = 0; i < article.getMedias().size(); i++) {
+            if (article.getMedias().get(i).getType().equals(ConstParam.MEDIUM)) {
+                return article.getMedias().get(i).getBody().get(0).getContent();
+            }
+        }
+        return "\n\n\n\n";
+    }
+
+    public static ArrayList<ItemDetailStory> convertToListDatumStory(ArrayList<Event> listEventToConvert) {
+        //Output: List rỗng hoặc null thì đểu trả về list rỗng
+        //List này phải theo thứ tự!
+        //Đầu vào là list đã sắp thứ tự theo trình tự thời gian!
+        ArrayList<ItemDetailStory> itemDetailStories = new ArrayList<>();
+        boolean today = false; //kiểm tra xem đã có phần tử đầu tiên chưa? Chưa thì cho label lên đầu, gán biến này = true
+        boolean yesterday = false;
+        boolean lastweek = false;
+        boolean older = false;
+
+        boolean timeLineIsSet = false;
+        if (listEventToConvert == null) {
+            return itemDetailStories;
+        }
+        if (listEventToConvert.size() == 0) {
+            return itemDetailStories;
+        }
+        //Xét phần tử đầu tiên
+        ItemDetailStory itemInit = new ItemDetailStory(ItemDetailStory.LATEST_EVENT, null, ItemDetailStory.TYPE_EVENT_TOPEST_SINGLE, listEventToConvert.get(0));
+        itemDetailStories.add(itemInit);
+//        if (listEventToConvert.size() == 1) {
+//            return itemDetailStories;
+//        }
         for (int i = 0; i < listEventToConvert.size(); i++) {
+            //Tính tiếp từ index i = 0 trở đi đến hết để thêm vào đoạn còn lại, trùng ko sao ^^, vì thằng trên và list dưới là khác nhau
             //Kiểm tra với mỗi Event, phân vào 1 trong 4 type, tạo phần tử với type đó
             Event event = listEventToConvert.get(i);
+            long dayOffset = GeneralTool.countDayToNow(event.getTime());
+            if (!timeLineIsSet) {
+                //Các trường hợp đầu tiên sẽ phải có
 
+                //Vì với thằng số 1 này, nó sẽ có thêm cái label "Time line" trên đầu nên phải xét riêng, cũng ko hẳn đâu @@,
+                //Vì yester day cũng có thể có timeline mà?
+
+                //Tất cả trong cái IF to này đầu tiên sẽ phải có time line lên đầu, type của nó sẽ là
+                //ItemDetailStory.TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL
+                if (dayOffset == 0) {
+                    //Today
+                    if (!today) {
+                        //thằng today đầu tiên, phải là kiểu ItemDetailStory.TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL,
+                        //Có label: ItemDetailStory.TIME_LINE và ItemDetailStory.TODAY
+                        itemDetailStories.add(new ItemDetailStory(ItemDetailStory.TIME_LINE, ItemDetailStory.TODAY, ItemDetailStory.TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL, event));
+                        today = true;
+                        timeLineIsSet = true;
+                    } /*else {
+                        //bản chất nếu đã set xong timeLineIsSet thì sẽ méo bao giờ vào đây đâu, phí công vcl
+                        //Các thằng today khác, ko phải thằng đầu
+                        itemDetailStories.add(new ItemDetailStory())
+                    }*/
+
+                } else if (dayOffset == 1) {
+                    if (!yesterday) {
+                        itemDetailStories.add(new ItemDetailStory(ItemDetailStory.TIME_LINE, ItemDetailStory.YESTERDAY, ItemDetailStory.TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL, event));
+                        yesterday = true;
+                        timeLineIsSet = true;
+                    }
+
+                } else if (dayOffset >= 2 && dayOffset <= 7) {
+                    if (!lastweek) {
+                        itemDetailStories.add(new ItemDetailStory(ItemDetailStory.TIME_LINE, ItemDetailStory.LAST_WEEK, ItemDetailStory.TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL, event));
+                        lastweek = true;
+                        timeLineIsSet = true;
+                    }
+                } else {
+                    if (!older) {
+                        itemDetailStories.add(new ItemDetailStory(ItemDetailStory.TIME_LINE, ItemDetailStory.OLDER, ItemDetailStory.TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL, event));
+                        older = true;
+                        timeLineIsSet = true;
+                    }
+                }
+            } else {
+                //Trường hợp Timeline đã được set rồi
+                if (dayOffset == 0) {
+                    //Today
+                    if (!today) {
+                        //Nếu Timeline đã được set, thì không bao giờ vào case này, vì dữ liệu đã được sắp xếp theo thời gian
+                        //thằng today đầu tiên, phải là kiểu ItemDetailStory.TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL,
+                        //Có label: ItemDetailStory.TIME_LINE và ItemDetailStory.TODAY
+                        itemDetailStories.add(new ItemDetailStory(null, ItemDetailStory.TODAY, ItemDetailStory.TYPE_EVENT_NORMAL_HAVE_TO_DAY_LABEL, event));
+                        today = true;
+                    } else {
+                        itemDetailStories.add(new ItemDetailStory(null, null, ItemDetailStory.TYPE_EVENT_NORMAL_NOT_HAVE_ANY_LABEL, event));
+                    }
+
+                } else if (dayOffset == 1) {
+                    if (!yesterday) {
+                        itemDetailStories.add(new ItemDetailStory(null, ItemDetailStory.YESTERDAY, ItemDetailStory.TYPE_EVENT_NORMAL_HAVE_TO_DAY_LABEL, event));
+                        yesterday = true;
+                    } else {
+                        itemDetailStories.add(new ItemDetailStory(null, null, ItemDetailStory.TYPE_EVENT_NORMAL_NOT_HAVE_ANY_LABEL, event));
+                    }
+
+                } else if (dayOffset >= 2 && dayOffset <= 7) {
+                    if (!lastweek) {
+                        itemDetailStories.add(new ItemDetailStory(null, ItemDetailStory.LAST_WEEK, ItemDetailStory.TYPE_EVENT_NORMAL_HAVE_TO_DAY_LABEL, event));
+                        lastweek = true;
+                    } else {
+                        itemDetailStories.add(new ItemDetailStory(null, null, ItemDetailStory.TYPE_EVENT_NORMAL_NOT_HAVE_ANY_LABEL, event));
+                    }
+                } else {
+                    if (!older) {
+                        itemDetailStories.add(new ItemDetailStory(null, ItemDetailStory.OLDER, ItemDetailStory.TYPE_EVENT_NORMAL_HAVE_TO_DAY_LABEL, event));
+                        older = true;
+                    } else {
+                        itemDetailStories.add(new ItemDetailStory(null, null, ItemDetailStory.TYPE_EVENT_NORMAL_NOT_HAVE_ANY_LABEL, event));
+                    }
+                }
+            }
         }
 
         return itemDetailStories;

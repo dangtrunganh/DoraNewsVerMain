@@ -1,18 +1,30 @@
 package com.anhdt.doranewsvermain;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
+import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
+import com.anhdt.doranewsvermain.constant.ConstServiceFirebase;
+import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.FavoriteFragment;
 import com.anhdt.doranewsvermain.fragment.LatestNewsFragment;
 import com.anhdt.doranewsvermain.fragment.MoreFragment;
+import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralHomeFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralLatestNewsFragment;
 
@@ -30,10 +42,38 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment activeFragment = homeFragment;
 
+    //Biến này dùng để điều khiển tab hiện tại bật ra Fragment, dùng cả cho sau này điều khiển nhạc nữa
+    //Bật ra Fragment ở tab hiện tại mong muốn, hiện tại chỉ có tác dụng khi App chạy
+    //Khi đó GeneralHomeFragment tồn tại, đã add vào một Fragment rồi? Right?
+    private AddFragmentCallback activeAddFragmentCallback = homeFragment;
+
     private static final String NAME_HOME_FRAGMENT = "HOME_FRAGMENT";
     private static final String NAME_LATEST_NEWS_FRAGMENT = "LATEST_NEWS_FRAGMENT";
     private static final String NAME_FAVORITE_FRAGMENT = "FAVORITE_FRAGMENT";
     private static final String NAME_MORE_FRAGMENT = "MORE_FRAGMENT";
+    private boolean doubleBackToExitPressedOnce = false;
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("X1X-", "onReceive");
+            if (intent.getAction().equals("do_something")) {
+                if (activeFragment == homeFragment) {
+                    String idEvent = intent.getExtras().getString(ConstServiceFirebase.PARAM_ID_EVENT);
+                    String idStory = intent.getExtras().getString(ConstServiceFirebase.PARAM_ID_LONG_EVENT);
+                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(ConstGeneralTypeTab.TYPE_TAB_HOME, idEvent, idStory);
+                    detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
+                    activeAddFragmentCallback.addFrgCallback(detailEventFragment);
+                } else if (activeFragment == latestNewsFragment) {
+                    String idEvent = intent.getExtras().getString(ConstServiceFirebase.PARAM_ID_EVENT);
+                    String idStory = intent.getExtras().getString(ConstServiceFirebase.PARAM_ID_LONG_EVENT);
+                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(ConstGeneralTypeTab.TYPE_TAB_LATEST_HOME, idEvent, idStory);
+                    detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
+                    activeAddFragmentCallback.addFrgCallback(detailEventFragment);
+                }
+            }
+        }
+    };
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
@@ -45,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 fm.beginTransaction().hide(activeFragment).show(homeFragment).commit();
                 activeFragment = homeFragment;
+                activeAddFragmentCallback = homeFragment;
                 return true;
             case R.id.navigation_latest_news:
                 if (activeFragment == latestNewsFragment) {
@@ -53,14 +94,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 fm.beginTransaction().hide(activeFragment).show(latestNewsFragment).commit();
                 activeFragment = latestNewsFragment;
+                activeAddFragmentCallback = latestNewsFragment;
                 return true;
             case R.id.navigation_favorite:
                 fm.beginTransaction().hide(activeFragment).show(favoriteFragment).commit();
                 activeFragment = favoriteFragment;
+                activeAddFragmentCallback = favoriteFragment;
                 return true;
             case R.id.navigation_more:
                 fm.beginTransaction().hide(activeFragment).show(moreFragment).commit();
                 activeFragment = moreFragment;
+                activeAddFragmentCallback = moreFragment;
                 return true;
         }
         return false;
@@ -74,8 +118,18 @@ public class MainActivity extends AppCompatActivity {
         initViews();
     }
 
-    private void getIntentFromSplashAct() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver),
+                new IntentFilter("MyData")
+        );
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     private void initViews() {
@@ -131,4 +185,17 @@ public class MainActivity extends AppCompatActivity {
 //        transaction.replace(R.id.container, fragment);
 //        transaction.commit();
 //    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Nhấn back thêm 1 lần nữa để thoát", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+    }
 }

@@ -20,8 +20,11 @@ import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.autoviewpager.StoryAdapter;
+import com.anhdt.doranewsvermain.api.ServerAPI;
+import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.constant.TypeNewsConst;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
+import com.anhdt.doranewsvermain.fragment.DetailStoryFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
@@ -31,7 +34,13 @@ import com.anhdt.doranewsvermain.util.GeneralTool;
 
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 import me.relex.circleindicator.CircleIndicator;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -56,7 +65,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private boolean isAnimatingStory = false;
 
-    private FragmentManager fragmentManager;
+//    private FragmentManager fragmentManager;
 
     private int typeTabContent; // 1 or 2 - tab home hay tab latest
 
@@ -65,7 +74,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public HotNewsAdapter(ArrayList<Datum> arrayDatums, Context mContext, RecyclerView recyclerView, FragmentManager fragmentManager, int typeTabContent, AddFragmentCallback addFragmentCallback) {
         this.arrayDatums = arrayDatums;
         this.mContext = mContext;
-        this.fragmentManager = fragmentManager;
+//        this.fragmentManager = fragmentManager;
         this.typeTabContent = typeTabContent;
         this.addFragmentCallback = addFragmentCallback;
 
@@ -119,10 +128,10 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         RecyclerView.ViewHolder viewHolderStory = recyclerView.findViewHolderForAdapterPosition(position);
                         if (viewHolderStory instanceof HotNewsAdapter.StoryViewHolder) {
                             HotNewsAdapter.StoryViewHolder storyViewHolder = (StoryViewHolder) viewHolderStory;
-                            Log.e("11-anim-yTop", "Position: " + String.valueOf(position) + " - " + String.valueOf(yTopView));
-                            Log.e("11-anim-yTopParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(newTopRecyclerView));
-                            Log.e("11-anim-yBottom", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomView));
-                            Log.e("11-anim-yBottomParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomRecyclerView));
+                            Log.e("11-enter-yTop", "Position: " + String.valueOf(position) + " - " + String.valueOf(yTopView));
+                            Log.e("11-enter-yTopParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(newTopRecyclerView));
+                            Log.e("11-enter-yBottom", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomView));
+                            Log.e("11-enter-yBottomParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomRecyclerView));
                             if (GeneralTool.checkIfChildOutIParent(yTopView, yBottomView, newTopRecyclerView, yBottomRecyclerView)) {
                                 //Thỏa mãn nằm ngoài
                                 //Chạy animation
@@ -286,7 +295,10 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void bindData(ArrayList<Article> articleArrayList) {
 //            Log.e("xxx-", articleArrayList.toString());
 //            Log.e("xxx-size", String.valueOf(articleArrayList.size()));
-            ArticleItemAdapter articleItemAdapter = new ArticleItemAdapter(mContext, articleArrayList/*, fragmentManager*/, typeTabContent, addFragmentCallback);
+            ArticleItemAdapter articleItemAdapter = new ArticleItemAdapter(mContext,
+                    articleArrayList/*, fragmentManager*/,
+                    typeTabContent, addFragmentCallback,
+                    null, ArticleItemAdapter.IN_HOME);
             recyclerArticle.setHasFixedSize(true);
             recyclerArticle.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
             recyclerArticle.setAdapter(articleItemAdapter);
@@ -353,14 +365,62 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+    private void loadDetailStory(String idStory, String uId) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(RootAPIUrlConst.ROOT_GET_NEWS)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-    public class StoryViewHolder extends RecyclerView.ViewHolder {
+        final ServerAPI apiService = retrofit.create(ServerAPI.class);
+
+        Call<Stories> call = apiService.getDetailStory(idStory, uId);
+
+        call.enqueue(new Callback<Stories>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
+                Stories stories = response.body();
+                if (stories == null) {
+                    Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                int follow = stories.getFollow();
+                //Kiểm tra biến này để bật/tắt follow
+                ArrayList<Event> arrayListEvent = (ArrayList<Event>) stories.getEvents();
+                if (arrayListEvent == null) {
+                    return;
+                }
+                if (arrayListEvent.size() == 0) {
+                    return;
+                }
+                //load data to recyclerView
+//                eventAdapterHorizontal.updateListEvents(arrayListEvent);
+                Gson gson = new Gson();
+                String jsonListEvents = gson.toJson(arrayListEvent);
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent, jsonListEvents, idStory);
+                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+                addFragmentCallback.addFrgCallback(detailStoryFragment);
+            }
+
+            @Override
+            public void onFailure(Call<Stories> call, Throwable t) {
+                Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public class StoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private AutoScrollViewPager autoScrollViewPagerStories;
         private CircleIndicator indicator;
+        private TextView textViewStory;
+        private ArrayList<Event> arrayListEvents;
+        private String idStory;
 
         public StoryViewHolder(@NonNull View itemView) {
             super(itemView);
             autoScrollViewPagerStories = itemView.findViewById(R.id.viewpager_item_stories);
+            textViewStory = itemView.findViewById(R.id.text_view_full_story_item_stories);
+
 
 //            ConstraintLayout constraintLayout = itemView.findViewById(R.id.constraint_layout_item_event_vpg);
 //        constraintLayout.getHeight() = constraintLayout.getWidth();
@@ -382,9 +442,14 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @RequiresApi(api = Build.VERSION_CODES.M)
         public void bindData(ArrayList<Event> arrayEvents, String idStory) {
+            this.arrayListEvents = arrayEvents;
+            this.idStory = idStory;
             StoryAdapter storyAdapterVP = new StoryAdapter(arrayEvents, mContext, autoScrollViewPagerStories, idStory, typeTabContent, addFragmentCallback);
             autoScrollViewPagerStories.setAdapter(storyAdapterVP);
             indicator.setViewPager(autoScrollViewPagerStories);
+
+            //Chỉ khi bindData() xong thì mới click xem thông tin toàn cảnh được ^^
+            textViewStory.setOnClickListener(this);
 
             //Nếu cần tắt animation đi
             autoScrollViewPagerStories.setScrollDurationFactor(4);
@@ -397,6 +462,28 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public void startAnimation() {
             autoScrollViewPagerStories.startAutoScroll();
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.text_view_full_story_item_stories) {
+                //Mở Chi tiết story lên
+                if (arrayListEvents == null) {
+                    return;
+                }
+                if (arrayListEvents.size() == 0) {
+                    return;
+                }
+                if (idStory == null) {
+                    return;
+                }
+                loadDetailStory(idStory, GeneralTool.getDeviceId(mContext));
+//                Gson gson = new Gson();
+//                String jsonListEvents = gson.toJson(arrayListEvents);
+//                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent, jsonListEvents, idStory);
+//                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+//                addFragmentCallback.addFrgCallback(detailStoryFragment);
+            }
         }
     }
 

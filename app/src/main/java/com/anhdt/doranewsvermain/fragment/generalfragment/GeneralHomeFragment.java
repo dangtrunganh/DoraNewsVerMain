@@ -62,11 +62,19 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
     @Override
     public void addFrgCallback(Fragment fragment) {
+//        FragmentManager fragmentManager = getChildFragmentManager();
+//        FragmentTransaction ft = fragmentManager.beginTransaction();
+//        ft.add(R.id.main_container_frg_home, fragment);
+//        ft.addToBackStack(null);
+//        ft.commit();
+
+        //=====
         FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.main_container_frg_home, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        transaction.add(R.id.main_container_frg_home, fragment );
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override

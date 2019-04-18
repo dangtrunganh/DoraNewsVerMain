@@ -7,15 +7,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.recyclerview.HotNewsAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
-import com.anhdt.doranewsvermain.constant.ConstGeneral;
-import com.anhdt.doranewsvermain.constant.ConstParam;
+import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.LoadPageConst;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
@@ -105,7 +103,7 @@ public class NewsInCategoryFrament extends BaseFragment {
         recyclerViewListNewsInCategory.setLayoutManager(linearLayoutManager);
 
         hotNewsAdapter = new HotNewsAdapter(new ArrayList<>(), getContext(), recyclerViewListNewsInCategory, getActivity().getSupportFragmentManager(),
-                ConstGeneral.TYPE_TAB_LATEST_HOME, addFragmentCallback);
+                ConstGeneralTypeTab.TYPE_TAB_LATEST_HOME, addFragmentCallback);
         recyclerViewListNewsInCategory.setAdapter(hotNewsAdapter);
 
 

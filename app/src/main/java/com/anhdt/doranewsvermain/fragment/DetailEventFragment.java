@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,6 +30,7 @@ import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -53,6 +55,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
 //    public static final int TYPE_IN = 1; //Event in stories
 
     private ImageView mImageViewCover;
+    private ImageView mImageShowStory;
     private TextView mTextTitleEvent, mTextNameCategory, mTextNumberNews, mTextLoadMoreNews;
     private Toolbar mToolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -74,6 +77,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
     //    private String eventTitle;
     private String idStory; //Chỉ những TYPE_IN thì mới kiểm tra lấy thông tin idStory
     private ArrayList<Article> articles;
+    private ArrayList<Event> arrayListEvent;
 
     private boolean isFollowed = false;
 
@@ -90,10 +94,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
         DetailEventFragment fragment = new DetailEventFragment();
         args.putInt(ARG_TYPE_TAB, typeTab);
         args.putString(ARG_EVENT_ID, eventId);
-//        args.putString(ARG_EVENT_TITLE, eventTitle);
-
         args.putString(ARG_LONG_EVENT_ID, idStory);
-//        args.putInt(ARG_TYPE_SINGLE_OR_IN, typeSingleOrIn);
         fragment.setArguments(args);
         return fragment;
     }
@@ -120,6 +121,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
         mShimmerViewContainer = view.findViewById(R.id.skeleton_detail_event);
         mShimmerViewContainer.startShimmerAnimation();
         mImageViewCover = view.findViewById(R.id.image_cover_detail_event);
+        mImageShowStory = view.findViewById(R.id.image_show_all_event_in_stories);
         mTextTitleEvent = view.findViewById(R.id.text_title_detail_event);
         mTextNameCategory = view.findViewById(R.id.text_category_detail_event);
         mTextNumberNews = view.findViewById(R.id.text_number_news_detail_event);
@@ -134,6 +136,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
         recyclerViewArticle.setLayoutManager(linearLayoutManager);
         recyclerViewArticle.setHasFixedSize(true);
         recyclerViewArticle.setNestedScrollingEnabled(false);
+//        ViewCompat.setNestedScrollingEnabled(recyclerViewArticle, false);
 
         mTextLoadMoreNews.setOnClickListener(this);
 
@@ -147,7 +150,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_white);
         mToolbar.setNavigationOnClickListener(v -> addFragmentCallback.popBackStack());
 
-        btnFollow = view.findViewById(R.id.btn_follow_story);
+        btnFollow = view.findViewById(R.id.btn_follow_story_in_detail_event);
         btnFollow.setOnClickListener(this);
 
         //===GetData====
@@ -171,6 +174,8 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
                     typeTabHomeOrLatest, idStory, addFragmentCallback, eventId);
             recyclerListEventInStoryHorizontal.setAdapter(eventAdapterHorizontal);
             loadDataToRecyclerEventHorizontal(idStory, DEFAULT_USER_ID);
+            textShowAllEvent.setOnClickListener(this);
+            mImageShowStory.setOnClickListener(this);
         } /*else {
             //Không hiển thị list các event trong story vì idStory là rỗng
 //            constraintLayoutListEventInStory.setVisibility(View.GONE);
@@ -233,15 +238,15 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
                 }
                 int follow = stories.getFollow();
                 //Kiểm tra biến này để bật/tắt follow
-                ArrayList<Event> arrayList = (ArrayList<Event>) stories.getEvents();
-                if (arrayList == null) {
+                arrayListEvent = (ArrayList<Event>) stories.getEvents();
+                if (arrayListEvent == null) {
                     return;
                 }
-                if (arrayList.size() == 0) {
+                if (arrayListEvent.size() == 0) {
                     return;
                 }
                 //load data to recyclerView
-                eventAdapterHorizontal.updateListEvents(arrayList);
+                eventAdapterHorizontal.updateListEvents(arrayListEvent);
             }
 
             @Override
@@ -293,7 +298,9 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
 //                Log.e("pp-", String.valueOf(news.getData().size()));
                 //load data to recyclerView
                 Log.e("xxy-1", event.getListArticles().toString());
-                articleItemAdapter = new ArticleItemAdapter(getContext(), (ArrayList<Article>) event.getListArticles(), typeTabHomeOrLatest, addFragmentCallback);
+                articleItemAdapter = new ArticleItemAdapter(getContext(),
+                        (ArrayList<Article>) event.getListArticles(),
+                        typeTabHomeOrLatest, addFragmentCallback, mTextLoadMoreNews, ArticleItemAdapter.LOAD_MORE_DETAIL_EVENT);
                 recyclerViewArticle.setAdapter(articleItemAdapter);
 //                articleItemAdapter.updateListArticles((ArrayList<Article>) event.getListArticles());
                 mShimmerViewContainer.stopShimmerAnimation();
@@ -321,7 +328,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_follow_story) {
+        if (v.getId() == R.id.btn_follow_story_in_detail_event) {
             //Khi click vào follow 1 story thì có nút này hiện lên
             if (!isFollowed) {
                 Toast.makeText(getContext(), "Bạn đã theo dõi dòng sự kiện này ^^", Toast.LENGTH_SHORT).show();
@@ -345,6 +352,36 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
                 isFollowed = false;
             }
 
+        } else if (v.getId() == R.id.text_show_all_event_in_stories) {
+            //Sự kiện Click vào xem tất cả story
+            if (arrayListEvent == null) {
+                return;
+            }
+            if (arrayListEvent.size() == 0) {
+                return;
+            }
+            Gson gson = new Gson();
+            String jsonListEvents = gson.toJson(arrayListEvent);
+            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabHomeOrLatest, jsonListEvents, idStory);
+            detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+            addFragmentCallback.addFrgCallback(detailStoryFragment);
+        } else if (v.getId() == R.id.image_show_all_event_in_stories) {
+            //Sự kiện Click vào xem tất cả story
+            if (arrayListEvent == null) {
+                return;
+            }
+            if (arrayListEvent.size() == 0) {
+                return;
+            }
+            Gson gson = new Gson();
+            String jsonListEvents = gson.toJson(arrayListEvent);
+            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabHomeOrLatest, jsonListEvents, idStory);
+            detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+            addFragmentCallback.addFrgCallback(detailStoryFragment);
+        } else if (v.getId() == R.id.text_load_more_news) {
+            //Khi ấn xem thêm thì load thêm ra
+//            Toast.makeText(getContext(), "Clicked load more!", Toast.LENGTH_SHORT).show();
+            articleItemAdapter.loadMoreArticles();
         }
     }
 }

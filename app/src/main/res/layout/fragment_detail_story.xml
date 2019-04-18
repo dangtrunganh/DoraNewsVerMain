@@ -4,16 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
-    android:background="@color/backgroundRecyclerView"
+    android:paddingBottom="10dp"
+    android:background="@color/white"
     tools:context="com.anhdt.doranewsvermain.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_detail_story"
         android:layout_width="match_parent"
+        android:background="@android:color/white"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="false"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:orientation="vertical"
+        app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_detail_story"
@@ -21,14 +22,12 @@
             android:layout_height="?attr/actionBarSize"
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp"
-            app:layout_collapseMode="pin"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            app:contentInsetStartWithNavigation="0dp"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white"
+                android:layout_height="?attr/actionBarSize"
                 android:gravity="center_vertical|end"
                 android:paddingEnd="10dp"
                 tools:ignore="RtlSymmetry">
@@ -52,13 +51,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundRecyclerView"
+        android:paddingBottom="20dp"
+        android:layout_marginBottom="20dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     </android.support.v7.widget.RecyclerView>
 
-    <include
-        android:id="@+id/skeleton_detail_story"
-        layout="@layout/skeleton_data_place_holder"
-        android:visibility="gone" />
+    <!--<include-->
+        <!--android:id="@+id/skeleton_detail_story"-->
+        <!--layout="@layout/skeleton_data_place_holder"-->
+        <!--android:visibility="gone" />-->
 
 </android.support.design.widget.CoordinatorLayout>
