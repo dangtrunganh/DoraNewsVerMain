@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.recyclerview.HotNewsAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
-import com.anhdt.doranewsvermain.constant.ConstGeneral;
+import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.LoadPageConst;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
@@ -97,7 +97,7 @@ public class HomeFragment extends BaseFragment {
 
         //====Adapter====
         hotNewsAdapter = new HotNewsAdapter(new ArrayList<>(), getContext(), recyclerViewHotNews, getChildFragmentManager(),
-                ConstGeneral.TYPE_TAB_HOME, addFragmentCallback);
+                ConstGeneralTypeTab.TYPE_TAB_HOME, addFragmentCallback);
         recyclerViewHotNews.setAdapter(hotNewsAdapter);
 
         //====get uId from args====

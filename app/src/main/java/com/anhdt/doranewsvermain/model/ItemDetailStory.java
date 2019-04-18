@@ -13,31 +13,26 @@ public class ItemDetailStory {
     public static final String LAST_WEEK = "Tuần qua";
     public static final String OLDER = "Cũ hơn";
 
-    public static final int TYPE_EVENT_TOP_SINGLE = 0;
-    public static final int TYPE_EVENT_TOP_WITH_TIME_LINE = 1;
-    public static final int TYPE_EVENT_IN_TIME_LINE_WITH_HAVE_TIME = 2;
-    public static final int TYPE_EVENT_IN_TIME_LINE_WITH_NOT_HAVE_TIME = 3;
+    public static final int TYPE_EVENT_TOPEST_SINGLE = 0; //Thằng trên cùng, event đơn
+    public static final int TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL = 1;
+    public static final int TYPE_EVENT_NORMAL_HAVE_TO_DAY_LABEL = 2;
+    public static final int TYPE_EVENT_NORMAL_NOT_HAVE_ANY_LABEL = 3;
 
-    private String titleTop; //Latest or Timeline or null - ko phải phần tử đầu đặc biệt
-    private String titleTime;
+    private String titleTop; //Latest or Timeline or NULL - ko phải phần tử đầu đặc biệt
+    private String titleTime; //time - TODAY, YESTERDAY,...
     private int type; //1 trong 4 loại trên
     private Event event;
-    private ArrayList<Event> listEventToday;
-    private ArrayList<Event> listEventYesterday;
-    private ArrayList<Event> listEventLastWeek;
-    private ArrayList<Event> listEventOlder;
+//    private ArrayList<Event> listEventToday;
+//    private ArrayList<Event> listEventYesterday;
+//    private ArrayList<Event> listEventLastWeek;
+//    private ArrayList<Event> listEventOlder;
 
-    public ItemDetailStory(String titleTop, String titleTime, int type, Event event,
-                           ArrayList<Event> listEventToday, ArrayList<Event> listEventYesterday,
-                           ArrayList<Event> listEventLastWeek, ArrayList<Event> listEventOlder) {
+
+    public ItemDetailStory(String titleTop, String titleTime, int type, Event event) {
         this.titleTop = titleTop;
         this.titleTime = titleTime;
         this.type = type;
         this.event = event;
-        this.listEventToday = listEventToday;
-        this.listEventYesterday = listEventYesterday;
-        this.listEventLastWeek = listEventLastWeek;
-        this.listEventOlder = listEventOlder;
     }
 
     public Event getEvent() {
@@ -48,35 +43,27 @@ public class ItemDetailStory {
         this.event = event;
     }
 
-    public ArrayList<Event> getListEventToday() {
-        return listEventToday;
+    public String getTitleTop() {
+        return titleTop;
     }
 
-    public void setListEventToday(ArrayList<Event> listEventToday) {
-        this.listEventToday = listEventToday;
+    public void setTitleTop(String titleTop) {
+        this.titleTop = titleTop;
     }
 
-    public ArrayList<Event> getListEventYesterday() {
-        return listEventYesterday;
+    public String getTitleTime() {
+        return titleTime;
     }
 
-    public void setListEventYesterday(ArrayList<Event> listEventYesterday) {
-        this.listEventYesterday = listEventYesterday;
+    public void setTitleTime(String titleTime) {
+        this.titleTime = titleTime;
     }
 
-    public ArrayList<Event> getListEventLastWeek() {
-        return listEventLastWeek;
+    public int getType() {
+        return type;
     }
 
-    public void setListEventLastWeek(ArrayList<Event> listEventLastWeek) {
-        this.listEventLastWeek = listEventLastWeek;
-    }
-
-    public ArrayList<Event> getListEventOlder() {
-        return listEventOlder;
-    }
-
-    public void setListEventOlder(ArrayList<Event> listEventOlder) {
-        this.listEventOlder = listEventOlder;
+    public void setType(int type) {
+        this.type = type;
     }
 }

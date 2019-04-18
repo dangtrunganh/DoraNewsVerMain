@@ -22,6 +22,7 @@ import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 import com.anhdt.doranewsvermain.model.userresult.UserResult;
+import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.github.ybq.android.spinkit.SpriteFactory;

@@ -1,10 +1,12 @@
 package com.anhdt.doranewsvermain.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.anhdt.doranewsvermain.R;
+import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 
-public class FavoriteFragment extends BaseFragment {
+public class FavoriteFragment extends BaseFragment implements AddFragmentCallback {
 
     public static FavoriteFragment newInstance() {
         FavoriteFragment favoriteFragment = new FavoriteFragment();
@@ -28,6 +30,21 @@ public class FavoriteFragment extends BaseFragment {
 
     @Override
     protected void initProgressbar() {
+
+    }
+
+    @Override
+    public void addFrgCallback(Fragment fragment) {
+
+    }
+
+    @Override
+    public void popBackStack() {
+
+    }
+
+    @Override
+    public void popAllBackStack() {
 
     }
 }

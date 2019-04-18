@@ -124,7 +124,7 @@
                     tools:ignore="RtlSymmetry">
 
                     <Button
-                        android:id="@+id/btn_follow_story"
+                        android:id="@+id/btn_follow_story_in_detail_event"
                         android:layout_width="90dp"
                         android:layout_height="30dp"
                         android:background="@drawable/border_follow_button"
