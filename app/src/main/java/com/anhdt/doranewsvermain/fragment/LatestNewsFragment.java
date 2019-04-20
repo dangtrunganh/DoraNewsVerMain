@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.viewpagercategory.CategoryViewPagerAdapter;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,7 +18,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LatestNewsFragment extends BaseFragment {
+public class LatestNewsFragment extends BaseFragmentNeedUpdateUI {
     public static final String PARAM_LIST_CATEGORY_LATEST_NEWS_FRG = "PARAM_LIST_CATEGORY_LATEST_NEWS_FRG";
     private static final String ARGS_U_ID_LATEST_NEWS_FRG = "ARGS_U_ID_LATEST_NEWS_FRG";
 
@@ -83,7 +84,7 @@ public class LatestNewsFragment extends BaseFragment {
         for (int i = 0; i < arrayCategories.size(); i++) {
             String jsonCategory = gson.toJson(arrayCategories.get(i));
             NewsInCategoryFragment newsInCategoryFrament = NewsInCategoryFragment.newInstance(jsonCategory, uId);
-            if(addFragmentCallback == null) {
+            if (addFragmentCallback == null) {
 //                Log.e("bn-", "what the hell");
                 Toast.makeText(getContext(), "what the hell", Toast.LENGTH_SHORT).show();
                 return;
@@ -125,5 +126,10 @@ public class LatestNewsFragment extends BaseFragment {
     @Override
     protected void initProgressbar() {
 
+    }
+
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory) {
+        //Không làm gì
     }
 }

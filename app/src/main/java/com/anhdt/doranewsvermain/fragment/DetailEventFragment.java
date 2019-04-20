@@ -24,6 +24,7 @@ import com.anhdt.doranewsvermain.adapter.recyclerview.EventAdapterHorizontal;
 import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
@@ -42,7 +43,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DetailEventFragment extends BaseFragment implements View.OnClickListener {
+public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements View.OnClickListener {
     private static String ARG_TYPE_TAB = "ARG_TYPE_TAB";
     private static String ARG_EVENT_ID = "ARG_EVENT_ID";
     private static String ARG_EVENT_TITLE = "ARG_EVENT_TITLE";
@@ -108,7 +109,8 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onResume() {
         super.onResume();
-//        mShimmerViewContainer.startShimmerAnimation();
+        mShimmerViewContainer.setVisibility(View.VISIBLE);
+        mShimmerViewContainer.startShimmerAnimation();
     }
 
     @Override
@@ -125,7 +127,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
             return;
         }
         mShimmerViewContainer = view.findViewById(R.id.skeleton_detail_event);
-        mShimmerViewContainer.startShimmerAnimation();
+//        mShimmerViewContainer.startShimmerAnimation();
         mImageViewCover = view.findViewById(R.id.image_cover_detail_event);
         mImageShowStory = view.findViewById(R.id.image_show_all_event_in_stories);
         mTextTitleEvent = view.findViewById(R.id.text_title_detail_event);
@@ -142,15 +144,16 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
         recyclerViewArticle.setLayoutManager(linearLayoutManager);
         recyclerViewArticle.setHasFixedSize(true);
         recyclerViewArticle.setNestedScrollingEnabled(false);
-//        ViewCompat.setNestedScrollingEnabled(recyclerViewArticle, false);
 
         mTextLoadMoreNews.setOnClickListener(this);
 
         mToolbar = view.findViewById(R.id.toolbar_detail_event);
 
+        //====Collasping====Tạm thời bỏ đi======
         collapsingToolbarLayout = view.findViewById(R.id.collab_toolbar_layout_detail_event);
         collapsingToolbarLayout.setTitleEnabled(false);
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+        //====Collasping====Tạm thời bỏ đi======
 
         //Set back icon to toolbar
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_white);
@@ -308,17 +311,6 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
                             typeTabHomeOrLatest, addFragmentCallback, mTextLoadMoreNews, ArticleItemAdapter.LOAD_MORE_DETAIL_EVENT);
                     recyclerViewArticle.setAdapter(articleItemAdapter);
                 }
-//                if (event.getData().size() < HotNewsAdapter.VISIBLE_THRESHOLD) {
-//                    //Khi data nhận về nhỏ có size nhỏ hơn Threshold thì chuyển flag = true, tức là sẽ không load tiếp nữa
-//                    //Nếu bằng thì tức là load đúng size buffer = 3, tức là vẫn còn mà
-//                    hotNewsAdapter.setFlagFinishLoadData(true);
-//                }
-
-//                arrayDatum.addAll(news.getData());
-//                Log.e("pp-", String.valueOf(news.getData().size()));
-                //load data to recyclerView
-
-//                articleItemAdapter.updateListArticles((ArrayList<Article>) event.getListArticles());
                 mShimmerViewContainer.stopShimmerAnimation();
                 mShimmerViewContainer.setVisibility(View.GONE);
             }
@@ -399,5 +391,10 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
 //            Toast.makeText(getContext(), "Clicked load more!", Toast.LENGTH_SHORT).show();
             articleItemAdapter.loadMoreArticles();
         }
+    }
+
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory) {
+        //Update lại UI
     }
 }

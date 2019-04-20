@@ -34,7 +34,7 @@ public class MoreFragment extends BaseFragment implements AddFragmentCallback {
     }
 
     @Override
-    public void addFrgCallback(Fragment fragment) {
+    public void addFrgCallback(BaseFragment fragment) {
 
     }
 
@@ -45,6 +45,11 @@ public class MoreFragment extends BaseFragment implements AddFragmentCallback {
 
     @Override
     public void popAllBackStack() {
+
+    }
+
+    @Override
+    public void updateListEventFollow(boolean isFollowed, String idStory) {
 
     }
 }

@@ -18,6 +18,7 @@ import com.anhdt.doranewsvermain.adapter.recyclerview.StoryItemAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
@@ -34,7 +35,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DetailStoryFragment extends BaseFragment implements View.OnClickListener {
+public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements View.OnClickListener, UpdateUIFollow {
     private static String ARG_TYPE_TAB = "ARG_TYPE_TAB";
     private static String ARG_LIST_EVENT = "ARG_LIST_EVENT";
     private static String ARG_ID_STORY = "ARG_ID_STORY";
@@ -47,6 +48,10 @@ public class DetailStoryFragment extends BaseFragment implements View.OnClickLis
     private AddFragmentCallback addFragmentCallback;
     private int typeTabHomeOrLatest;
     private boolean isFollowed = false;
+
+//    private boolean isBlueButton = false; //Biến này chỉ để updateUI thôi, ko được dùng
+    //Nếu Đã theo dõi -> Chuyển thành true, trước đó là false
+    //Nếu bỏ theo dõi -> Chuyển thành false, trước đó là true
     private String idStory;
     private ArrayList<ItemDetailStory> arrayItemDetailStories;
 
@@ -186,32 +191,44 @@ public class DetailStoryFragment extends BaseFragment implements View.OnClickLis
         });
     }
 
+    public void updateButtonUI() {
+        //Chỉ update khi có sự kiện bắn về
+        if (!this.isFollowed) {
+            Toast.makeText(getContext(), "Bạn đã theo dõi dòng sự kiện này ^^", Toast.LENGTH_SHORT).show();
+            final int sdk = android.os.Build.VERSION.SDK_INT;
+            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
+            } else {
+                btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
+            }
+            btnFollow.setText("Bỏ theo dõi");
+            this.isFollowed = true;
+        } else {
+            Toast.makeText(getContext(), "Bỏ theo dõi dòng sự kiện này :(", Toast.LENGTH_SHORT).show();
+            final int sdk = android.os.Build.VERSION.SDK_INT;
+            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
+            } else {
+                btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
+            }
+            btnFollow.setText("Theo dõi");
+            this.isFollowed = false;
+        }
+    }
+
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_follow_story) {
             //Khi click vào follow 1 story thì có nút này hiện lên
-            if (!isFollowed) {
-                Toast.makeText(getContext(), "Bạn đã theo dõi dòng sự kiện này ^^", Toast.LENGTH_SHORT).show();
-                final int sdk = android.os.Build.VERSION.SDK_INT;
-                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
-                } else {
-                    btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
-                }
-                btnFollow.setText("Bỏ theo dõi");
-                isFollowed = true;
-            } else {
-                Toast.makeText(getContext(), "Bỏ theo dõi dòng sự kiện này :(", Toast.LENGTH_SHORT).show();
-                final int sdk = android.os.Build.VERSION.SDK_INT;
-                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
-                } else {
-                    btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
-                }
-                btnFollow.setText("Theo dõi");
-                isFollowed = false;
-            }
+            updateButtonUI();
+        }
+    }
 
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory) {
+        //Update lại UI
+        if (this.idStory.equals(idStory)) {
+            this.isFollowed = isFollowed; //Lưu lại là đã theo dõi
         }
     }
 }

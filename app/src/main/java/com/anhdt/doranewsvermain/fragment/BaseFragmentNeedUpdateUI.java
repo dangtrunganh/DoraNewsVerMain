@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 
-public abstract class BaseFragment extends Fragment {
-    //Đây là những thằng cha chính, hoặc những thằng con nhỏ nhất bên trong
+public abstract class BaseFragmentNeedUpdateUI extends Fragment implements UpdateUIFollow {
+    //Đây là Base cho những thằng con nằm trong
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -26,6 +26,7 @@ public abstract class BaseFragment extends Fragment {
         initProgressbar();
         Log.d("Fragment-x", "onCreate");
     }
+
 
 
     @Nullable

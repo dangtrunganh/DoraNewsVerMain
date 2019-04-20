@@ -23,6 +23,7 @@ import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.LoadPageConst;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -36,7 +37,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HomeFragment extends BaseFragment implements ActionNetworkStateChange {
+public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetworkStateChange, UpdateUIFollow {
     private static final String ARGS_U_ID_HOME_FRG = "ARGS_U_ID_HOME_FRG";
 
     //Các biến lưu trữ trạng thái mạng trước đó để bật tắt animation skeleton
@@ -239,5 +240,10 @@ public class HomeFragment extends BaseFragment implements ActionNetworkStateChan
         } else if (newState.equals(NetworkChangeReceiver.DISCONNECTED)) {
             //Cái này gọi khi mất mạng
         }
+    }
+
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory) {
+        //Không làm gì
     }
 }

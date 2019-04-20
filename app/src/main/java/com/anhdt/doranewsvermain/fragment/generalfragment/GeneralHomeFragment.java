@@ -9,6 +9,7 @@ import android.view.View;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.fragment.BaseFragment;
+import com.anhdt.doranewsvermain.fragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.HomeFragment;
 import com.google.gson.Gson;
@@ -34,6 +35,8 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
     @Override
     protected void initializeComponents() {
+
+        //First addFrg() - run only one time
         addFrg();
     }
 
@@ -82,7 +85,7 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
     }
 
     @Override
-    public void addFrgCallback(Fragment fragment) {
+    public void addFrgCallback(BaseFragmentNeedUpdateUI fragment) {
 //        if (!isAdded()) return;
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -105,5 +108,10 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
         for (int i = 0; i < fragmentManager.getBackStackEntryCount() - 1; ++i) {
             fragmentManager.popBackStack();
         }
+    }
+
+    @Override
+    public void updateListEventFollow(boolean isFollowed, String idStory) {
+
     }
 }
