@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +18,17 @@ import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
+import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //Click ở bất kì vị trí nào cũng đều có event, get event ID ra mà sổ ra màn Detail nhé
-    ArrayList<ItemDetailStory> arrayItemDetailStories;
+    private ArrayList<ItemDetailStory> arrayItemDetailStories;
+    private ArrayList<Event> arrayListOriginalEvent;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private String idStory;
@@ -38,12 +42,14 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //            TYPE_ERROR = 4;
 
     public StoryItemAdapter(ArrayList<ItemDetailStory> arrayItemDetailStories, Context mContext,
-                            int typeTabContent, String idStory, AddFragmentCallback addFragmentCallback) {
+                            int typeTabContent, String idStory, AddFragmentCallback addFragmentCallback,
+                            ArrayList<Event> arrayListOriginalEvent) {
         this.arrayItemDetailStories = arrayItemDetailStories;
         this.mContext = mContext;
         this.typeTabContent = typeTabContent;
         this.idStory = idStory;
         this.addFragmentCallback = addFragmentCallback;
+        this.arrayListOriginalEvent = arrayListOriginalEvent;
     }
 
     @Override
@@ -164,9 +170,44 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             } else {
                 //Thực hiện Hành động khi click vào cả item, -> Mở màn Detail Event Fragment
                 String idEvent = arrayItemDetailStories.get(position).getEvent().getId();
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY);
+
+                //====Tạo ra List với 5 phần tử gần nhất để truyền cho DetailEventFragment====
+                ArrayList<Event> arrayEventsResult = new ArrayList<>();
+
+                Log.e("be-before:", "xxx");
+                Log.e("be-index:", position + "");
+
+                for (int i = 0; i < arrayListOriginalEvent.size(); i++) {
+                    Log.e("Be-before", arrayListOriginalEvent.get(i).getId());
+                }
+                Log.e("be-before", "xxx");
+
+                if (position == 0) {
+                    Log.e("be-id:", arrayListOriginalEvent.get(position).getId());
+                    arrayEventsResult.addAll(GeneralTool.findKClosestEvent(arrayListOriginalEvent, position, 4));
+                } else {
+                    Log.e("be-id:", arrayListOriginalEvent.get(position - 1).getId());
+                    arrayEventsResult.addAll(GeneralTool.findKClosestEvent(arrayListOriginalEvent, position - 1, 4));
+                }
+
+                Log.e("be-After:", "xxx");
+                for (int i = 0; i < arrayEventsResult.size(); i++) {
+                    Log.e("Be-After", arrayEventsResult.get(i).getId());
+                }
+                Log.e("be-After", "xxx");
+
+//                if (arrayEventsResult.size() == 0 || arrayEventsResult.size() == 1) {
+//                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+//                    detailEventFragment.setAddFragmentCallback(addFragmentCallback);
+//                    addFragmentCallback.addFrgCallback(detailEventFragment);
+//                } else {
+                Gson gson = new Gson();
+                String jsonListEvent = gson.toJson(arrayEventsResult);
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, jsonListEvent);
                 detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailEventFragment);
+//                }
+
             }
         }
     }
@@ -216,11 +257,42 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 //Thực hiện hành động khi click vào button more
                 Toast.makeText(mContext, "Clicked more option!", Toast.LENGTH_SHORT).show();
             } else {
-                //Thực hiện Hành động khi click vào cả item --> Mở DetailEventFragment tương ứng
+                //Thực hiện Hành động khi click vào cả item, -> Mở màn Detail Event Fragment
                 String idEvent = arrayItemDetailStories.get(position).getEvent().getId();
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY);
+
+                //====Tạo ra List với 5 phần tử gần nhất để truyền cho DetailEventFragment====
+                ArrayList<Event> arrayEventsResult = new ArrayList<>();
+
+                Log.e("be-before:", "xxx");
+                Log.e("be-index:", position + "");
+                for (int i = 0; i < arrayListOriginalEvent.size(); i++) {
+                    Log.e("Be-before", arrayListOriginalEvent.get(i).getId());
+                }
+                Log.e("be-before", "xxx");
+
+                if (position == 0) {
+                    arrayEventsResult.addAll(GeneralTool.findKClosestEvent(arrayListOriginalEvent, position, 4));
+                } else {
+                    arrayEventsResult.addAll(GeneralTool.findKClosestEvent(arrayListOriginalEvent, position - 1, 4));
+                }
+
+                Log.e("be-After:", "xxx");
+                for (int i = 0; i < arrayEventsResult.size(); i++) {
+                    Log.e("Be-After", arrayEventsResult.get(i).getId());
+                }
+                Log.e("be-After", "xxx");
+
+//                if (arrayEventsResult.size() == 0 || arrayEventsResult.size() == 1) {
+//                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+//                    detailEventFragment.setAddFragmentCallback(addFragmentCallback);
+//                    addFragmentCallback.addFrgCallback(detailEventFragment);
+//                } else {
+                Gson gson = new Gson();
+                String jsonListEvent = gson.toJson(arrayEventsResult);
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, jsonListEvent);
                 detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailEventFragment);
+//                }
             }
         }
     }

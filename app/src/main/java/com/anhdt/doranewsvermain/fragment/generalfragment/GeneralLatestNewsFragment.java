@@ -65,6 +65,7 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
     public void addFrgCallback(Fragment fragment) {
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         ft.add(R.id.main_container_frg_latest_newss, fragment);
         ft.addToBackStack(null);
         ft.commit();

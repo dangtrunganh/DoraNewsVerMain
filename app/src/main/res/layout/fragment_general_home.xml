@@ -6,8 +6,6 @@
     <FrameLayout
         android:id="@+id/main_container_frg_home"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </FrameLayout>
+        android:layout_height="match_parent" />
 
 </android.support.constraint.ConstraintLayout>

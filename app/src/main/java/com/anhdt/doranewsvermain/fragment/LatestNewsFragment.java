@@ -2,10 +2,8 @@ package com.anhdt.doranewsvermain.fragment;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -78,13 +76,13 @@ public class LatestNewsFragment extends BaseFragment {
         if (arrayCategories.size() == 0) {
             return;
         }
-        ArrayList<NewsInCategoryFrament> fragments = new ArrayList<>();
+        ArrayList<NewsInCategoryFragment> fragments = new ArrayList<>();
         Gson gson = new Gson();
 
         //add list category bình thường
         for (int i = 0; i < arrayCategories.size(); i++) {
             String jsonCategory = gson.toJson(arrayCategories.get(i));
-            NewsInCategoryFrament newsInCategoryFrament = NewsInCategoryFrament.newInstance(jsonCategory, uId);
+            NewsInCategoryFragment newsInCategoryFrament = NewsInCategoryFragment.newInstance(jsonCategory, uId);
             if(addFragmentCallback == null) {
 //                Log.e("bn-", "what the hell");
                 Toast.makeText(getContext(), "what the hell", Toast.LENGTH_SHORT).show();

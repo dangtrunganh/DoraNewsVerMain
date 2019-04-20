@@ -2,6 +2,8 @@ package com.anhdt.doranewsvermain.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -107,10 +109,17 @@ public class GeneralTool {
         }
     }
 
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     /**
      * Hàm này truyền vào một article và type, trả về summary của article đó
+     *
      * @param article
-     * @param type - type: ConstParam.MEDIUM, SHORT, LONG
+     * @param type    - type: ConstParam.MEDIUM, SHORT, LONG
      * @return summary of article
      */
     public static String getSummaryOfArticle(Article article, String type) {
@@ -234,5 +243,41 @@ public class GeneralTool {
         }
 
         return itemDetailStories;
+    }
+
+    //k - số phần tử xung quanh x, indexSpecificEvent - index của phần tử x, ví dụ k = 4
+    public static ArrayList<Event> findKClosestEvent(ArrayList<Event> arrayEventInStory, int indexSpecificEvent, int k) {
+        ArrayList<Event> arrayResult = new ArrayList<>();
+        if (indexSpecificEvent < 0 || indexSpecificEvent > arrayEventInStory.size() - 1) {
+            return arrayResult;
+        }
+        if (arrayEventInStory.size() <= k) {
+            arrayResult = arrayEventInStory;
+            return arrayResult;
+        }
+        int n = arrayEventInStory.size();
+        int l = indexSpecificEvent - 1;
+        int r = indexSpecificEvent + 1;
+        int count = 0;
+        int kMinL = k / 2;
+        arrayResult.add(arrayEventInStory.get(indexSpecificEvent));
+        while (l >= 0 && r < n && count < k) {
+            if (kMinL > 0) {
+                arrayResult.add(0, arrayEventInStory.get(l--));
+                kMinL--;
+            } else {
+                arrayResult.add(arrayEventInStory.get(r++));
+            }
+            count++;
+        }
+        while (count < k && l >= 0) {
+            arrayResult.add(0, arrayEventInStory.get(l--));
+            count++;
+        }
+        while (count < k && r < n) {
+            arrayResult.add(arrayEventInStory.get(r++));
+            count++;
+        }
+        return arrayResult;
     }
 }

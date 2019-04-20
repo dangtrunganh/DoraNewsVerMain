@@ -31,8 +31,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,12 +46,15 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
     private static String ARG_TYPE_TAB = "ARG_TYPE_TAB";
     private static String ARG_EVENT_ID = "ARG_EVENT_ID";
     private static String ARG_EVENT_TITLE = "ARG_EVENT_TITLE";
+    private static String ARG_LIST_OF_STORY = "ARG_LIST_OF_STORY";
+
     //    private static String ARG_TYPE_SINGLE_OR_IN = "ARG_TYPE_SINGLE_OR_IN";
     private static String ARG_LONG_EVENT_ID = "ARG_LONG_EVENT_ID";
 
     private static String DEFAULT_USER_ID = "8def96c8-5f32-4fcf-9c0f-ce76ca719d65";
 
     public static String DEFAULT_ID_STORY = "";
+    public static String DEFAULT_LIST_OF_STORY = "";
 
 //    public static final int TYPE_SINGLE = 0; //Event single, not in any stories
 //    public static final int TYPE_IN = 1; //Event in stories
@@ -89,12 +94,13 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
         this.addFragmentCallback = addFragmentCallback;
     }
 
-    public static DetailEventFragment newInstance(int typeTab, String eventId/*, String eventTitle*/, String idStory) {
+    public static DetailEventFragment newInstance(int typeTab, String eventId/*, String eventTitle*/, String idStory, String jsonListOfStory) {
         Bundle args = new Bundle();
         DetailEventFragment fragment = new DetailEventFragment();
         args.putInt(ARG_TYPE_TAB, typeTab);
         args.putString(ARG_EVENT_ID, eventId);
         args.putString(ARG_LONG_EVENT_ID, idStory);
+        args.putString(ARG_LIST_OF_STORY, jsonListOfStory);
         fragment.setArguments(args);
         return fragment;
     }
@@ -159,27 +165,36 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
         eventId = bundle.getString(ARG_EVENT_ID);
 //        eventTitle = bundle.getString(ARG_EVENT_TITLE);
         idStory = bundle.getString(ARG_LONG_EVENT_ID);
-        if (!idStory.equals(DEFAULT_ID_STORY)) {
-            //Nếu idStory khác rỗng, thực hiện load data lên recycler view - list các story
-            //recyclerView - List các event trong story horizontal
-            constraintLayoutListEventInStory.setVisibility(View.VISIBLE);
-            recyclerListEventInStoryHorizontal = view.findViewById(R.id.recycler_list_articles_in_stories_detail_event);
-            LinearLayoutManager linearLayoutManagerHorizontal = new LinearLayoutManager(getActivity(),
-                    LinearLayoutManager.HORIZONTAL, false);
-            recyclerListEventInStoryHorizontal.setLayoutManager(linearLayoutManagerHorizontal);
-            recyclerListEventInStoryHorizontal.setHasFixedSize(true);
-            recyclerListEventInStoryHorizontal.setNestedScrollingEnabled(false);
+        String jsonListEventsOfStory = bundle.getString(ARG_LIST_OF_STORY);
+        if (jsonListEventsOfStory != null && idStory != null) {
+            if (!idStory.equals(DEFAULT_ID_STORY) && !jsonListEventsOfStory.equals(DEFAULT_LIST_OF_STORY)) {
+                //Nếu idStory khác rỗng, thực hiện load data lên recycler view - list các story
+                //recyclerView - List các event trong story horizontal
+                constraintLayoutListEventInStory.setVisibility(View.VISIBLE);
+                recyclerListEventInStoryHorizontal = view.findViewById(R.id.recycler_list_articles_in_stories_detail_event);
+                LinearLayoutManager linearLayoutManagerHorizontal = new LinearLayoutManager(getActivity(),
+                        LinearLayoutManager.HORIZONTAL, false);
+                recyclerListEventInStoryHorizontal.setLayoutManager(linearLayoutManagerHorizontal);
+                recyclerListEventInStoryHorizontal.setHasFixedSize(true);
+                recyclerListEventInStoryHorizontal.setNestedScrollingEnabled(false);
 
-            eventAdapterHorizontal = new EventAdapterHorizontal(new ArrayList<>(), getContext(),
-                    typeTabHomeOrLatest, idStory, addFragmentCallback, eventId);
-            recyclerListEventInStoryHorizontal.setAdapter(eventAdapterHorizontal);
-            loadDataToRecyclerEventHorizontal(idStory, DEFAULT_USER_ID);
-            textShowAllEvent.setOnClickListener(this);
-            mImageShowStory.setOnClickListener(this);
-        } /*else {
+                eventAdapterHorizontal = new EventAdapterHorizontal(new ArrayList<>(), getContext(),
+                        typeTabHomeOrLatest, idStory, addFragmentCallback, eventId);
+                recyclerListEventInStoryHorizontal.setAdapter(eventAdapterHorizontal);
+
+                //===Lấy ra List Event từ json===
+                Gson gson = new Gson();
+                arrayListEvent = gson.fromJson(jsonListEventsOfStory, new TypeToken<List<Event>>() {
+                }.getType());
+                eventAdapterHorizontal.updateListEvents(arrayListEvent);
+//            loadDataToRecyclerEventHorizontal(idStory, DEFAULT_USER_ID);
+                textShowAllEvent.setOnClickListener(this);
+                mImageShowStory.setOnClickListener(this);
+            } /*else {
             //Không hiển thị list các event trong story vì idStory là rỗng
 //            constraintLayoutListEventInStory.setVisibility(View.GONE);
         }*/
+        }
 
 //        mToolbar.setTitle(eventTitle);
 
@@ -287,6 +302,11 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
 
                 if (event.getListArticles() != null) {
                     mTextNumberNews.setText(event.getListArticles().size() + " bài báo / " + event.getReadableTime());
+                    Log.e("xxy-1", event.getListArticles().toString());
+                    articleItemAdapter = new ArticleItemAdapter(getContext(),
+                            (ArrayList<Article>) event.getListArticles(),
+                            typeTabHomeOrLatest, addFragmentCallback, mTextLoadMoreNews, ArticleItemAdapter.LOAD_MORE_DETAIL_EVENT);
+                    recyclerViewArticle.setAdapter(articleItemAdapter);
                 }
 //                if (event.getData().size() < HotNewsAdapter.VISIBLE_THRESHOLD) {
 //                    //Khi data nhận về nhỏ có size nhỏ hơn Threshold thì chuyển flag = true, tức là sẽ không load tiếp nữa
@@ -297,11 +317,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
 //                arrayDatum.addAll(news.getData());
 //                Log.e("pp-", String.valueOf(news.getData().size()));
                 //load data to recyclerView
-                Log.e("xxy-1", event.getListArticles().toString());
-                articleItemAdapter = new ArticleItemAdapter(getContext(),
-                        (ArrayList<Article>) event.getListArticles(),
-                        typeTabHomeOrLatest, addFragmentCallback, mTextLoadMoreNews, ArticleItemAdapter.LOAD_MORE_DETAIL_EVENT);
-                recyclerViewArticle.setAdapter(articleItemAdapter);
+
 //                articleItemAdapter.updateListArticles((ArrayList<Article>) event.getListArticles());
                 mShimmerViewContainer.stopShimmerAnimation();
                 mShimmerViewContainer.setVisibility(View.GONE);
@@ -362,7 +378,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
             }
             Gson gson = new Gson();
             String jsonListEvents = gson.toJson(arrayListEvent);
-            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabHomeOrLatest, jsonListEvents, idStory);
+            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabHomeOrLatest/*, jsonListEvents*/, idStory);
             detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
             addFragmentCallback.addFrgCallback(detailStoryFragment);
         } else if (v.getId() == R.id.image_show_all_event_in_stories) {
@@ -375,7 +391,7 @@ public class DetailEventFragment extends BaseFragment implements View.OnClickLis
             }
             Gson gson = new Gson();
             String jsonListEvents = gson.toJson(arrayListEvent);
-            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabHomeOrLatest, jsonListEvents, idStory);
+            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabHomeOrLatest/*, jsonListEvents*/, idStory);
             detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
             addFragmentCallback.addFrgCallback(detailStoryFragment);
         } else if (v.getId() == R.id.text_load_more_news) {

@@ -7,13 +7,20 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.anhdt.doranewsvermain.R;
+import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.fragment.BaseFragment;
+import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.HomeFragment;
 import com.google.gson.Gson;
 
 public class GeneralHomeFragment extends BaseFragment implements AddFragmentCallback {
     //    private FragmentManager fragmentManager = getChildFragmentManager();
     public static final String PARAM_U_ID_GENERAL_HOME_FRG = "PARAM_U_ID_GENERAL_HOME_FRG";
+
+    public static final String ARG_EVENT_ID = "ARG_EVENT_ID";
+    public static final String ARG_STORY_ID = "ARG_STORY_ID";
+    public static final String DEFAULT_ID_ARG = "";
+
 
     public static FragmentManager fragmentManagerHome;
 
@@ -27,17 +34,18 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
     @Override
     protected void initializeComponents() {
-//        View view = getView();
-//        if (view == null) {
-//            return;
-//        }
-        //Transition sang HomeFragment
         addFrg();
     }
 
     private void addFrg() {
         Bundle bundle = getArguments();
+        if (bundle == null) {
+            return;
+        }
         String uId = bundle.getString(PARAM_U_ID_GENERAL_HOME_FRG);
+        String idEvent = bundle.getString(ARG_EVENT_ID);
+        String idStory = bundle.getString(ARG_STORY_ID);
+
         fragmentManagerHome = getChildFragmentManager();
         FragmentManager fragmentManager = getChildFragmentManager();
         HomeFragment fragment = HomeFragment.newInstance(uId);
@@ -46,8 +54,21 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.main_container_frg_home, fragment);
-        ft.addToBackStack(fragment.getClass().getName());
+        ft.addToBackStack(null);
         ft.commit();
+
+        //======
+        //Thêm DetailEventFragment nếu idEvent và idStory != ""
+        if (idEvent != null && idStory != null) {
+            if (!idEvent.equals(DEFAULT_ID_ARG) && !idStory.equals(DEFAULT_ID_ARG)) {
+                FragmentTransaction ftDetailEvent = fragmentManager.beginTransaction();
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(ConstGeneralTypeTab.TYPE_TAB_HOME, idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                detailEventFragment.setAddFragmentCallback(this);
+                ftDetailEvent.add(R.id.main_container_frg_home, detailEventFragment);
+                ftDetailEvent.addToBackStack(null);
+                ftDetailEvent.commit();
+            }
+        }
     }
 
     @Override
@@ -62,17 +83,11 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
     @Override
     public void addFrgCallback(Fragment fragment) {
-//        FragmentManager fragmentManager = getChildFragmentManager();
-//        FragmentTransaction ft = fragmentManager.beginTransaction();
-//        ft.add(R.id.main_container_frg_home, fragment);
-//        ft.addToBackStack(null);
-//        ft.commit();
-
-        //=====
+//        if (!isAdded()) return;
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-        transaction.add(R.id.main_container_frg_home, fragment );
+        transaction.add(R.id.main_container_frg_home, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

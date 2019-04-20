@@ -1,18 +1,16 @@
 package com.anhdt.doranewsvermain.adapter.viewpagercategory;
 
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.anhdt.doranewsvermain.fragment.NewsInCategoryFrament;
+import com.anhdt.doranewsvermain.fragment.NewsInCategoryFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 
 import java.util.ArrayList;
 
 public class CategoryViewPagerAdapter extends FragmentStatePagerAdapter {
-    private ArrayList<NewsInCategoryFrament> arrayFragments;
+    private ArrayList<NewsInCategoryFragment> arrayFragments;
     private ArrayList<Category> arrayCategories;
 
     public CategoryViewPagerAdapter(FragmentManager fm) {
@@ -21,7 +19,7 @@ public class CategoryViewPagerAdapter extends FragmentStatePagerAdapter {
         this.arrayCategories = new ArrayList<>();
     }
 
-    public void setArrayFragments(ArrayList<NewsInCategoryFrament> arrayFragments) {
+    public void setArrayFragments(ArrayList<NewsInCategoryFragment> arrayFragments) {
         this.arrayFragments = arrayFragments;
     }
 
@@ -30,7 +28,7 @@ public class CategoryViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public NewsInCategoryFrament getItem(int position) {
+    public NewsInCategoryFragment getItem(int position) {
         return this.arrayFragments.get(position);
     }
 

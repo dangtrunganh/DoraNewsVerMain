@@ -100,8 +100,6 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
                 //Quy hết ra đơn vị pixels
-
-
                 float height = recyclerView.getHeight();
 //                float width = recyclerView.getWidth();
 
@@ -110,16 +108,13 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 Log.e("mm-yTop", String.valueOf(yTopRecyclerView));
                 Log.e("mm-yTop-new", String.valueOf(newTopRecyclerView));
                 Log.e("mm-height", String.valueOf(height));
-//                Log.e("mm-width", String.valueOf(width));
 
-//                float newTopRecyclerView = yTopRecyclerView - (1.0f / 3) * heightStoryView;
                 for (int i = 0; i <= size; i++) {
                     int position = positionFirstVisible + i;
                     Log.e("11-main-posi=", String.valueOf(position));
                     View view = linearLayoutManager.findViewByPosition(position);
                     float yTopView = view.getY();
                     float yBottomView = yTopView + heightStoryView;
-//                    try {
                     Datum datum = arrayDatums.get(position);
                     if (datum == null) {
                         continue;
@@ -141,7 +136,6 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                                    continue;
 //                                }
                                 storyViewHolder.stopAnimation();
-                                Log.e("11-", "stop");
 //                                isAnimatingStory = false;
                             } else {
                                 //Nằm trong, chạy animation thôi ^^, tại một thời điểm chỉ cho 1 cái chạy
@@ -150,22 +144,15 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                                    continue;
 //                                }
                                 storyViewHolder.startAnimation();
-                                Log.e("11-", "start");
 //                                isAnimatingStory = true;
                             }
                         }
                     }
-//                    } catch (Exception e) {
-//                        Log.e("lklk-", "lklk");
-//                        e.printStackTrace();
-//                        Log.e("lklk-position-error=:", String.valueOf(position));
-//                        Log.e("lklk-Object-Datum=", arrayDatums.get(position).toString());
-//                    }
                 }
 
-                if (!isLoading && totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)
+                if (!isLoading /*&& totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)*/
                         && linearLayoutManager != null
-                        && lastVisibleItem == arrayDatums.size() - 1) {
+                        && lastVisibleItem >= arrayDatums.size() - 3) {
                     if (loadMore != null)
                         loadMore.onLoadMore();
                     isLoading = true;
@@ -359,7 +346,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            String titleEvent = event.getTitle();
 
             //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là DEFAULT
-            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY);
+            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY);
             detailEventFragment.setAddFragmentCallback(addFragmentCallback);
             addFragmentCallback.addFrgCallback(detailEventFragment);
         }
@@ -397,7 +384,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                eventAdapterHorizontal.updateListEvents(arrayListEvent);
                 Gson gson = new Gson();
                 String jsonListEvents = gson.toJson(arrayListEvent);
-                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent, jsonListEvents, idStory);
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent/*, jsonListEvents*/, idStory);
                 detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailStoryFragment);
             }
@@ -477,7 +464,11 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (idStory == null) {
                     return;
                 }
-                loadDetailStory(idStory, GeneralTool.getDeviceId(mContext));
+//                loadDetailStory(idStory, GeneralTool.getDeviceId(mContext));
+                Log.e("pipi-", idStory);
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent/*, jsonListEvents*/, idStory);
+                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+                addFragmentCallback.addFrgCallback(detailStoryFragment);
 //                Gson gson = new Gson();
 //                String jsonListEvents = gson.toJson(arrayListEvents);
 //                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent, jsonListEvents, idStory);
@@ -507,28 +498,34 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void updateListNews(List<Datum> listDatums) {
-        boolean flag = true;
-
-        for (Datum datum : arrayDatums) {
-            for (Datum datumCmp : listDatums) {
-                if (datum.getId().equals(datumCmp.getId())) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (!flag) {
-                break;
-            }
-        }
-        if (flag) {
-            arrayDatums.addAll(listDatums);
-            notifyDataSetChanged();
-            this.setLoaded();
-        }
-
-//        arrayDatums.addAll(listDatums);
-//        notifyDataSetChanged();
-//        this.setLoaded();
+//        boolean flag = true;
+//
+//        for (Datum datum : arrayDatums) {
+//            for (Datum datumCmp : listDatums) {
+//                if (datum.getId().equals(datumCmp.getId())) {
+//                    flag = false;
+//                    break;
+//                }
+//            }
+//            if (!flag) {
+//                break;
+//            }
+//        }
+//        if (flag) {
+//            arrayDatums.addAll(listDatums);
+//            notifyDataSetChanged();
+//            this.setLoaded();
+//        }
+//        for (Datum datum : arrayDatums) {
+//            for (Datum datumCmp : listDatums) {
+//                if (datum.getId().equals(datumCmp.getId())) {
+//                    Log.e("Duplicate-id", datum.getId() + "");
+//                }
+//            }
+//        }
+        arrayDatums.addAll(listDatums);
+        notifyDataSetChanged();
+        this.setLoaded();
     }
 
     public void setLoaded() {

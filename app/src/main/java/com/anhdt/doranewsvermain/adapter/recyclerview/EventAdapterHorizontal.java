@@ -19,6 +19,7 @@ import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -122,7 +123,9 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
                 //Bật lên màn chi tiết của event tiếp theo
                 Event event = arrayListEvents.get(position);
                 String idEvent = event.getId();
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent, idStory);
+                Gson gson = new Gson();
+                String jsonListEvents = gson.toJson(arrayListEvents);
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent, idStory, jsonListEvents);
 
                 //Cần set lại addFragmentCallback, vì từ DetailEventFragment truyền sang cho EventAdapterHorizontal
                 //Nhưng detailEventFragment là cái hoàn toàn mới, cần callBack để back lại
