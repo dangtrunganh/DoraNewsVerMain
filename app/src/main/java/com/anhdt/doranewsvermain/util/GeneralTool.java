@@ -1,16 +1,22 @@
 package com.anhdt.doranewsvermain.util;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.anhdt.doranewsvermain.activity.SplashActivity;
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.model.DatumStory;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,6 +37,24 @@ public class GeneralTool {
             return true;
         }
         return false;
+    }
+
+    public static boolean checkIfParentHasChild(ArrayList<Datum> parents, ArrayList<Datum> childs) {
+        String idParent = "";
+        String idChild = "";
+        for (int i = 0; i < parents.size(); i++) {
+            if (parents.get(i) == null) {
+                continue;
+            }
+            idParent += parents.get(i).getId();
+        }
+        for (int i = 0; i < childs.size(); i++) {
+            if(childs.get(i) == null) {
+                continue;
+            }
+            idChild += childs.get(i).getId();
+        }
+        return idParent.contains(idChild);
     }
 
     public static int convertDpsToPixels(Context mContext, float valueDps) {
@@ -107,10 +131,17 @@ public class GeneralTool {
         }
     }
 
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     /**
      * Hàm này truyền vào một article và type, trả về summary của article đó
+     *
      * @param article
-     * @param type - type: ConstParam.MEDIUM, SHORT, LONG
+     * @param type    - type: ConstParam.MEDIUM, SHORT, LONG
      * @return summary of article
      */
     public static String getSummaryOfArticle(Article article, String type) {
@@ -234,5 +265,41 @@ public class GeneralTool {
         }
 
         return itemDetailStories;
+    }
+
+    //k - số phần tử xung quanh x, indexSpecificEvent - index của phần tử x, ví dụ k = 4
+    public static ArrayList<Event> findKClosestEvent(ArrayList<Event> arrayEventInStory, int indexSpecificEvent, int k) {
+        ArrayList<Event> arrayResult = new ArrayList<>();
+        if (indexSpecificEvent < 0 || indexSpecificEvent > arrayEventInStory.size() - 1) {
+            return arrayResult;
+        }
+        if (arrayEventInStory.size() <= k) {
+            arrayResult = arrayEventInStory;
+            return arrayResult;
+        }
+        int n = arrayEventInStory.size();
+        int l = indexSpecificEvent - 1;
+        int r = indexSpecificEvent + 1;
+        int count = 0;
+        int kMinL = k / 2;
+        arrayResult.add(arrayEventInStory.get(indexSpecificEvent));
+        while (l >= 0 && r < n && count < k) {
+            if (kMinL > 0) {
+                arrayResult.add(0, arrayEventInStory.get(l--));
+                kMinL--;
+            } else {
+                arrayResult.add(arrayEventInStory.get(r++));
+            }
+            count++;
+        }
+        while (count < k && l >= 0) {
+            arrayResult.add(0, arrayEventInStory.get(l--));
+            count++;
+        }
+        while (count < k && r < n) {
+            arrayResult.add(arrayEventInStory.get(r++));
+            count++;
+        }
+        return arrayResult;
     }
 }

@@ -1,4 +1,4 @@
-package com.anhdt.doranewsvermain.fragment;
+package com.anhdt.doranewsvermain.fragment.basefragment;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,7 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public abstract class BaseFragment extends Fragment {
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
+
+public abstract class BaseFragmentNeedUpdateUI extends Fragment implements UpdateUIFollow {
+    //Đây là Base cho những thằng con nằm trong
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

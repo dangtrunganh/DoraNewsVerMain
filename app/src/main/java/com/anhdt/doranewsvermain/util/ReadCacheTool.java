@@ -2,12 +2,15 @@ package com.anhdt.doranewsvermain.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.DisplayMetrics;
+import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.constant.ConstLocalCaching;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
+import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -48,9 +51,9 @@ public class ReadCacheTool {
      */
     public static String getUId(Context mContext) {
         SharedPreferences pre = mContext.getSharedPreferences
-                (ConstLocalCaching.FILE_NAME_PREF_UID, MODE_PRIVATE);
+                (ConstLocalCaching.FILE_NAME_PREF_UID_M_TOKEN_DEVICE_ID, MODE_PRIVATE);
         return pre.getString(ConstLocalCaching.KEY_PREF_UID,
-                ConstLocalCaching.DEFAULT_VALUE_PREF_KEY_UID_DEFAULT);
+                ConstLocalCaching.DEFAULT_VALUE_PREF_UID_DEFAULT);
     }
 
     /**
@@ -59,20 +62,50 @@ public class ReadCacheTool {
      * @param mContext Ngữ cảnh hiện tại
      * @param uId      tương ứng là uId cần lưu xuống local
      */
-    public static void storeUId(Context mContext, String uId) {
+    public static void storeUIdMTokenDeviceId(Context mContext, String uId, String mToken, String deviceId) {
         SharedPreferences pre = mContext.getSharedPreferences
-                (ConstLocalCaching.FILE_NAME_PREF_UID, MODE_PRIVATE);
+                (ConstLocalCaching.FILE_NAME_PREF_UID_M_TOKEN_DEVICE_ID, MODE_PRIVATE);
         SharedPreferences.Editor editor = pre.edit();
         editor.clear();
         editor.apply();
 
-        //===Storage-UId====
+        //===Storage-UId-MToken-DeviceId====
         editor.putString(ConstLocalCaching.KEY_PREF_UID, uId);
+        editor.putString(ConstLocalCaching.KEY_PREF_M_TOKEN, mToken);
+        editor.putString(ConstLocalCaching.KEY_PREF_DEVICE_ID, deviceId);
         //Lưu xuống file
         editor.apply();
 
     }
 
+    /**
+     * Hàm này thực hiện lấy mToken từ SharedPreference ra
+     *
+     * @param mContext Ngữ cảnh hiện tại
+     * @return mToken tương ứng get được, chú ý có thể "" - xâu rỗng (default)
+     */
+    public static String getMToken(Context mContext) {
+        SharedPreferences pre = mContext.getSharedPreferences
+                (ConstLocalCaching.FILE_NAME_PREF_UID_M_TOKEN_DEVICE_ID, MODE_PRIVATE);
+        return pre.getString(ConstLocalCaching.KEY_PREF_M_TOKEN,
+                ConstLocalCaching.DEFAULT_VALUE_PREF_M_TOKEN_DEFAULT);
+    }
+
+    /**
+     * Hàm này thực hiện lấy DeviceId từ SharedPreference ra
+     *
+     * @param mContext Ngữ cảnh hiện tại
+     * @return deviceId tương ứng get được, chú ý có thể "" - xâu rỗng (default)
+     */
+    public static String getDeviceId(Context mContext) {
+        SharedPreferences pre = mContext.getSharedPreferences
+                (ConstLocalCaching.FILE_NAME_PREF_UID_M_TOKEN_DEVICE_ID, MODE_PRIVATE);
+        return pre.getString(ConstLocalCaching.KEY_PREF_DEVICE_ID,
+                ConstLocalCaching.DEFAULT_VALUE_PREF_DEVICE_ID_DEFAULT);
+    }
+
+
+    //===========================================//
     public static void clearCacheCategory(Context mContext) {
         SharedPreferences pre = mContext.getSharedPreferences
                 (ConstLocalCaching.FILE_NAME_PREF_LIST_CATEGORY, MODE_PRIVATE);
@@ -83,7 +116,7 @@ public class ReadCacheTool {
 
     public static void clearCacheUId(Context mContext) {
         SharedPreferences pre = mContext.getSharedPreferences
-                (ConstLocalCaching.FILE_NAME_PREF_UID, MODE_PRIVATE);
+                (ConstLocalCaching.FILE_NAME_PREF_UID_M_TOKEN_DEVICE_ID, MODE_PRIVATE);
         SharedPreferences.Editor editor = pre.edit();
         editor.clear();
         editor.apply();
@@ -99,92 +132,96 @@ public class ReadCacheTool {
     }
 
 
-//    /*cache=================================cache*/
-//    //=====Cache Event & Articles in Hot event ======
-//    //1 ===========STORE==============
-//    //Mỗi lần store xuống, là xóa cmn hết cái cũ đi :v
-//    public static void storeEvent(Context mContext, List<Datum> arrayListEvent) {
-//        //Bước 1: Chuyển list sang json String
-//        Gson gson = new Gson();
-//        String json = gson.toJson(arrayListEvent);
-//
-//        //Bước 2: Lưu vào trong share preference
-//        SharedPreferences pre = mContext.getSharedPreferences(
-//                ConstLocalCaching.FILE_NAME_PREF_CACHE_HOT,
-//                MODE_PRIVATE);
-//        SharedPreferences.Editor editor = pre.edit();
-//
-//        //Xóa list cũ đi rồi mới add vào
-//        editor.remove(ConstLocalCaching.KEY_PREF_CACHE_HOT_EVENT);
-//        editor.apply();
-//
-//        editor.putString(ConstLocalCaching.KEY_PREF_CACHE_HOT_EVENT, json);
-//        //chấp nhận lưu xuống file
-//        editor.commit();
-//        editor.apply();
-//    }
-//
-//    public static void storeArticle(Context mContext, ArrayList<Article> arrayListEvent) {
-//        //Bước 1: Chuyển list sang json String
-//        Gson gson = new Gson();
-//        String json = gson.toJson(arrayListEvent);
-//
-//        //Bước 2: Lưu vào trong share preference
-//        SharedPreferences pre = mContext.getSharedPreferences(
-//                ConstLocalCaching.FILE_NAME_PREF_CACHE_HOT,
-//                MODE_PRIVATE);
-//        SharedPreferences.Editor editor = pre.edit();
-//
-//        //Xóa list cũ đi rồi mới add vào
-//        editor.remove(ConstLocalCaching.KEY_PREF_CACHE_HOT_ARTICLE);
-//        editor.apply();
-//
-//        editor.putString(ConstLocalCaching.KEY_PREF_CACHE_HOT_ARTICLE, json);
-//        //chấp nhận lưu xuống file
-//        editor.commit();
-//        editor.apply();
-//    }
-//
-//
-//    //2 ===========GET==============
-//    public static ArrayList<Datum> getListEvent(Context mContext) {
-//        //Ko có gì thì trả về list size = 0, có thì trả về list đó
-//        //1. get jsonString listEvent
-//        SharedPreferences pre = mContext.getSharedPreferences
-//                (ConstLocalCaching.FILE_NAME_PREF_CACHE_HOT, MODE_PRIVATE);
-//        String jsonEvent = pre.getString(ConstLocalCaching.KEY_PREF_CACHE_HOT_EVENT,
-//                ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_HOT_EVENT);
-//        if (jsonEvent.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_HOT_EVENT)) {
-//            Toast.makeText(mContext, "LE-Nothing in pref-event-cache", Toast.LENGTH_SHORT).show();
-//            return new ArrayList<>();
-//        } else {
-//            Gson gson = new Gson();
-//            ArrayList<Datum> arrayList = gson.fromJson(jsonEvent, new TypeToken<List<Datum>>() {
-//            }.getType());
-//            return arrayList;
-//        }
-//    }
-//
-//    public static ArrayList<Article> getListArticle(Context mContext) {
-//        //Ko có gì thì trả về list size = 0, có thì trả về list đó
-//        //1. get jsonString listArticle
-//        SharedPreferences pre = mContext.getSharedPreferences
-//                (ConstLocalCaching.FILE_NAME_PREF_CACHE_HOT, MODE_PRIVATE);
-//
-//        String jsonArticle = pre.getString(ConstLocalCaching.KEY_PREF_CACHE_HOT_ARTICLE,
-//                ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_HOT_ARTICLE);
-//
-//        if (jsonArticle.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_HOT_ARTICLE)) {
-//            Toast.makeText(mContext, "LA-Nothing in pref-article-cache", Toast.LENGTH_SHORT).show();
-//            return new ArrayList<>();
-//        } else {
-//            Gson gson = new Gson();
-//            ArrayList<Article> arrayList = gson.fromJson(jsonArticle, new TypeToken<List<Article>>() {
-//            }.getType());
-//            return arrayList;
-//        }
-//    }
-//    /*cache=================================cache*/
+    /*cache=================================cache*/
+    //=====Cache Datum-News in Hot News Tab ======
+    //1 ===========STORE==============
+    //Mỗi lần store xuống, là xóa cmn hết cái cũ đi :v
+    public static void storeHotNews(Context mContext, List<Datum> arrayListDatumHotNews) {
+        //Bước 1: Chuyển list sang json String
+        Gson gson = new Gson();
+        String json = gson.toJson(arrayListDatumHotNews);
+
+        //Bước 2: Lưu vào trong share preference
+        SharedPreferences pre = mContext.getSharedPreferences(
+                ConstLocalCaching.FILE_NAME_PREF_CACHE_GENERAL_NEWS,
+                MODE_PRIVATE);
+        SharedPreferences.Editor editor = pre.edit();
+
+        //Xóa list cũ đi rồi mới add vào
+        editor.remove(ConstLocalCaching.KEY_PREF_CACHE_HOT_NEWS);
+        editor.apply();
+
+        editor.putString(ConstLocalCaching.KEY_PREF_CACHE_HOT_NEWS, json);
+        //chấp nhận lưu xuống file
+        editor.commit();
+        editor.apply();
+    }
+
+
+    public static void storeNewsByCategory(Context mContext, String idCategory, ArrayList<Datum> arrayListNewsByCategory) {
+        //Bước 1: Chuyển list sang json String
+        Gson gson = new Gson();
+        String json = gson.toJson(arrayListNewsByCategory);
+
+        //Bước 2: Lưu vào trong share preference
+        SharedPreferences pre = mContext.getSharedPreferences(
+                ConstLocalCaching.FILE_NAME_PREF_CACHE_GENERAL_NEWS,
+                MODE_PRIVATE);
+        SharedPreferences.Editor editor = pre.edit();
+
+        //Xóa list cũ đi rồi mới add vào
+        editor.remove(idCategory);
+        editor.apply();
+
+        editor.putString(idCategory, json);
+        //chấp nhận lưu xuống file
+        editor.commit();
+        editor.apply();
+    }
+
+
+    //2 ===========GET==============
+    //Trả về list get được hoặc list rỗng (nếu lỗi)
+    //Get List HotNews
+    public static ArrayList<Datum> getListHotNews(Context mContext) {
+        //Ko có gì thì trả về list size = 0, có thì trả về list đó
+        //1. get jsonString listNews
+        SharedPreferences pre = mContext.getSharedPreferences
+                (ConstLocalCaching.FILE_NAME_PREF_CACHE_GENERAL_NEWS, MODE_PRIVATE);
+        String jsonHotNews = pre.getString(ConstLocalCaching.KEY_PREF_CACHE_HOT_NEWS,
+                ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_HOT_NEWS);
+        if (jsonHotNews == null) {
+            return new ArrayList<>();
+        }
+        if (jsonHotNews.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_HOT_NEWS)) {
+//            Toast.makeText(mContext, "LE-Nothing in pref-hot-news-cache", Toast.LENGTH_SHORT).show();
+            return new ArrayList<>();
+        } else {
+            return new Gson().fromJson(jsonHotNews, new TypeToken<List<Datum>>() {
+            }.getType());
+        }
+    }
+
+    public static ArrayList<Datum> getListNewsByCategory(Context mContext, String idCategory) {
+        //Ko có gì thì trả về list size = 0, có thì trả về list đó
+        //1. get jsonString listNews
+        SharedPreferences pre = mContext.getSharedPreferences
+                (ConstLocalCaching.FILE_NAME_PREF_CACHE_GENERAL_NEWS, MODE_PRIVATE);
+
+        String jsonNewsByCategory = pre.getString(idCategory,
+                ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_NEWS_BY_CATEGORY);
+        if (jsonNewsByCategory == null) {
+            return new ArrayList<>();
+        }
+        if (jsonNewsByCategory.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_NEWS_BY_CATEGORY)) {
+//            Toast.makeText(mContext, "LA-Nothing in pref-news-by-category-cache", Toast.LENGTH_SHORT).show();
+            return new ArrayList<>();
+        } else {
+            return new Gson().fromJson(jsonNewsByCategory, new TypeToken<List<Datum>>() {
+            }.getType());
+        }
+    }
+    /*cache=================================cache*/
 
 
     //=============Convert==============

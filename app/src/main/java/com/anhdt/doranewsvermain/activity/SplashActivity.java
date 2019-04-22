@@ -1,9 +1,16 @@
 package com.anhdt.doranewsvermain.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.service.notification.StatusBarNotification;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -28,13 +35,12 @@ import com.github.ybq.android.spinkit.SpinKitView;
 import com.github.ybq.android.spinkit.SpriteFactory;
 import com.github.ybq.android.spinkit.Style;
 import com.github.ybq.android.spinkit.sprite.Sprite;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -50,9 +56,11 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
     private static final String TAG = SplashActivity.class.getName();
 
     private ImageView imageAppIcon;
-    private TextView textAppName;
+    private ImageView imageAppName;
+    private ImageView imageAppFooter;
+//    private TextView textAppName;
 
-    private SpinKitView spinKitView;
+//    private SpinKitView spinKitView;
 
     private Animation animationLogo;
 
@@ -64,29 +72,88 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_splash_2);
         initViews();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        StatusBarNotification[] sbns = nMgr.getActiveNotifications();
+//        for (StatusBarNotification sbn : sbns) {
+//            if (sbn == null) {
+//                Log.i(TAG, "sbn is null");
+//                continue;
+//            }
+//            Notification n = sbn.getNotification();
+//            Bundle bundle = n.extras;
+//            String eventId = bundle.getString("event_id");
+//            String storyId = bundle.getString("long_event_id");
+//            String urlImage = bundle.getString("urlImage");
+//            if (eventId != null && storyId != null && urlImage != null) {
+//                Log.e("iii1-eventId", eventId);
+//                Log.e("iii1-storyId", storyId);
+//                Log.e("iii1-urlImage", urlImage);
+//                Log.e("===========", "===========");
+//            } else {
+//                Log.e("iii1-", "null");
+//            }
+//        }
+////        String y = Arrays.toString(sbns);
+////        Log.e("iii-", y);
+////        Toast.makeText(this, "iii--" + Arrays.toString(x), Toast.LENGTH_SHORT).show();
+        nMgr.cancelAll();
+    }
+
     private void initViews() {
-        imageAppIcon = findViewById(R.id.image_icon_splash_screen);
-        textAppName = findViewById(R.id.text_splash_screen);
+        imageAppIcon = findViewById(R.id.image_logo_app_splash);
+        imageAppName = findViewById(R.id.image_name_app_splash);
+        imageAppFooter = findViewById(R.id.image_footer_app_splash);
+//        textAppName = findViewById(R.id.text_splash_screen);
 
-        spinKitView = findViewById(R.id.spin_kit);
-        Style style = Style.values()[9];
-        Sprite drawable = SpriteFactory.create(style);
-        spinKitView.setIndeterminateDrawable(drawable);
+//        spinKitView = findViewById(R.id.spin_kit);
+//        Style style = Style.values()[9];
+//        Sprite drawable = SpriteFactory.create(style);
+//        spinKitView.setIndeterminateDrawable(drawable);
 
-        animationLogo = AnimationUtils.loadAnimation(this, R.anim.move_fb_logo);
-        animationLogo.setFillAfter(true);
+        animationLogo = AnimationUtils.loadAnimation(this, R.anim.push_down);
         imageAppIcon.setAnimation(animationLogo);
-        animationLogo.setAnimationListener(this);
+
+        animationLogo = AnimationUtils.loadAnimation(this, R.anim.push_right);
+        imageAppName.setAnimation(animationLogo);
+//        animationLogo.setFillAfter(true);
+
+        animationLogo = AnimationUtils.loadAnimation(this, R.anim.push_right);
+        imageAppFooter.setAnimation(animationLogo);
+
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    sleep(3000);
+                    //Đọc data ra
+                    setUpUserId(); //- Chỉ thực hiện khi đọc list category chưa có, vì nếu không, mỗi lần splash chạy là lại phải đọc uId lên?
+                    //Hay là đọc uId ở đây để MainAct đỡ phải gọi?
+
+                    setUpDataCategory();
+                    //Sau đó navigate sang màn hình tiếp theo, đã navigate trong setUpDataCategory() rồi
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                super.run();
+            }
+        };
+        thread.start();
+//        animationLogo.setAnimationListener(this);
     }
 
     private String getDeviceId() {
         @SuppressLint("HardwareIds") String android_id = Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        Log.e("k-android_id", android_id);
+//        Log.e("k-android_id", android_id);
         return android_id;
     }
 
@@ -94,7 +161,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
         //Đọc userId trong Local, nếu không có tức là chưa đăng nhập lần nào --> Đăng ký mới
         uId = ReadCacheTool.getUId(SplashActivity.this);
 //        String jsonCategory = ReadCacheTool.getListCategoryInCache(SplashActivity.this);
-        if (uId.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_KEY_UID_DEFAULT) /*&&
+        if (uId.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_UID_DEFAULT) /*&&
                 jsonCategory.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_LIST_CATEGORY_DEFAULT)*/) {
             //Tức là đang rỗng, chưa có uId trong SharedPreference
             getTokenFirebaseAndSendToServer(); //Lấy token từ firebase, trong đó gọi hàm sendInfo lên Server
@@ -104,8 +171,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
     private void getTokenFirebaseAndSendToServer() {
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(SplashActivity.this, instanceIdResult -> {
             String mToken = instanceIdResult.getToken();
-            Log.e("k-newToken", mToken);
-//                return mToken;
+//            Log.e("k-newToken", mToken);
             sendInfoToServer(mToken);
         });
     }
@@ -114,7 +180,8 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
         //Gửi thông tin User lên server để đăng ký lần đầu
 
         //1. Lấy device id
-        String deviceId = getDeviceId();
+//        String deviceId = getDeviceId();
+        String deviceId = GeneralTool.getDeviceId(this);
         if (deviceId != null && mToken != null) {
             //Gửi thông tin lên server
             Retrofit retrofit = new Retrofit.Builder()
@@ -137,15 +204,13 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
                     UserResult userResult = response.body();
                     uId = userResult.getUId();
                     if (uId == null) {
-                        Log.e("su-login", "fail: uId null");
+//                        Log.e("su-login", "fail: uId null");
                     } else {
-                        Log.e("su-login", "success: " + userResult.getUId());
-                        //========
+                        Log.e("su-login", "mToken: " + mToken);
+                        Log.e("su-login", "deviceId: " + deviceId);
+                        Log.e("su-login", "uuid: " + userResult.getUId());
                         // store to local cache
-                        ReadCacheTool.storeUId(SplashActivity.this, userResult.getUId());
-                        // Sau đó thực hiện navigate sang màn hình MainActivity, nếu lần sau đã vào đc MainActivity rồi
-                        // thì sure là đã login, đã lưu lại uId ở local
-                        //========
+                        ReadCacheTool.storeUIdMTokenDeviceId(SplashActivity.this, userResult.getUId(), mToken, deviceId);
                     }
                 }
 
@@ -164,36 +229,33 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 
     @Override
     public void onAnimationEnd(Animation animation) {
-        textAppName.setVisibility(View.VISIBLE);
-        spinKitView.setVisibility(View.VISIBLE);
+//        textAppName.setVisibility(View.VISIBLE);
+//        spinKitView.setVisibility(View.VISIBLE);
 
-        Animation animationAppName = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade_app_name);
-        animationAppName.setFillAfter(true);
-        textAppName.setAnimation(animationAppName);
-        animationAppName.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                //Đọc data ra
-                setUpUserId(); //- Chỉ thực hiện khi đọc list category chưa có, vì nếu không, mỗi lần splash chạy là lại phải đọc uId lên?
-                //Hay là đọc uId ở đây để MainAct đỡ phải gọi?
-
-                setUpDataCategory();
-
-                //Sau đó navigate sang màn hình tiếp theo, đã navigate trong setUpDataCategory() rồi
-//                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-//                finish();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
+//        Animation animationAppName = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade_app_name);
+//        animationAppName.setFillAfter(true);
+//        textAppName.setAnimation(animationAppName);
+//        animationAppName.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//                //Đọc data ra
+//                setUpUserId(); //- Chỉ thực hiện khi đọc list category chưa có, vì nếu không, mỗi lần splash chạy là lại phải đọc uId lên?
+//                //Hay là đọc uId ở đây để MainAct đỡ phải gọi?
+//
+//                setUpDataCategory();
+//                //Sau đó navigate sang màn hình tiếp theo, đã navigate trong setUpDataCategory() rồi
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -237,7 +299,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
             intentResult.putExtra(ConstParamTransfer.TRANSFER_LIST_CATEGORY_FR_SPLASH_TO_MAIN, json);
 
             //Mặc định setUser chạy trước, do đó, ta sẽ truyền hết uID đã có sang các màn hình khác nhau
-            if (!uId.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_KEY_UID_DEFAULT)) {
+            if (!uId.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_UID_DEFAULT)) {
                 intentResult.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN, uId);
             }
             startActivity(intentResult);

@@ -40,10 +40,12 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -52,7 +54,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    private boolean flagFinishLoadData = false; //true, false ám chỉ lần load này đã phải cuối chưa? true tức là cuối rồi
+    //    private boolean flagFinishLoadData = false; //true, false ám chỉ lần load này đã phải cuối chưa? true tức là cuối rồi
     private boolean isLoading; //Load xong thì tắt ProgressBar đi
     //true là đang load
     //false là load xong rồi, tắt đi thôi
@@ -100,8 +102,6 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
                 //Quy hết ra đơn vị pixels
-
-
                 float height = recyclerView.getHeight();
 //                float width = recyclerView.getWidth();
 
@@ -110,16 +110,13 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 Log.e("mm-yTop", String.valueOf(yTopRecyclerView));
                 Log.e("mm-yTop-new", String.valueOf(newTopRecyclerView));
                 Log.e("mm-height", String.valueOf(height));
-//                Log.e("mm-width", String.valueOf(width));
 
-//                float newTopRecyclerView = yTopRecyclerView - (1.0f / 3) * heightStoryView;
                 for (int i = 0; i <= size; i++) {
                     int position = positionFirstVisible + i;
                     Log.e("11-main-posi=", String.valueOf(position));
                     View view = linearLayoutManager.findViewByPosition(position);
                     float yTopView = view.getY();
                     float yBottomView = yTopView + heightStoryView;
-//                    try {
                     Datum datum = arrayDatums.get(position);
                     if (datum == null) {
                         continue;
@@ -141,7 +138,6 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                                    continue;
 //                                }
                                 storyViewHolder.stopAnimation();
-                                Log.e("11-", "stop");
 //                                isAnimatingStory = false;
                             } else {
                                 //Nằm trong, chạy animation thôi ^^, tại một thời điểm chỉ cho 1 cái chạy
@@ -150,22 +146,15 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                                    continue;
 //                                }
                                 storyViewHolder.startAnimation();
-                                Log.e("11-", "start");
 //                                isAnimatingStory = true;
                             }
                         }
                     }
-//                    } catch (Exception e) {
-//                        Log.e("lklk-", "lklk");
-//                        e.printStackTrace();
-//                        Log.e("lklk-position-error=:", String.valueOf(position));
-//                        Log.e("lklk-Object-Datum=", arrayDatums.get(position).toString());
-//                    }
                 }
 
-                if (!isLoading && totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)
+                if (!isLoading /*&& totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)*/
                         && linearLayoutManager != null
-                        && lastVisibleItem == arrayDatums.size() - 1) {
+                        && lastVisibleItem >= arrayDatums.size() - 3) {
                     if (loadMore != null)
                         loadMore.onLoadMore();
                     isLoading = true;
@@ -174,9 +163,9 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    public boolean isFlagFinishLoadData() {
-        return flagFinishLoadData;
-    }
+//    public boolean isFlagFinishLoadData() {
+//        return flagFinishLoadData;
+//    }
 
     public void setLoadMore(ILoadMore loadMore) {
         this.loadMore = loadMore;
@@ -255,16 +244,17 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //Chỉ chạy trên android M trở lên
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (idStory != null) {
+//                    Log.e("uu-id-out-story", idStory);
                     storyViewHolder.bindData(arrayListEvents, idStory);
                 } else {
                     Toast.makeText(mContext, "Error - idStory null!", Toast.LENGTH_SHORT).show();
                 }
             }
         } else if (viewHolder instanceof LoadingViewHolder) {
-            if (flagFinishLoadData) {
-                //true - hết rồi, dừng load, không hiển thị LoadingProgressBar nữa
-                return;
-            }
+//            if (flagFinishLoadData) {
+//                //true - hết rồi, dừng load, không hiển thị LoadingProgressBar nữa
+//                return;
+//            }
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) viewHolder;
             loadingViewHolder.setIndeterminate();
         }
@@ -359,13 +349,14 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            String titleEvent = event.getTitle();
 
             //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là DEFAULT
-            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY);
+            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY);
             detailEventFragment.setAddFragmentCallback(addFragmentCallback);
             addFragmentCallback.addFrgCallback(detailEventFragment);
         }
     }
 
-    private void loadDetailStory(String idStory, String uId) {
+    private void loadDetailStory(String idStory/*,*//* String uId*/) {
+        String uId = ReadCacheTool.getUId(mContext);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(RootAPIUrlConst.ROOT_GET_NEWS)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -397,7 +388,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                eventAdapterHorizontal.updateListEvents(arrayListEvent);
                 Gson gson = new Gson();
                 String jsonListEvents = gson.toJson(arrayListEvent);
-                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent, jsonListEvents, idStory);
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent/*, jsonListEvents*/, idStory);
                 detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailStoryFragment);
             }
@@ -477,7 +468,11 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (idStory == null) {
                     return;
                 }
-                loadDetailStory(idStory, GeneralTool.getDeviceId(mContext));
+//                loadDetailStory(idStory, GeneralTool.getDeviceId(mContext));
+                Log.e("pipi-", idStory);
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent/*, jsonListEvents*/, idStory);
+                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+                addFragmentCallback.addFrgCallback(detailStoryFragment);
 //                Gson gson = new Gson();
 //                String jsonListEvents = gson.toJson(arrayListEvents);
 //                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent, jsonListEvents, idStory);
@@ -507,35 +502,49 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void updateListNews(List<Datum> listDatums) {
-        boolean flag = true;
-
-        for (Datum datum : arrayDatums) {
-            for (Datum datumCmp : listDatums) {
-                if (datum.getId().equals(datumCmp.getId())) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (!flag) {
-                break;
-            }
-        }
-        if (flag) {
-            arrayDatums.addAll(listDatums);
-            notifyDataSetChanged();
+        if (GeneralTool.checkIfParentHasChild(arrayDatums, (ArrayList<Datum>) listDatums)) {
+            //List cha chứa cả list con sau khi load more
             this.setLoaded();
+            return;
         }
+        arrayDatums.addAll(listDatums);
+        notifyDataSetChanged();
+        this.setLoaded();
+    }
 
+//    public void updateSpecialListNews(List<Datum> listDatums) {
+//        arrayDatums.clear();
 //        arrayDatums.addAll(listDatums);
 //        notifyDataSetChanged();
 //        this.setLoaded();
+//    }
+
+
+    //Thực hiện nếu vuốt xuống refresh mà list bị trùng id thì bỏ qua, ko update nữa
+    //Nếu mà 2 list ko trùng thì clear rôi update
+    //Dùng được cho cả khi list đang ở chế độ offline mà online lại
+    public void reloadInNormalState(List<Datum> listDatums) {
+//        if (arrayDatums.equals(listDatums)) {
+//            //equals thì chắc chỉ khi mới load lần đầu, xong ấn refresh luôn mới vào, khi ấy 2 list trùng nhau
+//            return;
+//        }
+        if (GeneralTool.checkIfParentHasChild(arrayDatums, (ArrayList<Datum>) listDatums)) {
+            //Sau khi load một hồi, nếu list hiện tại đã có nhiều data
+            //Lần load mới trả về trùng với mấy thằng đầu của list thì ko loadMore nữa
+            this.setLoaded();
+            return;
+        }
+        arrayDatums.clear();
+        arrayDatums.addAll(listDatums);
+        notifyDataSetChanged();
+        this.setLoaded();
     }
 
     public void setLoaded() {
         isLoading = false;
     }
 
-    public void setFlagFinishLoadData(boolean flagFinishLoadData) {
-        this.flagFinishLoadData = flagFinishLoadData;
-    }
+//    public void setFlagFinishLoadData(boolean flagFinishLoadData) {
+//        this.flagFinishLoadData = flagFinishLoadData;
+//    }
 }

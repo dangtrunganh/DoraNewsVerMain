@@ -1,16 +1,15 @@
 package com.anhdt.doranewsvermain.fragment;
 
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.viewpagerarticle.ArticleInViewPagerAdapter;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,7 +19,7 @@ import java.util.List;
 
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
 
-public class DetailNewsFragment extends BaseFragment {
+public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements UpdateUIFollow {
     private static final String ARGS_LIST_ARTICLE = "ARGS_LIST_ARTICLE";
     private static final String ARGS_POSITION_CLICKED = "ARGS_POSITION_CLICKED";
     private ArticleInViewPagerAdapter articleInViewPagerAdapter;
@@ -119,5 +118,10 @@ public class DetailNewsFragment extends BaseFragment {
     @Override
     protected void initProgressbar() {
 
+    }
+
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory) {
+        //Không làm gì
     }
 }

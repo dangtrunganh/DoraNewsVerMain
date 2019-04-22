@@ -26,7 +26,9 @@ public class ArticleInViewPagerAdapter extends FragmentStatePagerAdapter {
         Gson gson = new Gson();
         Article article = mArrayNews.get(position);
         String jsonArticle = gson.toJson(article);
-        return ArticleFramentInDetailNewsFragment.newInstance(jsonArticle);
+
+        String jsonListTotal = gson.toJson(mArrayNews);
+        return ArticleFramentInDetailNewsFragment.newInstance(jsonArticle, jsonListTotal, position);
     }
 
     @Override

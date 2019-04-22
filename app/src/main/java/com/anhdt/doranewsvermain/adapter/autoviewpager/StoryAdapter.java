@@ -26,6 +26,7 @@ import com.anhdt.doranewsvermain.customview.NewsBackgroundLayout;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -143,8 +144,10 @@ public class StoryAdapter extends PagerAdapter {
             String idEvent = event.getId();
 //            String titleEvent = event.getTitle();
 
-            //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là DEFAULT
-            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory);
+            Log.e("uu-id-out-story", idStory);
+            //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là idStory
+            String jsonListEvent = new Gson().toJson(arrayEvents);
+            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, jsonListEvent);
             detailEventFragment.setAddFragmentCallback(addFragmentCallback);
             addFragmentCallback.addFrgCallback(detailEventFragment);
         });

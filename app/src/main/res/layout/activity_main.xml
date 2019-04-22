@@ -10,21 +10,251 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/navigation"
+        app:layout_constraintBottom_toTopOf="@id/constraint_divider"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?android:attr/windowBackground"
-        app:itemIconTint="@drawable/bottom_navigation_selector"
-        app:labelVisibilityMode="labeled"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_view_notice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/border_view_notice"
+        android:paddingStart="10dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/image_icon_app_view_notice"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/image_icon_app_dora"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/image_close_view_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close_view_notice"
+            app:layout_constraintBottom_toBottomOf="@id/image_icon_app_view_notice"
+            app:layout_constraintRight_toRightOf="@id/image_cover_view_notice"
+            app:layout_constraintTop_toTopOf="@id/image_icon_app_view_notice" />
+
+        <TextView
+            android:id="@+id/text_name_app_view_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Dora News"
+            android:textColor="@color/lightGreyBold"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/image_icon_app_view_notice"
+            app:layout_constraintLeft_toRightOf="@id/image_icon_app_view_notice"
+            app:layout_constraintTop_toTopOf="@id/image_icon_app_view_notice" />
+
+        <TextView
+            android:id="@+id/text_title_hot_view_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:paddingTop="5dp"
+            android:text="Tin hot"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_name_app_view_notice" />
+
+        <ImageView
+            android:id="@+id/image_cover_view_notice"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_default"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_name_app_view_notice" />
+
+        <TextView
+            android:id="@+id/text_content_view_notice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:paddingEnd="5dp"
+            android:text="Khẩn trương điều tra mở rộng vụ án vận chuyển trái phép ngà voi xuyên quốc gia."
+            android:textColor="@color/lightGreyBold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/text_title_hot_view_notice"
+            app:layout_constraintRight_toLeftOf="@id/image_cover_view_notice"
+            app:layout_constraintTop_toBottomOf="@id/text_title_hot_view_notice" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_control_voice"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="@color/colorLogo"
+        app:layout_constraintBottom_toTopOf="@id/constraint_divider">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circle_image_cover_control_voice"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toTopOf="@id/text_time_start_control_voice"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_name_article_control_voice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="Phóng thành công tên lửa đạn đạo từ Triều Tiên ngày 21/4/2019"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
+            app:layout_constraintLeft_toRightOf="@id/circle_image_cover_control_voice"
+            app:layout_constraintRight_toLeftOf="@id/image_previous_control_voice"
+            app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
+
+        <ImageView
+            android:id="@+id/image_next_control_voice"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_next_black"
+            app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
+
+        <ImageView
+            android:id="@+id/image_play_pause_control_voice"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_play_black"
+            app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
+            app:layout_constraintRight_toLeftOf="@id/image_next_control_voice"
+            app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
+
+        <ImageView
+            android:id="@+id/image_previous_control_voice"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_previous_black"
+            app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
+            app:layout_constraintRight_toLeftOf="@id/image_play_pause_control_voice"
+            app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
+
+        <TextView
+            android:id="@+id/text_time_start_control_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="10dp"
+            android:text="00:15"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/circle_image_cover_control_voice" />
+
+        <ImageView
+            android:id="@+id/image_stop_control_music"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_exit_control_voice"
+            app:layout_constraintBottom_toBottomOf="@id/text_time_start_control_voice"
+            app:layout_constraintRight_toRightOf="@id/image_next_control_voice"
+            app:layout_constraintTop_toTopOf="@id/text_time_start_control_voice" />
+
+        <TextView
+            android:id="@+id/text_time_end_control_music"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="10dp"
+            android:text="01:21"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/image_next_control_voice" />
+
+        <SeekBar
+            android:id="@+id/seek_bar_control_voice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:progressBackgroundTint="@android:color/black"
+            android:progressTint="@android:color/black"
+            android:thumbTint="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="@id/text_time_start_control_voice"
+            app:layout_constraintLeft_toRightOf="@id/text_time_start_control_voice"
+            app:layout_constraintRight_toLeftOf="@id/text_time_end_control_music"
+            app:layout_constraintTop_toTopOf="@id/text_time_start_control_voice" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/navigation" />
+        app:layout_constraintRight_toRightOf="parent">
+
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/navigation"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?android:attr/windowBackground"
+            app:itemIconTint="@drawable/bottom_navigation_selector"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/navigation" />
+
+        <TextView
+            android:id="@+id/text_connection_state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#7a8283"
+            android:gravity="center"
+            android:padding="2dp"
+            android:paddingBottom="2dp"
+            android:text="Không có kết nối"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/navigation" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

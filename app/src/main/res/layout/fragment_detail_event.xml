@@ -144,6 +144,6 @@
     <include
         android:id="@+id/skeleton_detail_event"
         layout="@layout/skeleton_data_place_holder"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </android.support.design.widget.CoordinatorLayout>
