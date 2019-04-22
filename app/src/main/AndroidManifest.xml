@@ -4,7 +4,7 @@
     package="com.anhdt.doranewsvermain">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -33,10 +33,12 @@
         </service>
         <!--&lt;!&ndash;Đăng ký sự kiện lắng nghe khi thay đổi mạng hoặc Wifi&ndash;&gt;-->
         <!--<receiver android:name="broadcastreceiver.NetworkChangeReceiver" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
-            <!--</intent-filter>-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+        <!--</intent-filter>-->
         <!--</receiver>-->
+        <service android:name=".service.voice.VoicePlayerService" />
+
         <activity
             android:name=".MainActivity"
             android:hardwareAccelerated="true"

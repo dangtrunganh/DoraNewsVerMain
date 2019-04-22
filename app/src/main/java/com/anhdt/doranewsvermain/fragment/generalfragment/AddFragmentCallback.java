@@ -1,10 +1,6 @@
 package com.anhdt.doranewsvermain.fragment.generalfragment;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-
-import com.anhdt.doranewsvermain.fragment.BaseFragment;
-import com.anhdt.doranewsvermain.fragment.BaseFragmentNeedUpdateUI;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 
 public interface AddFragmentCallback {
     void addFrgCallback(BaseFragmentNeedUpdateUI fragment);

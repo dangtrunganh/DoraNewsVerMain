@@ -144,6 +144,7 @@ public class StoryAdapter extends PagerAdapter {
             String idEvent = event.getId();
 //            String titleEvent = event.getTitle();
 
+            Log.e("uu-id-out-story", idStory);
             //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là idStory
             String jsonListEvent = new Gson().toJson(arrayEvents);
             DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, jsonListEvent);

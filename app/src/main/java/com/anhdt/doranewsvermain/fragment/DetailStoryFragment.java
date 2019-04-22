@@ -1,9 +1,13 @@
 package com.anhdt.doranewsvermain.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,21 +17,19 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
-import com.anhdt.doranewsvermain.adapter.recyclerview.EventAdapterHorizontal;
 import com.anhdt.doranewsvermain.adapter.recyclerview.StoryItemAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.GeneralTool;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.anhdt.doranewsvermain.util.ReadCacheTool;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,12 +46,16 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     private RecyclerView recyclerViewEvents;
     private Toolbar mToolbar;
     private Button btnFollow;
+    private ProgressDialog dialog;
     private StoryItemAdapter storyItemAdapter;
     private AddFragmentCallback addFragmentCallback;
+    private AlertDialog alertDialog;
     private int typeTabHomeOrLatest;
-    private boolean isFollowed = false;
+    //    private boolean isFollowed = false;
+    private int stateFollow = -1;
 
-//    private boolean isBlueButton = false; //Biến này chỉ để updateUI thôi, ko được dùng
+
+    //    private boolean isBlueButton = false; //Biến này chỉ để updateUI thôi, ko được dùng
     //Nếu Đã theo dõi -> Chuyển thành true, trước đó là false
     //Nếu bỏ theo dõi -> Chuyển thành false, trước đó là true
     private String idStory;
@@ -75,6 +81,10 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
         if (view == null) {
             return;
         }
+        dialog = new ProgressDialog(getContext());
+        dialog.setMessage("Loading...");
+        dialog.setCancelable(false);
+
         mToolbar = view.findViewById(R.id.toolbar_detail_story);
 
         //Set back icon to toolbar
@@ -96,7 +106,6 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
         this.idStory = bundle.getString(ARG_ID_STORY);
 
 
-
         Log.e("pipi-receiver", this.idStory);
 
 //        if (idStory == null) {
@@ -105,8 +114,8 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
 //        if (!idStory.equals("")) {
 //            return;
 //        }
-
-        loadData(this.idStory, DEFAULT_USER_ID);
+        String uId = ReadCacheTool.getUId(getContext());
+        loadData(this.idStory, uId);
 //        String jsonListEvent = bundle.getString(ARG_LIST_EVENT);
 
 //        Gson gson = new Gson();
@@ -165,7 +174,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                     }
                     return;
                 }
-                int follow = stories.getFollow();
+//                int follow = stories.getFollow();
                 //Kiểm tra biến này để bật/tắt follow
                 ArrayList<Event> mArrayEvents = (ArrayList<Event>) stories.getEvents();
                 Log.e("p0-", mArrayEvents.toString());
@@ -182,6 +191,13 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                 storyItemAdapter = new StoryItemAdapter(arrayItemDetailStories, getContext(),
                         typeTabHomeOrLatest, idStory, addFragmentCallback, mArrayEvents);
                 recyclerViewEvents.setAdapter(storyItemAdapter);
+
+                stateFollow = stories.getFollow();
+                if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
+                    updateUIWhenFollow(true);
+                } else if (stateFollow == RootAPIUrlConst.UN_FOLLOW_INTEGER) {
+                    updateUIWhenFollow(false);
+                }
             }
 
             @Override
@@ -191,10 +207,9 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
         });
     }
 
-    public void updateButtonUI() {
-        //Chỉ update khi có sự kiện bắn về
-        if (!this.isFollowed) {
-            Toast.makeText(getContext(), "Bạn đã theo dõi dòng sự kiện này ^^", Toast.LENGTH_SHORT).show();
+    public void updateUIWhenFollow(boolean isFollowed) {
+        if (isFollowed) {
+            //Theo dõi
             final int sdk = android.os.Build.VERSION.SDK_INT;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                 btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
@@ -202,9 +217,8 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                 btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
             }
             btnFollow.setText("Bỏ theo dõi");
-            this.isFollowed = true;
         } else {
-            Toast.makeText(getContext(), "Bỏ theo dõi dòng sự kiện này :(", Toast.LENGTH_SHORT).show();
+            //Không theo dõi
             final int sdk = android.os.Build.VERSION.SDK_INT;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                 btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
@@ -212,7 +226,6 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                 btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
             }
             btnFollow.setText("Theo dõi");
-            this.isFollowed = false;
         }
     }
 
@@ -220,15 +233,122 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     public void onClick(View v) {
         if (v.getId() == R.id.btn_follow_story) {
             //Khi click vào follow 1 story thì có nút này hiện lên
-            updateButtonUI();
+//            updateButtonUI();
+            followEvent();
         }
+    }
+
+    private void initDialog(String uId) {
+        alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("");
+        alertDialog.setMessage("Bỏ theo dõi?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Tớ đồng ý", (dialogg, which) -> {
+            //Noi dung xu ly khi click vao button, mac dinh dialog se close sau khi click vao
+            dialog.show();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+
+            final ServerAPI apiService = retrofit.create(ServerAPI.class);
+
+            Call<Stories> call = apiService.followStory(uId, idStory, RootAPIUrlConst.UN_FOLLOW);
+
+            call.enqueue(new Callback<Stories>() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
+                    Stories stories = response.body();
+                    if (stories == null) {
+                        Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        return;
+                    }
+                    stateFollow = stories.getFollow();
+                    if (stateFollow == RootAPIUrlConst.UN_FOLLOW_INTEGER) {
+                        //success, bỏ follow thành công
+                        //Thông báo cho MainActivity thay đổi UI button
+                        addFragmentCallback.updateListEventFollow(false, idStory);
+                    }
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(Call<Stories> call, Throwable t) {
+                    Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            });
+        });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> {
+            //Noi dung xu ly khi click vao button, mac dinh dialog se close sau khi click vao
+        });
+        alertDialog.setCanceledOnTouchOutside(false); //Vo hieu hoa khong cho kich ra ngoai de tat dialog
+        alertDialog.setCancelable(false); //Vo hieu hoa khong cho an back de tat dialog
+    }
+
+    private void followEvent() {
+        String uId = ReadCacheTool.getUId(getContext());
+        if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
+            //Trạng thái hiện tại đang là Follow
+            //Khi Click vào sẽ Unfollow - Chú ý là UNFOLLOW!!!
+            initDialog(uId);
+            alertDialog.show();
+        } else if (stateFollow == RootAPIUrlConst.UN_FOLLOW_INTEGER) {
+            //Trạng thái hiện tại đang là UnFollow, click vào sẽ là Follow
+            //Trạng thái hiện tại đang là Follow
+            //Khi Click vào sẽ follow - Chú ý là FOLLOW!!!
+            dialog.show();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+
+            final ServerAPI apiService = retrofit.create(ServerAPI.class);
+
+            Call<Stories> call = apiService.followStory(uId, idStory, RootAPIUrlConst.FOLLOW);
+
+            call.enqueue(new Callback<Stories>() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
+                    Stories stories = response.body();
+                    if (stories == null) {
+                        Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        return;
+                    }
+                    stateFollow = stories.getFollow();
+                    if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
+                        //success, follow thành công
+                        //Thông báo cho MainActivity thay đổi UI button
+                        addFragmentCallback.updateListEventFollow(true, idStory);
+                    }
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(Call<Stories> call, Throwable t) {
+                    Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "State is undefined!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
     public void updateUIFollow(boolean isFollowed, String idStory) {
         //Update lại UI
+        Log.e("uu-story-idStoryInUI", this.idStory);
+        Log.e("uu-story-idStory", idStory);
         if (this.idStory.equals(idStory)) {
-            this.isFollowed = isFollowed; //Lưu lại là đã theo dõi
+            Log.e("uu-story", "update detailStory: " + idStory);
+            updateUIWhenFollow(isFollowed);
         }
     }
 }

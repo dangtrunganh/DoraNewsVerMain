@@ -1,18 +1,17 @@
 package com.anhdt.doranewsvermain.fragment.generalfragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
-import com.anhdt.doranewsvermain.fragment.BaseFragment;
-import com.anhdt.doranewsvermain.fragment.BaseFragmentNeedUpdateUI;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.HomeFragment;
-import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 public class GeneralHomeFragment extends BaseFragment implements AddFragmentCallback {
     //    private FragmentManager fragmentManager = getChildFragmentManager();
@@ -24,6 +23,7 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
 
     public static FragmentManager fragmentManagerHome;
+    private ArrayList<UpdateUIFollow> observers = new java.util.ArrayList<>();
 
     public static GeneralHomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -51,13 +51,15 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
         fragmentManagerHome = getChildFragmentManager();
         FragmentManager fragmentManager = getChildFragmentManager();
-        HomeFragment fragment = HomeFragment.newInstance(uId);
+        HomeFragment fragmentHome = HomeFragment.newInstance(uId);
 
-        fragment.setAddFragmentCallback(this);
+        fragmentHome.setAddFragmentCallback(this);
 
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.main_container_frg_home, fragment);
+        ft.replace(R.id.main_container_frg_home, fragmentHome);
         ft.addToBackStack(null);
+
+        attach(fragmentHome);
         ft.commit();
 
         //======
@@ -69,6 +71,7 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
                 detailEventFragment.setAddFragmentCallback(this);
                 ftDetailEvent.add(R.id.main_container_frg_home, detailEventFragment);
                 ftDetailEvent.addToBackStack(null);
+                attach(detailEventFragment);
                 ftDetailEvent.commit();
             }
         }
@@ -92,6 +95,8 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
         transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         transaction.add(R.id.main_container_frg_home, fragment);
         transaction.addToBackStack(null);
+
+        attach(fragment);
         transaction.commit();
     }
 
@@ -99,6 +104,16 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
     public void popBackStack() {
         FragmentManager fragmentManager = getChildFragmentManager();
         fragmentManager.popBackStack();
+        detach();
+    }
+
+    public void attach(UpdateUIFollow updateUIFollow) {
+        observers.add(updateUIFollow);
+    }
+
+    public void detach() {
+        //Detach thằng trên cùng
+        observers.remove(observers.size() - 1);
     }
 
     @Override
@@ -107,11 +122,14 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 //        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         for (int i = 0; i < fragmentManager.getBackStackEntryCount() - 1; ++i) {
             fragmentManager.popBackStack();
+            detach();
         }
     }
 
     @Override
     public void updateListEventFollow(boolean isFollowed, String idStory) {
-
+        for (UpdateUIFollow observer : observers) {
+            observer.updateUIFollow(isFollowed, idStory);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.anhdt.doranewsvermain.util;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -8,11 +9,14 @@ import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.anhdt.doranewsvermain.activity.SplashActivity;
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.model.DatumStory;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -33,6 +37,24 @@ public class GeneralTool {
             return true;
         }
         return false;
+    }
+
+    public static boolean checkIfParentHasChild(ArrayList<Datum> parents, ArrayList<Datum> childs) {
+        String idParent = "";
+        String idChild = "";
+        for (int i = 0; i < parents.size(); i++) {
+            if (parents.get(i) == null) {
+                continue;
+            }
+            idParent += parents.get(i).getId();
+        }
+        for (int i = 0; i < childs.size(); i++) {
+            if(childs.get(i) == null) {
+                continue;
+            }
+            idChild += childs.get(i).getId();
+        }
+        return idParent.contains(idChild);
     }
 
     public static int convertDpsToPixels(Context mContext, float valueDps) {

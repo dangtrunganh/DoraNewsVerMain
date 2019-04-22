@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,10 +19,13 @@ import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.LoadPageConst;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
+import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -48,6 +52,7 @@ public class NewsInCategoryFragment extends BaseFragment {
     private Category currentCategory;
     private HotNewsAdapter hotNewsAdapter;
     private FragmentManager fragmentManager;
+    private ArrayList<Datum> arrayListDatum = new ArrayList<>();
     private String uId;
     private String oldStateNetWork = DISCONNECTED; //ban đầu sẽ là mất mạng
     private ShimmerFrameLayout mShimmerViewContainer;
@@ -69,16 +74,21 @@ public class NewsInCategoryFragment extends BaseFragment {
     public static NewsInCategoryFragment newInstance(String jsonCategory, String uId) {
         NewsInCategoryFragment newsInCategoryFrament = new NewsInCategoryFragment();
         Bundle args = new Bundle();
-        args.putString(PARAM_CATEGORY_NEWS_IN_CATEGORY_FRG, jsonCategory);
+        args.putString(PARAM_CATEGORY_NEWS_IN_CATEGORY_FRG, jsonCategory); //category hiện tại
         args.putString(PARAM_U_ID_NEWS_IN_CATEGORY_FRG, uId);
         newsInCategoryFrament.setArguments(args);
         return newsInCategoryFrament;
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mShimmerViewContainer.startShimmerAnimation();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        mShimmerViewContainer.startShimmerAnimation();
     }
 
     @Override
@@ -135,9 +145,9 @@ public class NewsInCategoryFragment extends BaseFragment {
     }
 
     private void setUpLoadMore(String idCategory) {
-        if (hotNewsAdapter.isFlagFinishLoadData()) {
-            return;
-        }
+//        if (hotNewsAdapter.isFlagFinishLoadData()) {
+//            return;
+//        }
         //Sự kiện loadMore()
         hotNewsAdapter.setLoadMore(() -> {
             hotNewsAdapter.addItemLoading();
@@ -163,9 +173,11 @@ public class NewsInCategoryFragment extends BaseFragment {
 
             final ServerAPI apiService = retrofit.create(ServerAPI.class);
 
+            String uId = ReadCacheTool.getUId(getContext());
             Call<News> call = apiService.getNewsInEachCategory(String.valueOf(typeLoadData),
                     deviceId,
-                    idCategory
+                    idCategory,
+                    uId
             );
 
             call.enqueue(new Callback<News>() {
@@ -180,16 +192,27 @@ public class NewsInCategoryFragment extends BaseFragment {
                         swipeContainer.setRefreshing(false);
                         return;
                     }
-
-                    if (news.getData().size() == 0) {
-                        //Khi data nhận về == 0 thì chuyển flag = true, tức là sẽ không load tiếp nữa
-                        hotNewsAdapter.setFlagFinishLoadData(true);
+                    //=========
+                    if (typeLoadData == LoadPageConst.LOAD_MORE_PAGE) {
+                        if (/*Collections.disjoint(arrayListDatum, news.getData())*/!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())) {
+                            //List tổng có chứa list trả về hay ko? Nếu có thi thôi
+                            //ko trùng thì vào trong này
+                            arrayListDatum.addAll(news.getData());
+                        }
+                        hotNewsAdapter.updateListNews(news.getData()); //add all, nếu trùng cả danh sách thì thôi ko add nữa
+                    } else if (typeLoadData == LoadPageConst.RELOAD_INIT_CURRENT_PAGE) {
+                        if (!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())/*arrayListDatum.equals(news.getData())*/) {
+                            //List tổng ko chứa cả list con mới bắn về, thực hiện update tại đây
+                            arrayListDatum.clear();
+                            arrayListDatum.addAll(news.getData());
+                        }
+                        hotNewsAdapter.reloadInNormalState(news.getData()); //xóa hết đi rồi mới add
                     }
-
-                    hotNewsAdapter.updateListNews(news.getData());
                     mShimmerViewContainer.stopShimmerAnimation();
                     mShimmerViewContainer.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
+                    //=========
+                    ReadCacheTool.storeNewsByCategory(getContext(), currentCategory.getId(), arrayListDatum);
                 }
 
                 @Override
@@ -202,10 +225,18 @@ public class NewsInCategoryFragment extends BaseFragment {
             });
         } else {
             //Mất mạng
+            arrayListDatum = ReadCacheTool.getListNewsByCategory(getContext(), currentCategory.getId());
+            if (arrayListDatum.size() != 0) {
+                //Lấy list từ Local lên
+                //Nếu ko trùng thì xóa sạch list đi, apply list từ offline lên
+                hotNewsAdapter.reloadInNormalState(arrayListDatum);
+            } else {
+                //Trong cache ko có gì, mà lại mất mạng, hix
+                actionDisableLoadBaseOnNetworkState(false);
+            }
             mShimmerViewContainer.setVisibility(View.GONE);
             mShimmerViewContainer.stopShimmerAnimation();
             oldStateNetWork = DISCONNECTED;
-            actionDisableLoadBaseOnNetworkState(false);
             swipeContainer.setRefreshing(false);
         }
     }

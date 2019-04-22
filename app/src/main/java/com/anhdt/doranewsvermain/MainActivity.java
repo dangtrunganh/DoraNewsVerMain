@@ -1,12 +1,16 @@
 package com.anhdt.doranewsvermain;
 
+import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -16,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,16 +28,25 @@ import com.anhdt.doranewsvermain.broadcastreceiver.NetworkChangeReceiver;
 import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.constant.ConstServiceFirebase;
+import com.anhdt.doranewsvermain.fragment.ArticleFramentInDetailNewsFragment;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
-import com.anhdt.doranewsvermain.fragment.FavoriteFragment;
-import com.anhdt.doranewsvermain.fragment.MoreFragment;
+import com.anhdt.doranewsvermain.fragment.generalfragment.FavoriteFragment;
+import com.anhdt.doranewsvermain.fragment.generalfragment.MoreFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralHomeFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralLatestNewsFragment;
+import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.service.voice.VoicePlayerService;
+import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, ActionNetworkStateChange {
+import java.util.ArrayList;
+import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ActionNetworkStateChange, VoicePlayerService.OnListenerActivity, ControlVoice {
     private static final String TAG = MainActivity.class.getName();
     private BottomNavigationView navigation;
     private TextView textConnectionState;
@@ -41,6 +55,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ConstraintLayout constraintLayoutViewNotice;
     private TextView textContentViewNotice, textTitleHot;
     private ImageView imageViewNotice, imageCloseViewNotice;
+    //=====================
+
+    //=====ViewControlMusic=====
+    private TextView textTitleArticle, textStartTime, textEndTime;
+    private ConstraintLayout constraintLayoutControlVoice;
+    private SeekBar seekBarVoice;
+    private CircleImageView imageCoverControlVoice;
+    private ImageView imagePreviousVoice, imagePlayVoice, imageNextVoice, imageExitVoice;
     //=====================
 
     private final GeneralHomeFragment homeFragment = GeneralHomeFragment.newInstance();
@@ -71,15 +93,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String contentNotice;
     private String titleHot;
 
+    //========
+    private VoicePlayerService mPlayerService;
+    private ServiceConnection mConnection;
+    private boolean mIsConnect;
+    //========
+
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e("llj-", intent.getAction());
+//            if (intent.getAction().equals("MyData")) {
             idEventFromBroadcast = intent.getExtras().getString(ConstServiceFirebase.PARAM_ID_EVENT);
             idStoryFromBroadcast = intent.getExtras().getString(ConstServiceFirebase.PARAM_ID_LONG_EVENT);
             urlImageFromBroadcast = intent.getExtras().getString(ConstServiceFirebase.PARAM_URL_IMAGE);
             titleHot = intent.getExtras().getString(ConstServiceFirebase.PARAM_TITLE_HOT);
             contentNotice = intent.getExtras().getString(ConstServiceFirebase.PARAM_CONTENT_NOTICE);
             loadDataToNotice();
+//            }
+
         }
     };
 
@@ -133,16 +165,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("main-", "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
         receiver = new NetworkChangeReceiver(this);
         final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(receiver, filter);
+
+        //=====bind service=====
+        boundService();
+    }
+
+    private void boundService() {
+        mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                if (iBinder instanceof VoicePlayerService.ArticleBinder) {
+                    mIsConnect = true;
+                    VoicePlayerService.ArticleBinder binder = (VoicePlayerService.ArticleBinder) iBinder;
+                    mPlayerService = binder.getService();
+                    mPlayerService.setmListenerActivity(MainActivity.this);
+//                    updateUI();
+                    if (mPlayerService != null) {
+                        Log.e("m-", "Service is boned successfully!");
+                    } else {
+                        Log.e("m-", "null mnr");
+                    }
+                } else {
+                    mIsConnect = false;
+                }
+
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+                mIsConnect = false;
+            }
+        };
+
+        Intent intent = new Intent(this, VoicePlayerService.class);
+        this.bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
+
     }
 
     @Override
     protected void onStart() {
+        Log.d("main-", "onStart()");
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver),
                 new IntentFilter("MyData")
@@ -150,10 +219,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onResume() {
+        Log.d("main-", "onResume()");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("main-", "onPause()");
+        super.onPause();
+    }
+
+
+    @Override
     protected void onStop() {
+        Log.d("main-", "onStop()");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-        unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("main-", "onDestroy()");
+        super.onDestroy();
     }
 
     private void initViews() {
@@ -164,8 +253,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textContentViewNotice = findViewById(R.id.text_content_view_notice);
         imageViewNotice = findViewById(R.id.image_cover_view_notice);
         imageCloseViewNotice = findViewById(R.id.image_close_view_notice);
-        constraintLayoutViewNotice.setVisibility(View.GONE);
 
+        //====View-Control-Voice====
+        textTitleArticle = findViewById(R.id.text_name_article_control_voice);
+        textTitleArticle.setSelected(true);
+        textTitleArticle.setOnClickListener(this);
+        constraintLayoutControlVoice = findViewById(R.id.constraint_control_voice);
+//        constraintLayoutControlVoice.setOnClickListener(this);
+        textStartTime = findViewById(R.id.text_time_start_control_voice);
+        textEndTime = findViewById(R.id.text_time_end_control_music);
+        seekBarVoice = findViewById(R.id.seek_bar_control_voice);
+
+        imageCoverControlVoice = findViewById(R.id.circle_image_cover_control_voice);
+        imageCoverControlVoice.setOnClickListener(this);
+        imagePreviousVoice = findViewById(R.id.image_previous_control_voice);
+        imagePlayVoice = findViewById(R.id.image_play_pause_control_voice);
+        imageNextVoice = findViewById(R.id.image_next_control_voice);
+        imageExitVoice = findViewById(R.id.image_stop_control_music);
+        //============
+
+
+        constraintLayoutViewNotice.setVisibility(View.GONE);
         //Nhận list Category để truyền Params cho fragment LatestNewsInFragment
         //Chỉ return về listCategories string, vì 2 thông số idEvent và idLongEvent chỉ để truyển cho DetailEventAct
         Intent result = getIntent();
@@ -258,6 +366,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.image_close_view_notice:
                 constraintLayoutViewNotice.setVisibility(View.GONE);
                 break;
+            case R.id.circle_image_cover_control_voice:
+            case R.id.text_name_article_control_voice:
+                //Mở fragment chi tiết list bài báo lên
+                break;
             default:
                 break;
         }
@@ -279,5 +391,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             textConnectionState.setTextColor(Color.WHITE);
             textConnectionState.setBackgroundColor(Color.DKGRAY);
         }
+    }
+
+    @Override
+    public void updateArticle(Article article) {
+
+    }
+
+    @Override
+    public void playVoiceAtPosition(ArrayList<Article> articles, int position) {
+        Toast.makeText(this, "Play voice at main!5", Toast.LENGTH_SHORT).show();
     }
 }

@@ -12,25 +12,38 @@ public class ConstLocalCaching {
     public static final String DEFAULT_VALUE_PREF_LIST_CATEGORY_DEFAULT = "";
 
 
-    //====uId=====
-    //Tên file
-    public static final String FILE_NAME_PREF_UID = "data_uid";
+    //====uId=====mToken=======deviceId======
+    //Tên FILE
+    public static final String FILE_NAME_PREF_UID_M_TOKEN_DEVICE_ID = "data_uid_m_token_device_id";
+
     //key lưu uId
-    public static final String KEY_PREF_UID = "uid";
+    public static final String KEY_PREF_UID = "key_uid";
     //default nếu uId rỗng
-    public static final String DEFAULT_VALUE_PREF_KEY_UID_DEFAULT = "";
+    public static final String DEFAULT_VALUE_PREF_UID_DEFAULT = "";
 
-    //====Cache-event-theo-category + articles, lưu vào chung 1 file, cho 2 key riêng====
+    //key lưu deviceId
+    public static final String KEY_PREF_DEVICE_ID = "key_device_id";
+    //default nếu deviceId rỗng
+    public static final String DEFAULT_VALUE_PREF_DEVICE_ID_DEFAULT = "";
+
+    //key lưu mTokenFirebase
+    public static final String KEY_PREF_M_TOKEN = "key_m_token";
+    //default nếu mTokenFirebase rỗng
+    public static final String DEFAULT_VALUE_PREF_M_TOKEN_DEFAULT = "";
+
+
+
+
+    //====Cache-news-datum-theo-category + tab hot, lưu vào chung 1 file, cho nhiều key, maybe?====
     //Tên file
-    public static final String FILE_NAME_PREF_CACHE_HOT = "cache_hot";
+    public static final String FILE_NAME_PREF_CACHE_GENERAL_NEWS = "cache_general_news";
     //key lưu list event
-    public static final String KEY_PREF_CACHE_HOT_EVENT = "key_event";
-    //key lưu list articles
-    public static final String DEFAULT_VALUE_PREF_CACHE_HOT_EVENT = "";
-    //key lưu list article
-    public static final String KEY_PREF_CACHE_HOT_ARTICLE = "key_article";
-    //key lưu list articles
-    public static final String DEFAULT_VALUE_PREF_CACHE_HOT_ARTICLE = "";
+    public static final String KEY_PREF_CACHE_HOT_NEWS = "key_hot_news";
+    //Giá trị mặc định trả về khi get theo KEY_PREF_CACHE_HOT_NEWS
+    public static final String DEFAULT_VALUE_PREF_CACHE_HOT_NEWS = "";
 
-    //Từ lần sau, mỗi category đã load, lưu vào file theo tên slug của category đó
+    //Key lưu News theo category sẽ là id của Category đó
+
+    //Giá trị mặc định trả về khi get theo DEFAULT_VALUE_PREF_CACHE_HOT_ARTICLE
+    public static final String DEFAULT_VALUE_PREF_CACHE_NEWS_BY_CATEGORY= "";
 }

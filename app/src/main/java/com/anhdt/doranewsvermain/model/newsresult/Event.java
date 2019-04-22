@@ -44,6 +44,10 @@ public class Event {
     @Expose
     private List<Article> listArticles;
 
+    @SerializedName("follow")
+    @Expose
+    private Integer follow; //1 or 0
+
     public String getId() {
         return id;
     }
@@ -132,6 +136,14 @@ public class Event {
         this.longEventId = longEventId;
     }
 
+    public Integer getFollow() {
+        return follow;
+    }
+
+    public void setFollow(Integer follow) {
+        this.follow = follow;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
@@ -146,6 +158,7 @@ public class Event {
                 ", category=" + category +
                 ", longEventId='" + longEventId + '\'' +
                 ", listArticles=" + listArticles +
+                ", follow=" + follow +
                 '}';
     }
 }

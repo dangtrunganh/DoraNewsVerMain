@@ -9,8 +9,8 @@ import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.viewpagercategory.CategoryViewPagerAdapter;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
-import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

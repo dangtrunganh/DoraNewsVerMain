@@ -1,8 +1,6 @@
 package com.anhdt.doranewsvermain.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -10,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,13 +21,17 @@ import com.anhdt.doranewsvermain.broadcastreceiver.NetworkChangeReceiver;
 import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.LoadPageConst;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
+import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -54,8 +57,9 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
     private String uId;
     private HotNewsAdapter hotNewsAdapter;
 
-
     private String oldStateNetWork = DISCONNECTED; //ban đầu sẽ là mất mạng
+
+    private ArrayList<Datum> arrayListDatum = new ArrayList<>(); //Phải có list tổng này để lưu cache xuống local
 
     public AddFragmentCallback getAddFragmentCallback() {
         return addFragmentCallback;
@@ -129,24 +133,25 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
         //==============LOAD DATA================
         //load data đồng thời đổ dữ liệu lên RecyclerView
         //Có mạng
-        loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, uId);
+        String deviceId = ReadCacheTool.getDeviceId(getContext());
+        loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, deviceId);
         //setUpLoadMore()
-        setUpLoadMore();
+        setUpLoadMore(deviceId);
         swipeContainer.setOnRefreshListener(() -> {
-            loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, uId);
+            loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, deviceId);
         });
     }
 
-    private void setUpLoadMore() {
-        if (hotNewsAdapter.isFlagFinishLoadData()) {
-            return;
-        }
+    private void setUpLoadMore(String deviceID) {
+//        if (hotNewsAdapter.isFlagFinishLoadData()) {
+//            return;
+//        }
         //Sự kiện loadMore()
         hotNewsAdapter.setLoadMore(() -> {
             hotNewsAdapter.addItemLoading();
             new Handler().postDelayed(() -> {
                 hotNewsAdapter.removeItemLoading();
-                loadData(LoadPageConst.LOAD_MORE_PAGE, uId);
+                loadData(LoadPageConst.LOAD_MORE_PAGE, deviceID);
             }, 2000); // Time to load
         });
     }
@@ -154,6 +159,10 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
     private void loadData(int typeLoadData, String deviceId) {
         if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
             if (oldStateNetWork.equals(DISCONNECTED)) {
+                //Quay lại trực tuyến, cho mShimmerViewContainer.setVisibility(View.VISIBLE);
+                //                mShimmerViewContainer.startShimmerAnimation(); chạy, hehe
+
+                //Đây là nguyên nhân khi từ offline sang online thì có nháy skeleton
                 mShimmerViewContainer.setVisibility(View.VISIBLE);
                 mShimmerViewContainer.startShimmerAnimation();
                 oldStateNetWork = CONNECTED;
@@ -166,7 +175,8 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
 
             final ServerAPI apiService = retrofit.create(ServerAPI.class);
 
-            Call<News> call = apiService.getHotNews(String.valueOf(typeLoadData), deviceId);
+            String uId = ReadCacheTool.getUId(getContext());
+            Call<News> call = apiService.getHotNews(String.valueOf(typeLoadData), deviceId, uId);
 
             call.enqueue(new Callback<News>() {
                 @SuppressLint("SetTextI18n")
@@ -180,14 +190,29 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
                         swipeContainer.setRefreshing(false);
                         return;
                     }
-                    if (news.getData().size() == 0) {
-                        //Khi data nhận về == 0 thì chuyển flag = true, tức là sẽ không load tiếp nữa
-                        hotNewsAdapter.setFlagFinishLoadData(true);
+//                    if (news.getData().size() == 0) {
+//                        //Khi data nhận về == 0 thì chuyển flag = true, tức là sẽ không load tiếp nữa
+//                        hotNewsAdapter.setFlagFinishLoadData(true);
+//                    }
+                    if (typeLoadData == LoadPageConst.LOAD_MORE_PAGE) {
+                        if (/*Collections.disjoint(arrayListDatum, news.getData())*/!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())) {
+                            //List tổng có chứa list trả về hay ko? Nếu có thi thôi
+                            //ko trùng thì vào trong này
+                            arrayListDatum.addAll(news.getData());
+                        }
+                        hotNewsAdapter.updateListNews(news.getData()); //add all, nếu trùng cả danh sách thì thôi ko add nữa
+                    } else if (typeLoadData == LoadPageConst.RELOAD_INIT_CURRENT_PAGE) {
+                        if (!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())/*arrayListDatum.equals(news.getData())*/) {
+                            //List tổng ko chứa cả list con mới bắn về, thực hiện update tại đây
+                            arrayListDatum.clear();
+                            arrayListDatum.addAll(news.getData());
+                        }
+                        hotNewsAdapter.reloadInNormalState(news.getData()); //xóa hết đi rồi mới add
                     }
-                    hotNewsAdapter.updateListNews(news.getData());
                     mShimmerViewContainer.stopShimmerAnimation();
                     mShimmerViewContainer.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
+                    ReadCacheTool.storeHotNews(getContext(), arrayListDatum);
                 }
 
                 @Override
@@ -200,13 +225,19 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
             });
         } else {
             //Mất mạng
-            mShimmerViewContainer.setVisibility(View.GONE);
+            arrayListDatum = ReadCacheTool.getListHotNews(getContext());
+            if (arrayListDatum.size() != 0) {
+                //Lấy list từ Local lên
+                //Nếu ko trùng thì xóa sạch list đi, apply list từ offline lên
+                hotNewsAdapter.reloadInNormalState(arrayListDatum);
+            } else {
+                actionDisableLoadBaseOnNetworkState(false);
+            }
             mShimmerViewContainer.stopShimmerAnimation();
+            mShimmerViewContainer.setVisibility(View.GONE);
             oldStateNetWork = DISCONNECTED;
-            actionDisableLoadBaseOnNetworkState(false);
             swipeContainer.setRefreshing(false);
         }
-
     }
 
     private void actionDisableLoadBaseOnNetworkState(boolean state) {

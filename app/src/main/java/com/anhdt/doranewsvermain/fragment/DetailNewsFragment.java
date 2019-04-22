@@ -1,15 +1,13 @@
 package com.anhdt.doranewsvermain.fragment;
 
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.viewpagerarticle.ArticleInViewPagerAdapter;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
 import com.anhdt.doranewsvermain.model.newsresult.Article;

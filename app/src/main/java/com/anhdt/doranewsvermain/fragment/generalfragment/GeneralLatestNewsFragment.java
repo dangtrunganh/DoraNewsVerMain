@@ -1,18 +1,15 @@
 package com.anhdt.doranewsvermain.fragment.generalfragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.anhdt.doranewsvermain.R;
-import com.anhdt.doranewsvermain.fragment.BaseFragment;
-import com.anhdt.doranewsvermain.fragment.BaseFragmentNeedUpdateUI;
-import com.anhdt.doranewsvermain.fragment.HomeFragment;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.LatestNewsFragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GeneralLatestNewsFragment extends BaseFragment implements AddFragmentCallback {
     public static final String PARAM_LIST_CATEGORY_GENERAL_LATEST_NEWS_FRG = "PARAM_LIST_CATEGORY_GENERAL_LATEST_NEWS_FRG";

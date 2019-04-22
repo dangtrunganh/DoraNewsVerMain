@@ -1,21 +1,21 @@
-package com.anhdt.doranewsvermain.fragment;
+package com.anhdt.doranewsvermain.fragment.generalfragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 import com.anhdt.doranewsvermain.R;
-import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 
-public class FavoriteFragment extends BaseFragment implements AddFragmentCallback {
+public class MoreFragment extends BaseFragment implements AddFragmentCallback {
 
-    public static FavoriteFragment newInstance() {
-        FavoriteFragment favoriteFragment = new FavoriteFragment();
+    public static MoreFragment newInstance() {
+        MoreFragment moreFragment = new MoreFragment();
         Bundle args = new Bundle();
 //        args.putString(PARAM_CATEGORY_SLUG, categoryJsonString);
 //        args.putString(PARAM_CATEGORY_NAME, categoryName);
 //        args.putBoolean(PARAM_HOT_EVENT, isHot);
 //        genreFragment.setArguments(args);
-        return favoriteFragment;
+        return moreFragment;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class FavoriteFragment extends BaseFragment implements AddFragmentCallbac
 
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_favorite;
+        return R.layout.fragment_more;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class FavoriteFragment extends BaseFragment implements AddFragmentCallbac
     }
 
     @Override
-    public void addFrgCallback(BaseFragment fragment) {
+    public void addFrgCallback(BaseFragmentNeedUpdateUI fragment) {
 
     }
 
