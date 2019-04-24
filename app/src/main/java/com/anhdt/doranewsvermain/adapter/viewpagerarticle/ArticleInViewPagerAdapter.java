@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.anhdt.doranewsvermain.fragment.ArticleFramentInDetailNewsFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -13,12 +14,14 @@ import java.util.ArrayList;
 public class ArticleInViewPagerAdapter extends FragmentStatePagerAdapter {
     private ArrayList<Article> mArrayNews;
 //    private FragmentManager fragmentManager;
+    private ControlVoice controlVoice;
 
-    public ArticleInViewPagerAdapter(FragmentManager fm, ArrayList<Article> mArrayNews) {
+    public ArticleInViewPagerAdapter(FragmentManager fm, ArrayList<Article> mArrayNews, ControlVoice controlVoice) {
         super(fm);
 //        super(fm);
 //        this.fragmentManager = fm;
         this.mArrayNews = mArrayNews;
+        this.controlVoice = controlVoice;
     }
 
     @Override
@@ -28,7 +31,9 @@ public class ArticleInViewPagerAdapter extends FragmentStatePagerAdapter {
         String jsonArticle = gson.toJson(article);
 
         String jsonListTotal = gson.toJson(mArrayNews);
-        return ArticleFramentInDetailNewsFragment.newInstance(jsonArticle, jsonListTotal, position);
+        ArticleFramentInDetailNewsFragment articleFramentInDetailNewsFragment = ArticleFramentInDetailNewsFragment.newInstance(jsonArticle, jsonListTotal, position);
+        articleFramentInDetailNewsFragment.setControlVoice(this.controlVoice);
+        return articleFramentInDetailNewsFragment;
     }
 
     @Override

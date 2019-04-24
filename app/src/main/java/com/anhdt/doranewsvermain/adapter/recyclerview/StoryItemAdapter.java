@@ -35,7 +35,7 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int typeTabContent; // 1 or 2 - tab home hay tab latest
 
     private AddFragmentCallback addFragmentCallback;
-    private final int TYPE_EVENT_TOPEST_SINGLE = 8, TYPE_NORMAL = 9, TYPE_ERROR = 10;
+    private final int TYPE_EVENT_TOPEST_SINGLE = 8, TYPE_NORMAL = 9, TYPE_ERROR = 10, TYPE_FOOTER = 11;
 //            TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL = 1,
 //            TYPE_EVENT_NORMAL_HAVE_TO_DAY_LABEL = 2,
 //            TYPE_EVENT_NORMAL_NOT_HAVE_ANY_LABEL = 3,
@@ -56,6 +56,9 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public int getItemViewType(int position) {
         if (arrayItemDetailStories.get(position) == null) {
             return TYPE_ERROR;
+        }
+        if (arrayItemDetailStories.get(position).isFooter()) {
+            return TYPE_FOOTER;
         }
         int typeItem = arrayItemDetailStories.get(position).getType();
         switch (typeItem) {
@@ -83,8 +86,18 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case TYPE_NORMAL:
                 View viewNormalStory = mLayoutInflater.inflate(R.layout.item_other_event_in_detail_story, viewGroup, false);
                 return new StoryItemAdapter.NormalEventViewHolder(viewNormalStory);
+            case TYPE_FOOTER:
+                View viewFooter = mLayoutInflater.inflate(R.layout.item_footer_recycler_view_item_story, viewGroup, false);
+                return new StoryItemAdapter.FooterViewHolder(viewFooter);
         }
         return null; //Với ERROR_VIEW
+    }
+
+    public class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        public FooterViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
     }
 
     @Override
@@ -97,6 +110,9 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         } else if (viewHolder instanceof StoryItemAdapter.NormalEventViewHolder) {
             StoryItemAdapter.NormalEventViewHolder normalEventViewHolder = (NormalEventViewHolder) viewHolder;
             normalEventViewHolder.bindData(itemDetailStory);
+        } else if (viewHolder instanceof StoryItemAdapter.FooterViewHolder) {
+            StoryItemAdapter.FooterViewHolder footerViewHolder = (FooterViewHolder) viewHolder;
+            //footer
         }
     }
 

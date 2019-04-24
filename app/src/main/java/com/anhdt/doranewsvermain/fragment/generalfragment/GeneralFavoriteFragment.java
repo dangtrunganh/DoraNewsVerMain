@@ -5,17 +5,21 @@ import android.os.Bundle;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
+import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 
-public class FavoriteFragment extends BaseFragment implements AddFragmentCallback {
+import java.util.ArrayList;
 
-    public static FavoriteFragment newInstance() {
-        FavoriteFragment favoriteFragment = new FavoriteFragment();
+public class GeneralFavoriteFragment extends BaseFragment implements AddFragmentCallback, ControlVoice {
+
+    public static GeneralFavoriteFragment newInstance() {
+        GeneralFavoriteFragment generalFavoriteFragment = new GeneralFavoriteFragment();
         Bundle args = new Bundle();
 //        args.putString(PARAM_CATEGORY_SLUG, categoryJsonString);
 //        args.putString(PARAM_CATEGORY_NAME, categoryName);
 //        args.putBoolean(PARAM_HOT_EVENT, isHot);
 //        genreFragment.setArguments(args);
-        return favoriteFragment;
+        return generalFavoriteFragment;
     }
 
     @Override
@@ -51,5 +55,22 @@ public class FavoriteFragment extends BaseFragment implements AddFragmentCallbac
     @Override
     public void updateListEventFollow(boolean isFollowed, String idStory) {
 
+    }
+
+    @Override
+    public void playVoiceAtPosition(ArrayList<Article> articles, int position) {
+        if (this.getControlVoice() != null) {
+            this.getControlVoice().playVoiceAtPosition(articles, position);
+        }
+    }
+
+    @Override
+    public void setCurrentListVoiceOnTopStack(ArrayList<Article> articles) {
+        this.getControlVoice().setCurrentListVoiceOnTopStack(articles);
+    }
+
+    @Override
+    public void deleteCurrentListVoiceOnTopStack() {
+        this.getControlVoice().deleteCurrentListVoiceOnTopStack();
     }
 }

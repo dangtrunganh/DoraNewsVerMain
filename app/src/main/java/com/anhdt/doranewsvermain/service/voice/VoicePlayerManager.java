@@ -26,6 +26,10 @@ public class VoicePlayerManager implements MediaPlayer.OnPreparedListener, Media
         this.mContext = mContext;
     }
 
+    public int getmIndexCurrentArticle() {
+        return mIndexCurrentArticle;
+    }
+
     public ArrayList<Article> getmCurrentArrayArticles() {
         return mCurrentArrayArticles;
     }
@@ -136,6 +140,12 @@ public class VoicePlayerManager implements MediaPlayer.OnPreparedListener, Media
         playArticle();
     }
 
+    public void pauseArticle() {
+        if (mState == MediaPlayerState.PLAYING) {
+            mPlayer.pause();
+            mState = MediaPlayerState.PAUSED;
+        }
+    }
 
 
     @Override

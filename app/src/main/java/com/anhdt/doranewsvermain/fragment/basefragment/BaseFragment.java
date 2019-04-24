@@ -10,9 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
+import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 
 public abstract class BaseFragment extends Fragment {
-    //Đây là những thằng cha chính, hoặc những thằng con nhỏ nhất bên trong
+    //Đây là những thằng cha chính, hoặc những thằng con nhỏ nhất bên trong - GeneralFragment
+    private ControlVoice controlVoice;
+
+    public void setControlVoice(ControlVoice controlVoice) {
+        this.controlVoice = controlVoice;
+    }
+
+    public ControlVoice getControlVoice() {
+        return controlVoice;
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

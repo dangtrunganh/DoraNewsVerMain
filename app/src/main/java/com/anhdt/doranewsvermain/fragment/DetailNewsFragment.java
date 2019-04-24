@@ -32,6 +32,10 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
     private FragmentManager fragmentManager;
     private AddFragmentCallback addFragmentCallback;
 
+    public ArrayList<Article> getmArrayNews() {
+        return mArrayNews;
+    }
+
     public AddFragmentCallback getAddFragmentCallback() {
         return addFragmentCallback;
     }
@@ -90,6 +94,15 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
         Gson gson = new Gson();
         mArrayNews = gson.fromJson(jsonListArticles, new TypeToken<List<Article>>() {
         }.getType());
+
+        //===
+        if (mArrayNews == null) {
+            return;
+        }
+        if (this.getControlVoice() == null) {
+            return;
+        }
+        this.getControlVoice().setCurrentListVoiceOnTopStack(mArrayNews);
         vpgNews = view.findViewById(R.id.vpg_news_detail_news);
         vpgNews.setOffscreenPageLimit(1);
         vpgNews.requestDisallowInterceptTouchEvent(true);
@@ -103,11 +116,19 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
         if (fragmentManager == null) {
             return;
         }
-        articleInViewPagerAdapter = new ArticleInViewPagerAdapter(fragmentManager, mArrayNews);
+        articleInViewPagerAdapter = new ArticleInViewPagerAdapter(fragmentManager, mArrayNews, this.getControlVoice());
         vpgNews.setAdapter(articleInViewPagerAdapter);
 
         indicator.attachToPager(vpgNews);
         vpgNews.setCurrentItem(position);
+    }
+
+    @Override
+    public void onDetach() {
+        if (this.getControlVoice() != null) {
+            this.getControlVoice().deleteCurrentListVoiceOnTopStack();
+        }
+        super.onDetach();
     }
 
     @Override

@@ -104,8 +104,9 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint_control_voice"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="60dp"
         android:background="@color/colorLogo"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/constraint_divider">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -113,10 +114,9 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
             android:padding="5dp"
             android:src="@mipmap/ic_launcher"
-            app:layout_constraintBottom_toTopOf="@id/text_time_start_control_voice"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -136,17 +136,7 @@
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
             app:layout_constraintLeft_toRightOf="@id/circle_image_cover_control_voice"
-            app:layout_constraintRight_toLeftOf="@id/image_previous_control_voice"
-            app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
-
-        <ImageView
-            android:id="@+id/image_next_control_voice"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="5dp"
-            android:src="@drawable/ic_next_black"
-            app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/image_play_pause_control_voice"
             app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
 
         <ImageView
@@ -159,62 +149,24 @@
             app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
 
         <ImageView
-            android:id="@+id/image_previous_control_voice"
+            android:id="@+id/image_next_control_voice"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/ic_previous_black"
+            android:src="@drawable/ic_next_black"
             app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
-            app:layout_constraintRight_toLeftOf="@id/image_play_pause_control_voice"
+            app:layout_constraintRight_toLeftOf="@id/image_stop_control_music"
             app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
-
-        <TextView
-            android:id="@+id/text_time_start_control_voice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginBottom="10dp"
-            android:text="00:15"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/circle_image_cover_control_voice" />
 
         <ImageView
             android:id="@+id/image_stop_control_music"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:layout_marginEnd="5dp"
             android:padding="5dp"
             android:src="@drawable/ic_exit_control_voice"
-            app:layout_constraintBottom_toBottomOf="@id/text_time_start_control_voice"
-            app:layout_constraintRight_toRightOf="@id/image_next_control_voice"
-            app:layout_constraintTop_toTopOf="@id/text_time_start_control_voice" />
-
-        <TextView
-            android:id="@+id/text_time_end_control_music"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="10dp"
-            android:text="01:21"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/image_next_control_voice" />
-
-        <SeekBar
-            android:id="@+id/seek_bar_control_voice"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:progressBackgroundTint="@android:color/black"
-            android:progressTint="@android:color/black"
-            android:thumbTint="@android:color/black"
-            app:layout_constraintBottom_toBottomOf="@id/text_time_start_control_voice"
-            app:layout_constraintLeft_toRightOf="@id/text_time_start_control_voice"
-            app:layout_constraintRight_toLeftOf="@id/text_time_end_control_music"
-            app:layout_constraintTop_toTopOf="@id/text_time_start_control_voice" />
+            app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/circle_image_cover_control_voice" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -23,6 +23,16 @@ public class Datum {
     @Expose
     private List<Article> articles = null;
 
+    private boolean isFooter = false;
+
+    public boolean isFooter() {
+        return isFooter;
+    }
+
+    public void setFooter(boolean footer) {
+        isFooter = footer;
+    }
+
     public String getId() {
         return id;
     }
