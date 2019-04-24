@@ -18,9 +18,11 @@ import com.anhdt.doranewsvermain.activity.ReadOriginalArticleActivity;
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.service.voice.StateLevel;
 import com.anhdt.doranewsvermain.service.voice.VoicePlayerService;
+import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -30,7 +32,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ArticleFramentInDetailNewsFragment extends BaseFragment implements View.OnClickListener, VoicePlayerService.OnListenerActivity{
+public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment implements View.OnClickListener {
     public static final String PARAM_DETAIL_NEWS = "param_news";
     public static final String PARAM_LIST_NEWS = "param_list_news";
     public static final String PARAM_POSITION = "param_position";
@@ -38,15 +40,24 @@ public class ArticleFramentInDetailNewsFragment extends BaseFragment implements 
 
     //Bài báo ứng với Fragment này
     private Article currentArticles;
+    private ControlVoice controlVoice;
+
+    public ControlVoice getControlVoice() {
+        return controlVoice;
+    }
+
+    public void setControlVoice(ControlVoice controlVoice) {
+        this.controlVoice = controlVoice;
+    }
 
     //voice đang chạy?
     private boolean mIsPlaying = false;
 
     private ArrayList<Article> listTotalArticles;
 
-    private VoicePlayerService mPlayerService;
-    private ServiceConnection mConnection;
-    private boolean mIsConnect;
+    //    private VoicePlayerService mPlayerService;
+//    private ServiceConnection mConnection;
+//    private boolean mIsConnect;
     private int position;
 
     public ArrayList<Article> getListTotalArticles() {
@@ -134,34 +145,34 @@ public class ArticleFramentInDetailNewsFragment extends BaseFragment implements 
             startActivity(intent);
         });
         btnPlay = view.findViewById(R.id.image_play_fr_detail_news);
-        boundService();
+//        boundService();
         btnPlay.setOnClickListener(this);
     }
 
-    private void boundService() {
-        mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                if (iBinder instanceof VoicePlayerService.ArticleBinder) {
-                    mIsConnect = true;
-                    mPlayerService = ((VoicePlayerService.ArticleBinder) iBinder).getService();
-                    mPlayerService.setmListenerActivity(ArticleFramentInDetailNewsFragment.this);
-//                    updateUI();
-                } else {
-                    mIsConnect = false;
-                }
-
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                mIsConnect = false;
-            }
-        };
-
-        Intent intent = new Intent(getContext(), VoicePlayerService.class);
-        Objects.requireNonNull(getContext()).bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
-    }
+//    private void boundService() {
+//        mConnection = new ServiceConnection() {
+//            @Override
+//            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+//                if (iBinder instanceof VoicePlayerService.ArticleBinder) {
+//                    mIsConnect = true;
+//                    mPlayerService = ((VoicePlayerService.ArticleBinder) iBinder).getService();
+//                    mPlayerService.setmListenerActivity(ArticleFramentInDetailNewsFragment.this);
+////                    updateUI();
+//                } else {
+//                    mIsConnect = false;
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onServiceDisconnected(ComponentName componentName) {
+//                mIsConnect = false;
+//            }
+//        };
+//
+//        Intent intent = new Intent(getContext(), VoicePlayerService.class);
+//        Objects.requireNonNull(getContext()).bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
+//    }
 
     @Override
     protected int getFragmentLayout() {
@@ -184,11 +195,12 @@ public class ArticleFramentInDetailNewsFragment extends BaseFragment implements 
                     btnPlay.setPressed(false);
                     mIsPlaying = true;
                 }
-                Toast.makeText(getContext(), "Play!", Toast.LENGTH_SHORT).show();
-                changeStateFromDetailArticle();
+//                Toast.makeText(getContext(), "Play!", Toast.LENGTH_SHORT).show();
+//                changeStateFromDetailArticle();
                 //handle khi click vào play voice
-
-
+                if (this.controlVoice != null) {
+                    controlVoice.playVoiceAtPosition(listTotalArticles, position);
+                }
 //                if (mIsPlaying) {
 ////                    mMediaBrowserHelper.getTransportControls().pause();
 //                } else {
@@ -202,25 +214,19 @@ public class ArticleFramentInDetailNewsFragment extends BaseFragment implements 
         }
     }
 
-    private void changeStateFromDetailArticle() {
-        if (!mIsConnect) {
-            return;
-        }
-        if (mPlayerService.getCurrentArticlesList() == null) {
-            mPlayerService.setArticleList(listTotalArticles);
-        }
-        mPlayerService.setIndexCurrentArticle(position);
-        mPlayerService.playArticle();
-//        if (mPlayerService.isOnlyPlaying()) {
-//            mImagePlay.setImageLevel(StateLevel.PAUSE);
+//    private void changeStateFromDetailArticle() {
+//        if (!mIsConnect) {
 //            return;
 //        }
-//        mImagePlay.setImageLevel(StateLevel.PLAY);
-    }
-
-    @Override
-    public void updateArticle(Article article) {
-        if (!mIsConnect) return;
-        //gọi về MainActivity để nó update
-    }
+//        if (mPlayerService.getCurrentArticlesList() == null) {
+//            mPlayerService.setArticleList(listTotalArticles);
+//        }
+//        mPlayerService.setIndexCurrentArticle(position);
+//        mPlayerService.playArticle();
+////        if (mPlayerService.isOnlyPlaying()) {
+////            mImagePlay.setImageLevel(StateLevel.PAUSE);
+////            return;
+////        }
+////        mImagePlay.setImageLevel(StateLevel.PLAY);
+//    }
 }

@@ -86,7 +86,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="15dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="68dp"
             android:paddingEnd="4dp"
             android:paddingBottom="2dp"
             android:text="Xem thêm"

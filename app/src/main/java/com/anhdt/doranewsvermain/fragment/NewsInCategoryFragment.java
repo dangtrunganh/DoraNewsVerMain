@@ -20,10 +20,12 @@ import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.LoadPageConst;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.News;
+import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -39,7 +41,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class NewsInCategoryFragment extends BaseFragment {
+public class NewsInCategoryFragment extends BaseNormalFragment {
+    private ControlVoice controlVoice;
     public static final String PARAM_CATEGORY_NEWS_IN_CATEGORY_FRG = "PARAM_CATEGORY_NEWS_IN_CATEGORY_FRG";
     public static final String PARAM_U_ID_NEWS_IN_CATEGORY_FRG = "PARAM_U_ID_NEWS_IN_CATEGORY_FRG";
 

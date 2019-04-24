@@ -3,6 +3,9 @@ package com.anhdt.doranewsvermain.util;
 import android.annotation.SuppressLint;
 
 import com.anhdt.doranewsvermain.BuildConfig;
+import com.anhdt.doranewsvermain.model.newsresult.Article;
+
+import java.util.ArrayList;
 
 public class VoiceTool {
 //    public static String covertUrlFetchMusicGenre(String genre, int limit, int offset) {
@@ -23,7 +26,16 @@ public class VoiceTool {
         return String.format("%s/%s",
                 parseMilliSecondsToTimer(timeCurrent), parseMilliSecondsToTimer(totalTime));
     }
+
+    public static String getTextTimeString(int time) {
+        return String.format("%s",
+                parseMilliSecondsToTimer(time));
+    }
     public static String getTextForControl(String artist, String title) {
         return String.format("%s - %s", artist, title);
+    }
+
+    public static boolean checkIfTwoListEqual(ArrayList<Article> articles1, ArrayList<Article> articles2) {
+        return articles1.toString().equals(articles2.toString());
     }
 }

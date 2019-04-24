@@ -22,17 +22,30 @@ public class ItemDetailStory {
     private String titleTime; //time - TODAY, YESTERDAY,...
     private int type; //1 trong 4 loại trên
     private Event event;
+    private boolean isFooter = false;
 //    private ArrayList<Event> listEventToday;
 //    private ArrayList<Event> listEventYesterday;
 //    private ArrayList<Event> listEventLastWeek;
 //    private ArrayList<Event> listEventOlder;
 
 
+    public ItemDetailStory() {
+
+    }
+
     public ItemDetailStory(String titleTop, String titleTime, int type, Event event) {
         this.titleTop = titleTop;
         this.titleTime = titleTime;
         this.type = type;
         this.event = event;
+    }
+
+    public boolean isFooter() {
+        return isFooter;
+    }
+
+    public void setFooter(boolean footer) {
+        isFooter = footer;
     }
 
     public Event getEvent() {

@@ -264,6 +264,9 @@ public class GeneralTool {
             }
         }
 
+        ItemDetailStory itemDetailStory = new ItemDetailStory();
+        itemDetailStory.setFooter(true);
+        itemDetailStories.add(itemDetailStory);
         return itemDetailStories;
     }
 

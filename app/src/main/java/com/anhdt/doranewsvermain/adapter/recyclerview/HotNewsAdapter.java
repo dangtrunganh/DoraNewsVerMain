@@ -45,7 +45,6 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -61,11 +60,11 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private float newTopRecyclerView;
 
-    private final int VIEW_TYPE_ARTICLE = 1, VIEW_TYPE_EVENT = 2, VIEW_TYPE_STORY = 3, ERROR_VIEW = 4, VIEW_TYPE_LOADING = 5;
+    private final int VIEW_TYPE_ARTICLE = 1, VIEW_TYPE_EVENT = 2, VIEW_TYPE_STORY = 3, ERROR_VIEW = 4, VIEW_TYPE_LOADING = 5, VIEW_TYPE_FOOTER = 6;
 
-    public static final int VISIBLE_THRESHOLD = 6;
+//    public static final int VISIBLE_THRESHOLD = 6;
 
-    private boolean isAnimatingStory = false;
+//    private boolean isAnimatingStory = false;
 
 //    private FragmentManager fragmentManager;
 
@@ -73,16 +72,21 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private AddFragmentCallback addFragmentCallback;
 
-    public HotNewsAdapter(ArrayList<Datum> arrayDatums, Context mContext, RecyclerView recyclerView, FragmentManager fragmentManager, int typeTabContent, AddFragmentCallback addFragmentCallback) {
-        this.arrayDatums = arrayDatums;
+    public HotNewsAdapter(ArrayList<Datum> mArrayDatums, Context mContext, RecyclerView recyclerView, FragmentManager fragmentManager, int typeTabContent, AddFragmentCallback addFragmentCallback) {
+        //===Tạo footer===
+        this.arrayDatums = new ArrayList<>();
+        Datum datumFooter = new Datum();
+        datumFooter.setFooter(true);
+        this.arrayDatums.add(datumFooter);
+        //======
+
+        this.arrayDatums.addAll(0, mArrayDatums);
         this.mContext = mContext;
-//        this.fragmentManager = fragmentManager;
         this.typeTabContent = typeTabContent;
         this.addFragmentCallback = addFragmentCallback;
 
         float yTopRecyclerView = recyclerView.getY();
         int heightStoryView = (int) (GeneralTool.getWidthScreen(mContext) * 0.9f + GeneralTool.convertDpsToPixels(mContext, 50.0f));
-//        Log.e("mm-1-width", String.valueOf(GeneralTool.convertPixelsToDps(mContext, GeneralTool.getWidthScreen(mContext))));
         this.newTopRecyclerView = yTopRecyclerView - (1.0f / 3) * heightStoryView;
 
         //handle khi có sự kiện loadmore
@@ -91,7 +95,14 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int totalItemCount = linearLayoutManager.getItemCount();
+//                int totalItemCount = linearLayoutManager.getItemCount();
+
+
+                //====list rỗng====
+                if (arrayDatums.size() == 0 || arrayDatums.size() == 1) {
+                    return;
+                }
+                //======
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
 
                 int positionFirstVisible = linearLayoutManager.findFirstVisibleItemPosition();
@@ -120,6 +131,9 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Datum datum = arrayDatums.get(position);
                     if (datum == null) {
                         continue;
+                    }
+                    if (datum.isFooter()) {
+                        return;
                     }
                     if (datum.getType() == TypeNewsConst.STORY) {
                         RecyclerView.ViewHolder viewHolderStory = recyclerView.findViewHolderForAdapterPosition(position);
@@ -174,9 +188,21 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
         if (arrayDatums.get(position) == null) {
+            //Thằng cuối cùng, kiểm tra trước xem có phải thằng Loading ko?
             return VIEW_TYPE_LOADING;
         }
-        int typeItem = arrayDatums.get(position).getType();
+
+        //Ko phải Loading, xem có phải Footer ko?
+        if (arrayDatums.get(position).isFooter()) {
+            return VIEW_TYPE_FOOTER;
+        }
+
+        Datum datum = arrayDatums.get(position);
+//        if (datum == null) {
+        Log.e("ppl-", position + "");
+        Log.e("ppl-", arrayDatums.toString());
+//        }
+        int typeItem = datum.getType();
         switch (typeItem) {
             case TypeNewsConst.ARTICLE:
                 return VIEW_TYPE_ARTICLE;
@@ -208,6 +234,9 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case VIEW_TYPE_LOADING:
                 View viewLoading = mLayoutInflater.inflate(R.layout.item_loading, viewGroup, false);
                 return new HotNewsAdapter.LoadingViewHolder(viewLoading);
+            case VIEW_TYPE_FOOTER:
+                View viewFooter = mLayoutInflater.inflate(R.layout.item_footer_recycler_view, viewGroup, false);
+                return new HotNewsAdapter.FooterViewHolder(viewFooter);
         }
         return null; //Với ERROR_VIEW
     }
@@ -257,6 +286,15 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            }
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) viewHolder;
             loadingViewHolder.setIndeterminate();
+        } else if (viewHolder instanceof FooterViewHolder) {
+            //FooterView
+        }
+    }
+
+    public class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        public FooterViewHolder(@NonNull View itemView) {
+            super(itemView);
         }
     }
 
@@ -491,14 +529,18 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void addItemLoading() {
-        arrayDatums.add(null);
-        notifyItemInserted(arrayDatums.size() - 1);
+        //Thêm vào trước Footer
+//        arrayDatums.add(null);
+//        notifyItemInserted(arrayDatums.size() - 1);
 
+        arrayDatums.add(arrayDatums.size() - 1, null);
+        notifyItemInserted(arrayDatums.size() - 2);
     }
 
     public void removeItemLoading() {
-        arrayDatums.remove(arrayDatums.size() - 1);
-        notifyItemRemoved(arrayDatums.size());
+        //Thêm vào trước Footer
+        arrayDatums.remove(arrayDatums.size() - 2);
+        notifyItemRemoved(arrayDatums.size() - 1);
     }
 
     public void updateListNews(List<Datum> listDatums) {
@@ -507,7 +549,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             this.setLoaded();
             return;
         }
-        arrayDatums.addAll(listDatums);
+        arrayDatums.addAll(arrayDatums.size() - 1, listDatums);
         notifyDataSetChanged();
         this.setLoaded();
     }
@@ -535,7 +577,14 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return;
         }
         arrayDatums.clear();
-        arrayDatums.addAll(listDatums);
+
+        //===Tạo footer===
+        Datum datumFooter = new Datum();
+        datumFooter.setFooter(true);
+        this.arrayDatums.add(datumFooter);
+        //======
+
+        arrayDatums.addAll(0, listDatums);
         notifyDataSetChanged();
         this.setLoaded();
     }

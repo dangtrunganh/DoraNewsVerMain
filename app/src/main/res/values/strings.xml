@@ -2,6 +2,7 @@
     <string name="app_name">DoraNewsVerMain</string>
     <string name="title_hot">Hot</string>
     <string name="title_latest_news">Category</string>
+    <string name="title_search">Search</string>
     <string name="title_favorite">Favorite</string>
-    <string name="title_more">More</string>
+    <string name="title_notification">Notification</string>
 </resources>

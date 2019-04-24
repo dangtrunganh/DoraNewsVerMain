@@ -48,12 +48,11 @@ public class FirebaseInstanceService extends FirebaseMessagingService {
 //        Log.d("X1X", data.toString());
         String id = data.get("event_id");
         String idLongEvent = data.get("long_event_id");
-        String urlImage = data.get("urlImage");
+        String urlImage = data.get("url_image");
 
         String title = dataNoticeTitleBody.getTitle();
         String body = dataNoticeTitleBody.getBody();
-//        Log.e("tt-title", title);
-//        Log.e("tt-body", body);
+
 
         if (id == null || idLongEvent == null || urlImage == null || title == null || body == null) {
             return;
@@ -71,6 +70,8 @@ public class FirebaseInstanceService extends FirebaseMessagingService {
 //        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
         ///====/
+//        Log.e("tt-title", title);
+//        Log.e("tt-body", body);
         Intent intent = new Intent("MyData");
         intent.putExtra(ConstServiceFirebase.PARAM_ID_EVENT, id);
         intent.putExtra(ConstServiceFirebase.PARAM_ID_LONG_EVENT, idLongEvent);

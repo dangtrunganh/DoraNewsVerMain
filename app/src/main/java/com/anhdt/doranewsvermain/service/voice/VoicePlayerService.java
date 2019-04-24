@@ -78,6 +78,10 @@ public class VoicePlayerService extends Service implements VoicePlayerManager.On
         }
     }
 
+    public int getIndexCurrentArticle() {
+        return mVoicePlayerManager.getmIndexCurrentArticle();
+    }
+
     public void setIndexCurrentArticle(int position) {
         mVoicePlayerManager.setmIndexCurrentArticle(position);
     }
@@ -98,11 +102,16 @@ public class VoicePlayerService extends Service implements VoicePlayerManager.On
         if (mVoicePlayerManager == null) {
             return;
         }
+        setIndexCurrentArticle(position);
         mVoicePlayerManager.playArticle(position);
     }
 
     public void nextArticle() {
         mVoicePlayerManager.nextArticle();
+    }
+
+    public void stopArticle() {
+        mVoicePlayerManager.stopArticle();
     }
 
     public void previousArticle() {
@@ -122,6 +131,10 @@ public class VoicePlayerService extends Service implements VoicePlayerManager.On
                 mVoicePlayerManager.getTotalDuration());
     }
 
+    public String getTotalTime() {
+        return VoiceTool.getTextTimeString(mVoicePlayerManager.getTotalDuration());
+    }
+
     public String getTextExistTime() {
         return VoiceTool.parseMilliSecondsToTimer(mVoicePlayerManager.getTotalDuration() - getCurrentTime());
     }
@@ -134,6 +147,10 @@ public class VoicePlayerService extends Service implements VoicePlayerManager.On
     //Voice dang playing ma khong paused
     public boolean isOnlyPlaying() {
         return mVoicePlayerManager.isOnlyPlaying();
+    }
+
+    public void pauseArticle() {
+        mVoicePlayerManager.pauseArticle();
     }
 
     public void seek(int progress) {

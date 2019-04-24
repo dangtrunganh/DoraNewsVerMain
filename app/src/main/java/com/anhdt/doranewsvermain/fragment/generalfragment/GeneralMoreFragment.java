@@ -6,16 +6,16 @@ import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 
-public class MoreFragment extends BaseFragment implements AddFragmentCallback {
+public class GeneralMoreFragment extends BaseFragment implements AddFragmentCallback {
 
-    public static MoreFragment newInstance() {
-        MoreFragment moreFragment = new MoreFragment();
+    public static GeneralMoreFragment newInstance() {
+        GeneralMoreFragment generalMoreFragment = new GeneralMoreFragment();
         Bundle args = new Bundle();
 //        args.putString(PARAM_CATEGORY_SLUG, categoryJsonString);
 //        args.putString(PARAM_CATEGORY_NAME, categoryName);
 //        args.putBoolean(PARAM_HOT_EVENT, isHot);
 //        genreFragment.setArguments(args);
-        return moreFragment;
+        return generalMoreFragment;
     }
 
     @Override
