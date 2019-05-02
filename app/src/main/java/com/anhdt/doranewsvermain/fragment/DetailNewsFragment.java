@@ -9,8 +9,9 @@ import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.viewpagerarticle.ArticleInViewPagerAdapter;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
-import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -19,7 +20,7 @@ import java.util.List;
 
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
 
-public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements UpdateUIFollow {
+public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements UpdateUIFollowBookmarkChild {
     private static final String ARGS_LIST_ARTICLE = "ARGS_LIST_ARTICLE";
     private static final String ARGS_POSITION_CLICKED = "ARGS_POSITION_CLICKED";
     private ArticleInViewPagerAdapter articleInViewPagerAdapter;
@@ -29,7 +30,7 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
     private ArrayList<Article> mArrayNews;
     int position = 0;
 
-    private FragmentManager fragmentManager;
+//    private FragmentManager fragmentManager;
     private AddFragmentCallback addFragmentCallback;
 
     public ArrayList<Article> getmArrayNews() {
@@ -44,10 +45,10 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
         this.addFragmentCallback = addFragmentCallback;
     }
 
-    public void setFragmentManager(FragmentManager fragmentManager) {
-        this.fragmentManager = fragmentManager;
-        //Chỉ khi fragment Manager được set thì mới set up cho view pager
-    }
+//    public void setFragmentManager(FragmentManager fragmentManager) {
+////        this.fragmentManager = fragmentManager;
+//        //Chỉ khi fragment Manager được set thì mới set up cho view pager
+//    }
 
     public static DetailNewsFragment newInstance(String jsonListArticles, int positionClicked) {
         DetailNewsFragment fragment = new DetailNewsFragment();
@@ -113,10 +114,10 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
     }
 
     private void setUpViewPager() {
-        if (fragmentManager == null) {
-            return;
-        }
-        articleInViewPagerAdapter = new ArticleInViewPagerAdapter(fragmentManager, mArrayNews, this.getControlVoice());
+//        if (fragmentManager == null) {
+//            return;
+//        }
+        articleInViewPagerAdapter = new ArticleInViewPagerAdapter(getChildFragmentManager(), mArrayNews, this.getControlVoice());
         vpgNews.setAdapter(articleInViewPagerAdapter);
 
         indicator.attachToPager(vpgNews);
@@ -142,7 +143,12 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
     }
 
     @Override
-    public void updateUIFollow(boolean isFollowed, String idStory) {
+    public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
         //Không làm gì
+    }
+
+    @Override
+    public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+        //update nếu có thằng bị bookmark tại đây
     }
 }

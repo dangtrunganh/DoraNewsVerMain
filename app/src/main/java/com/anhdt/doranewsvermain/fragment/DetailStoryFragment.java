@@ -2,8 +2,6 @@ package com.anhdt.doranewsvermain.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -22,8 +20,9 @@ import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
-import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
+import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.GeneralTool;
@@ -37,7 +36,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements View.OnClickListener, UpdateUIFollow {
+public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements View.OnClickListener, UpdateUIFollowBookmarkChild {
     private static String ARG_TYPE_TAB = "ARG_TYPE_TAB";
     private static String ARG_LIST_EVENT = "ARG_LIST_EVENT";
     private static String ARG_ID_STORY = "ARG_ID_STORY";
@@ -50,7 +49,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     private StoryItemAdapter storyItemAdapter;
     private AddFragmentCallback addFragmentCallback;
     private AlertDialog alertDialog;
-    private int typeTabHomeOrLatest;
+//    private int typeTabHomeOrLatest;
     //    private boolean isFollowed = false;
     private int stateFollow = -1;
 
@@ -65,10 +64,10 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
         this.addFragmentCallback = addFragmentCallback;
     }
 
-    public static DetailStoryFragment newInstance(int typeTab/*, String jsonListEvents*/, String idStory) {
+    public static DetailStoryFragment newInstance(/*int typeTab*//*, String jsonListEvents*//*,*/ String idStory) {
         Bundle args = new Bundle();
         DetailStoryFragment fragment = new DetailStoryFragment();
-        args.putInt(ARG_TYPE_TAB, typeTab);
+//        args.putInt(ARG_TYPE_TAB, typeTab);
 //        args.putString(ARG_LIST_EVENT, jsonListEvents);
         args.putString(ARG_ID_STORY, idStory);
         fragment.setArguments(args);
@@ -96,17 +95,17 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                 LinearLayoutManager.VERTICAL, false);
         recyclerViewEvents.setLayoutManager(linearLayoutManagerHorizontal);
         recyclerViewEvents.setHasFixedSize(true);
-        recyclerViewEvents.setNestedScrollingEnabled(false);
+//        recyclerViewEvents.setNestedScrollingEnabled(false);
 
         btnFollow = view.findViewById(R.id.btn_follow_story);
 
         //===GetData====
         Bundle bundle = getArguments();
-        typeTabHomeOrLatest = bundle.getInt(ARG_TYPE_TAB);
+//        typeTabHomeOrLatest = bundle.getInt(ARG_TYPE_TAB);
         this.idStory = bundle.getString(ARG_ID_STORY);
 
 
-        Log.e("pipi-receiver", this.idStory);
+//        Log.e("pipi-receiver", this.idStory);
 
 //        if (idStory == null) {
 //            return;
@@ -139,11 +138,6 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
 //                    typeTabHomeOrLatest, idStory, addFragmentCallback, mArrayEvents);
 //            recyclerViewEvents.setAdapter(storyItemAdapter);
 //        }
-    }
-
-    @Override
-    protected int getFragmentLayout() {
-        return R.layout.fragment_detail_story;
     }
 
     @Override
@@ -189,7 +183,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                 btnFollow.setOnClickListener(DetailStoryFragment.this);
                 //===Adapter===
                 storyItemAdapter = new StoryItemAdapter(arrayItemDetailStories, getContext(),
-                        typeTabHomeOrLatest, idStory, addFragmentCallback, mArrayEvents);
+                        /*typeTabHomeOrLatest,*/ idStory, addFragmentCallback, mArrayEvents);
                 recyclerViewEvents.setAdapter(storyItemAdapter);
 
                 stateFollow = stories.getFollow();
@@ -211,6 +205,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
         if (isFollowed) {
             //Theo dõi
             final int sdk = android.os.Build.VERSION.SDK_INT;
+            stateFollow = RootAPIUrlConst.FOLLOW_INTEGER;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                 btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
             } else {
@@ -220,6 +215,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
         } else {
             //Không theo dõi
             final int sdk = android.os.Build.VERSION.SDK_INT;
+            stateFollow = RootAPIUrlConst.UN_FOLLOW_INTEGER;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                 btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
             } else {
@@ -269,7 +265,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                     if (stateFollow == RootAPIUrlConst.UN_FOLLOW_INTEGER) {
                         //success, bỏ follow thành công
                         //Thông báo cho MainActivity thay đổi UI button
-                        addFragmentCallback.updateListEventFollow(false, idStory);
+                        addFragmentCallback.updateListEventFollowInAddFrag(false, idStory, stories);
                     }
                     dialog.dismiss();
                 }
@@ -324,7 +320,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                     if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
                         //success, follow thành công
                         //Thông báo cho MainActivity thay đổi UI button
-                        addFragmentCallback.updateListEventFollow(true, idStory);
+                        addFragmentCallback.updateListEventFollowInAddFrag(true, idStory, stories);
                     }
                     dialog.dismiss();
                 }
@@ -342,13 +338,20 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     }
 
     @Override
-    public void updateUIFollow(boolean isFollowed, String idStory) {
+    public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
         //Update lại UI
-        Log.e("uu-story-idStoryInUI", this.idStory);
-        Log.e("uu-story-idStory", idStory);
         if (this.idStory.equals(idStory)) {
-            Log.e("uu-story", "update detailStory: " + idStory);
             updateUIWhenFollow(isFollowed);
         }
+    }
+
+    @Override
+    public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+        //Không cần update bookmark
+    }
+
+    @Override
+    protected int getFragmentLayout() {
+        return R.layout.fragment_detail_story;
     }
 }

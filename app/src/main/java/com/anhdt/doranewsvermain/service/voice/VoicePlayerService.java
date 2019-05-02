@@ -52,6 +52,14 @@ public class VoicePlayerService extends Service implements VoicePlayerManager.On
         mListenerActivity.updateArticle(article);
     }
 
+    @Override
+    public void updateButtonWhenFinishing(Article article) {
+        if (mListenerActivity == null) {
+            return;
+        }
+        mListenerActivity.updateButtonWhenFinishing(article);
+    }
+
     public class ArticleBinder extends Binder {
         public VoicePlayerService getService() {
             return VoicePlayerService.this;
@@ -139,6 +147,10 @@ public class VoicePlayerService extends Service implements VoicePlayerManager.On
         return VoiceTool.parseMilliSecondsToTimer(mVoicePlayerManager.getTotalDuration() - getCurrentTime());
     }
 
+    public boolean isFinishPlaying() {
+        return mVoicePlayerManager.isFinishPlaying();
+    }
+
     //Voice đang ở trạng thái Playing hoặc paused
     public boolean isPlaying() {
         return mVoicePlayerManager.isPlaying();
@@ -164,5 +176,6 @@ public class VoicePlayerService extends Service implements VoicePlayerManager.On
          * Hàm này để khi
          */
         void updateArticle(Article article);
+        void updateButtonWhenFinishing(Article article);
     }
 }

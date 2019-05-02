@@ -27,7 +27,7 @@
         android:paddingTop="5dp"
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -104,7 +104,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint_control_voice"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorLogo"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/constraint_divider">
@@ -141,8 +141,8 @@
 
         <ImageView
             android:id="@+id/image_play_pause_control_voice"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_play_black"
             app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
             app:layout_constraintRight_toLeftOf="@id/image_next_control_voice"
@@ -150,8 +150,8 @@
 
         <ImageView
             android:id="@+id/image_next_control_voice"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_next_black"
             app:layout_constraintBottom_toBottomOf="@id/circle_image_cover_control_voice"
             app:layout_constraintRight_toLeftOf="@id/image_stop_control_music"
@@ -159,8 +159,8 @@
 
         <ImageView
             android:id="@+id/image_stop_control_music"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:padding="5dp"
             android:src="@drawable/ic_exit_control_voice"

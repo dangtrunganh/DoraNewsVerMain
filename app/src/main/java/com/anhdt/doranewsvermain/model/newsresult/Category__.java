@@ -4,7 +4,9 @@ package com.anhdt.doranewsvermain.model.newsresult;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Category__ {
+import io.realm.RealmObject;
+
+public class Category__ extends RealmObject {
 
     @SerializedName("id")
     @Expose
@@ -38,6 +40,9 @@ public class Category__ {
 
     public void setUrlImage(String urlImage) {
         this.urlImage = urlImage;
+    }
+
+    public Category__() {
     }
 
     @Override

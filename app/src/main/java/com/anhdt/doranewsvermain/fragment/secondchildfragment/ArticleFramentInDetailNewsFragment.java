@@ -1,27 +1,19 @@
-package com.anhdt.doranewsvermain.fragment;
+package com.anhdt.doranewsvermain.fragment.secondchildfragment;
 
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.activity.ReadOriginalArticleActivity;
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
-import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
-import com.anhdt.doranewsvermain.service.voice.StateLevel;
-import com.anhdt.doranewsvermain.service.voice.VoicePlayerService;
 import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.bumptech.glide.Glide;

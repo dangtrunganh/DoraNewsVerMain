@@ -32,7 +32,7 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private String idStory;
-    private int typeTabContent; // 1 or 2 - tab home hay tab latest
+//    private int typeTabContent; // 1 or 2 - tab home hay tab latest
 
     private AddFragmentCallback addFragmentCallback;
     private final int TYPE_EVENT_TOPEST_SINGLE = 8, TYPE_NORMAL = 9, TYPE_ERROR = 10, TYPE_FOOTER = 11;
@@ -42,11 +42,11 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //            TYPE_ERROR = 4;
 
     public StoryItemAdapter(ArrayList<ItemDetailStory> arrayItemDetailStories, Context mContext,
-                            int typeTabContent, String idStory, AddFragmentCallback addFragmentCallback,
+                            /*int typeTabContent,*/ String idStory, AddFragmentCallback addFragmentCallback,
                             ArrayList<Event> arrayListOriginalEvent) {
         this.arrayItemDetailStories = arrayItemDetailStories;
         this.mContext = mContext;
-        this.typeTabContent = typeTabContent;
+//        this.typeTabContent = typeTabContent;
         this.idStory = idStory;
         this.addFragmentCallback = addFragmentCallback;
         this.arrayListOriginalEvent = arrayListOriginalEvent;
@@ -219,7 +219,7 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //                } else {
                 Gson gson = new Gson();
                 String jsonListEvent = gson.toJson(arrayEventsResult);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, jsonListEvent);
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
                 detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailEventFragment);
 //                }
@@ -305,7 +305,7 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //                } else {
                 Gson gson = new Gson();
                 String jsonListEvent = gson.toJson(arrayEventsResult);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, jsonListEvent);
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
                 detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailEventFragment);
 //                }

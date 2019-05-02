@@ -41,6 +41,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
+import com.anhdt.doranewsvermain.util.ReadRealmTool;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -68,11 +69,11 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 //    private FragmentManager fragmentManager;
 
-    private int typeTabContent; // 1 or 2 - tab home hay tab latest
+//    private int typeTabContent; // 1 or 2 - tab home hay tab latest
 
     private AddFragmentCallback addFragmentCallback;
 
-    public HotNewsAdapter(ArrayList<Datum> mArrayDatums, Context mContext, RecyclerView recyclerView, FragmentManager fragmentManager, int typeTabContent, AddFragmentCallback addFragmentCallback) {
+    public HotNewsAdapter(ArrayList<Datum> mArrayDatums, Context mContext, RecyclerView recyclerView, /*FragmentManager fragmentManager, int typeTabContent,*/ AddFragmentCallback addFragmentCallback) {
         //===Tạo footer===
         this.arrayDatums = new ArrayList<>();
         Datum datumFooter = new Datum();
@@ -82,7 +83,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         this.arrayDatums.addAll(0, mArrayDatums);
         this.mContext = mContext;
-        this.typeTabContent = typeTabContent;
+//        this.typeTabContent = typeTabContent;
         this.addFragmentCallback = addFragmentCallback;
 
         float yTopRecyclerView = recyclerView.getY();
@@ -321,11 +322,12 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         public void bindData(ArrayList<Article> articleArrayList) {
-//            Log.e("xxx-", articleArrayList.toString());
-//            Log.e("xxx-size", String.valueOf(articleArrayList.size()));
+            //=====set up bookmark=====
+            //Không biết như này có được không?
+            ReadRealmTool.setListBookmark(mContext, articleArrayList);
+            //=========================
             ArticleItemAdapter articleItemAdapter = new ArticleItemAdapter(mContext,
-                    articleArrayList/*, fragmentManager*/,
-                    typeTabContent, addFragmentCallback,
+                    articleArrayList, addFragmentCallback,
                     null, ArticleItemAdapter.IN_HOME);
             recyclerArticle.setHasFixedSize(true);
             recyclerArticle.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
@@ -387,7 +389,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            String titleEvent = event.getTitle();
 
             //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là DEFAULT
-            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY);
             detailEventFragment.setAddFragmentCallback(addFragmentCallback);
             addFragmentCallback.addFrgCallback(detailEventFragment);
         }
@@ -426,7 +428,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                eventAdapterHorizontal.updateListEvents(arrayListEvent);
                 Gson gson = new Gson();
                 String jsonListEvents = gson.toJson(arrayListEvent);
-                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent/*, jsonListEvents*/, idStory);
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabContent*//*, jsonListEvents*//*,*/ idStory);
                 detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailStoryFragment);
             }
@@ -473,7 +475,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void bindData(ArrayList<Event> arrayEvents, String idStory) {
             this.arrayListEvents = arrayEvents;
             this.idStory = idStory;
-            StoryAdapter storyAdapterVP = new StoryAdapter(arrayEvents, mContext, autoScrollViewPagerStories, idStory, typeTabContent, addFragmentCallback);
+            StoryAdapter storyAdapterVP = new StoryAdapter(arrayEvents, mContext, autoScrollViewPagerStories, idStory/*, typeTabContent*/, addFragmentCallback);
             autoScrollViewPagerStories.setAdapter(storyAdapterVP);
             indicator.setViewPager(autoScrollViewPagerStories);
 
@@ -507,8 +509,8 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     return;
                 }
 //                loadDetailStory(idStory, GeneralTool.getDeviceId(mContext));
-                Log.e("pipi-", idStory);
-                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent/*, jsonListEvents*/, idStory);
+//                Log.e("pipi-", idStory);
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabContent*//*, jsonListEvents*//*,*/ idStory);
                 detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailStoryFragment);
 //                Gson gson = new Gson();

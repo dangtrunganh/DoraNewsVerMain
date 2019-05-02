@@ -8,8 +8,9 @@ import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
-import com.anhdt.doranewsvermain.fragment.LatestNewsFragment;
+import com.anhdt.doranewsvermain.fragment.firstchildfragment.LatestNewsFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 
 import java.util.ArrayList;
@@ -18,7 +19,17 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
     public static final String PARAM_LIST_CATEGORY_GENERAL_LATEST_NEWS_FRG = "PARAM_LIST_CATEGORY_GENERAL_LATEST_NEWS_FRG";
     public static final String PARAM_U_ID_GENERAL_LATEST_NEWS_FRG = "PARAM_U_ID_GENERAL_LATEST_NEWS_FRG";
     public static FragmentManager fragmentManagerLatest;
-    private ArrayList<UpdateUIFollow> observers = new ArrayList<>();
+    private ArrayList<UpdateUIFollowBookmarkChild> observers = new ArrayList<>();
+
+    private UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain;
+
+    public UpdateUIFollowBookmarkChild getUpdateUIFollowBookmarkChildFromMain() {
+        return updateUIFollowBookmarkChildFromMain;
+    }
+
+    public void setUpdateUIFollowBookmarkChildFromMain(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain) {
+        this.updateUIFollowBookmarkChildFromMain = updateUIFollowBookmarkChildFromMain;
+    }
 
     public static GeneralLatestNewsFragment newInstance() {
         Bundle args = new Bundle();
@@ -53,7 +64,6 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.main_container_frg_latest_newss, latestNewsFragment);
-//        ft.addToBackStack(latestNewsFragment.getClass().getName());
         ft.addToBackStack(null);
 
         attach(latestNewsFragment);
@@ -98,8 +108,8 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
 
     }
 
-    public void attach(UpdateUIFollow updateUIFollow) {
-        observers.add(updateUIFollow);
+    public void attach(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChild) {
+        observers.add(updateUIFollowBookmarkChild);
     }
 
     public void detach() {
@@ -110,7 +120,6 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
     @Override
     public void popAllBackStack() {
         FragmentManager fragmentManager = getChildFragmentManager();
-//        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         for (int i = 0; i < fragmentManager.getBackStackEntryCount() - 1; ++i) {
             fragmentManager.popBackStack();
             detach();
@@ -118,10 +127,8 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
     }
 
     @Override
-    public void updateListEventFollow(boolean isFollowed, String idStory) {
-        for (UpdateUIFollow observer : observers) {
-            observer.updateUIFollow(isFollowed, idStory);
-        }
+    public void updateListEventFollowInAddFrag(boolean isFollowed, String idStory, Stories stories) {
+        updateUIFollowBookmarkChildFromMain.updateUIFollow(isFollowed, idStory, stories);
     }
 
     @Override
@@ -139,5 +146,24 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
     @Override
     public void deleteCurrentListVoiceOnTopStack() {
         this.getControlVoice().deleteCurrentListVoiceOnTopStack();
+    }
+
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
+        for (UpdateUIFollowBookmarkChild observer : observers) {
+            observer.updateUIFollow(isFollowed, idStory, stories);
+        }
+    }
+
+    @Override
+    public void updateListArticleBookmarkInAddFrag(boolean isBookmarked, int idArticle, Article article) {
+        updateUIFollowBookmarkChildFromMain.updateUIBookmark(isBookmarked, idArticle, article);
+    }
+
+    @Override
+    public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+        for (UpdateUIFollowBookmarkChild observer : observers) {
+            observer.updateUIBookmark(isBookmarked, idArticle, article);
+        }
     }
 }

@@ -5,8 +5,13 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Article {
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
+public class Article extends RealmObject {
+
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -39,7 +44,17 @@ public class Article {
     private Source source;
     @SerializedName("medias")
     @Expose
-    private List<Media> medias = null;
+    private RealmList<Media> medias = null;
+
+    private boolean isBookmarked = false;
+
+    public boolean isBookmarked() {
+        return isBookmarked;
+    }
+
+    public void setBookmarked(boolean bookmarked) {
+        isBookmarked = bookmarked;
+    }
 
     public Integer getId() {
         return id;
@@ -121,12 +136,24 @@ public class Article {
         this.source = source;
     }
 
-    public List<Media> getMedias() {
+//    public List<Media> getMedias() {
+//        return medias;
+//    }
+
+//    public void setMedias(List<Media> medias) {
+//        this.medias = medias;
+//    }
+
+
+    public RealmList<Media> getMedias() {
         return medias;
     }
 
-    public void setMedias(List<Media> medias) {
+    public void setMedias(RealmList<Media> medias) {
         this.medias = medias;
+    }
+
+    public Article() {
     }
 
     @Override

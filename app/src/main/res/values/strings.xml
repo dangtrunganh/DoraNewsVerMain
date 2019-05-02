@@ -1,8 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">DoraNewsVerMain</string>
     <string name="title_hot">Hot</string>
     <string name="title_latest_news">Category</string>
     <string name="title_search">Search</string>
     <string name="title_favorite">Favorite</string>
     <string name="title_notification">Notification</string>
+    <dimen name="design_bottom_navigation_text_size" tools:override="true">12sp</dimen>
+    <dimen name="design_bottom_navigation_active_text_size" tools:override="true">12sp</dimen>
 </resources>

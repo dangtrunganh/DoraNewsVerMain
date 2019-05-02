@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.model.newsresult.Media;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.VoiceTool;
 
@@ -44,6 +45,10 @@ public class VoicePlayerManager implements MediaPlayer.OnPreparedListener, Media
     //Sau khi MainAct khởi tạo VoicePLayerManager, sẽ gọi hàm này, set tham số = this --> Hàm này đã có MainAct để gọi updateUI
     public void setmListenerService(OnListenerService mListenerService) {
         this.mListenerService = mListenerService;
+    }
+
+    public boolean isFinishPlaying() {
+        return mState == MediaPlayerState.STOPPED;
     }
 
     //Kiểm tra trạng thái hiện tại có đang playing không? (only playing)
@@ -159,6 +164,10 @@ public class VoicePlayerManager implements MediaPlayer.OnPreparedListener, Media
             mIndexCurrentArticle++;
             stopArticle();
             playArticle();
+        } else {
+            //Vị trí cuối
+            stopArticle();
+            mListenerService.updateButtonWhenFinishing(getCurrentArticle());
         }
     }
 
@@ -181,5 +190,6 @@ public class VoicePlayerManager implements MediaPlayer.OnPreparedListener, Media
     //Dung de ra lenh cho Service update
     public interface OnListenerService {
         void updateArticle(Article article);
+        void updateButtonWhenFinishing(Article article);
     }
 }

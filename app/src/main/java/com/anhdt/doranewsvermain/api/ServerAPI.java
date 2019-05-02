@@ -1,6 +1,7 @@
 package com.anhdt.doranewsvermain.api;
 
 import com.anhdt.doranewsvermain.model.categoryresult.CategoryResult;
+import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
@@ -51,4 +52,7 @@ public interface ServerAPI {
     Call<Stories> followStory(@Query("uid") String uId,
                               @Query("storyid") String storyId,
                               @Query("type") String typeFollow); //1 or 0
+
+    @GET("follow/stories")
+    Call<News> getListStoriesFollowed(@Query("uid") String uId); //Return list stories followed
 }
