@@ -2,13 +2,16 @@ package com.anhdt.doranewsvermain.adapter.recyclerview;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
@@ -18,7 +21,9 @@ import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralHomeFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralLatestNewsFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadRealmTool;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
@@ -36,7 +41,7 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
     private ArrayList<Article> mArrayArticles;
     private LayoutInflater mLayoutInflater;
     private FragmentManager fragmentManager;
-    private int typeTabContent;
+    //    private int typeTabContent;
     private AddFragmentCallback addFragmentCallback;
 
     private ArrayList<Article> mCurrentArrayArticles;
@@ -44,11 +49,11 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
     private int currentItemCount;
 
     public ArticleItemAdapter(Context mContext, ArrayList<Article> mArrayArticles/*, FragmentManager fragmentManager*/,
-                              int typeTabContent, AddFragmentCallback addFragmentCallback,
+            /*int typeTabContent,*/ AddFragmentCallback addFragmentCallback,
                               TextView textLoadMore, int typeLoadMore) {
         this.mContext = mContext;
         this.mArrayArticles = mArrayArticles;
-        this.typeTabContent = typeTabContent;
+//        this.typeTabContent = typeTabContent;
         this.addFragmentCallback = addFragmentCallback;
 
         //Nếu ngoài home thì trường này là null, ví ko có load more
@@ -57,6 +62,7 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
             //Trong màn home thì chính là nó luôn
             this.mCurrentArrayArticles = this.mArrayArticles;
         } else {
+            //Không phải trong màn Home thì phải LoadMore
             this.mCurrentArrayArticles = new ArrayList<>();
             initUpdateThresHoldArticles();
         }
@@ -93,20 +99,21 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
         private TextView mTextTitle;
         private TextView mTextTimeReadable;
         private TextView mTextSummary;
+        private ImageView mImageCoverSource;
+        private ImageView mImageMore;
 
         public ArticleItemViewHolder(@NonNull View itemView) {
             super(itemView);
             mTextTitle = itemView.findViewById(R.id.text_title_articles_item_article);
-
             mImageCoverArticle = itemView.findViewById(R.id.image_cover_item_article);
-
             mTextSummary = itemView.findViewById(R.id.text_summary_item_article);
-
             mTextSource = itemView.findViewById(R.id.text_source_item_article);
-
             mTextTimeReadable = itemView.findViewById(R.id.text_time_item_article);
+            mImageCoverSource = itemView.findViewById(R.id.image_cover_source_item_article);
+            mImageMore = itemView.findViewById(R.id.image_more_item_article);
 
             itemView.setOnClickListener(this);
+            mImageMore.setOnClickListener(this);
         }
 
         public void bindData(Article article) {
@@ -114,33 +121,94 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
             if (article == null) {
                 return;
             }
-            Glide.with(itemView.getContext()).load(article.getImage()).
-                    apply(new RequestOptions().override(400, 0).
-                            placeholder(R.drawable.image_default).error(R.drawable.image_default))
-                    .into(mImageCoverArticle);
-
             mTextSource.setText(article.getSource().getName());
             mTextTitle.setText(article.getTitle());
             mTextTimeReadable.setText(article.getReadableTime());
             mTextSummary.setText(GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM));
+            if (article.getImage() != null) {
+                if (!article.getImage().equals("")) {
+                    Glide.with(itemView.getContext()).load(article.getImage()).
+                            apply(new RequestOptions().override(400, 0).
+                                    placeholder(R.drawable.image_default).error(R.drawable.image_default))
+                            .into(mImageCoverArticle);
+                }
+            }
+            if (article.getSource() != null) {
+                if (article.getSource().getIcon() != null) {
+                    if (!article.getSource().getIcon().equals("")) {
+                        Glide.with(itemView.getContext()).load("https://" + article.getSource().getIcon()).
+                                apply(new RequestOptions().override(400, 0).
+                                        placeholder(R.drawable.image_default).error(R.drawable.image_default))
+                                .into(mImageCoverSource);
+                    }
+                }
+            }
+
         }
 
         @Override
         public void onClick(View v) {
-            //Sự kiện khi kích vào một bài báo thường
             int position = getAdapterPosition();
-            //Chuyển sang màn hình Chi tiết các bài báo
-            Gson gson = new Gson();
-            String jsonListArticles = gson.toJson(mCurrentArrayArticles);
-            DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position);
-            detailNewsFragment.setAddFragmentCallback(addFragmentCallback);
-            if (typeTabContent == ConstGeneralTypeTab.TYPE_TAB_HOME) {
-                detailNewsFragment.setFragmentManager(GeneralHomeFragment.fragmentManagerHome);
-                addFragmentCallback.addFrgCallback(detailNewsFragment);
-            } else if (typeTabContent == ConstGeneralTypeTab.TYPE_TAB_LATEST_HOME) {
-                detailNewsFragment.setFragmentManager(GeneralLatestNewsFragment.fragmentManagerLatest);
+            Article article = mCurrentArrayArticles.get(position);
+            if (v.getId() == R.id.image_more_item_article) {
+                //click more button
+                BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(mContext);
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View sheetView = inflater.inflate(R.layout.fragment_bottom_sheet_book_mark_article, null);
+                LinearLayout bookmark = sheetView.findViewById(R.id.layout_bookmark_menu_bottom);
+                LinearLayout cancel = sheetView.findViewById(R.id.layout_cancel_menu_bottom);
+                TextView textBookmark = sheetView.findViewById(R.id.text_bookmark_menu_bottom);
+                mBottomSheetDialog.setContentView(sheetView);
+                if (article.isBookmarked()) {
+                    //Đã lưu thì "bỏ lưu"
+                    textBookmark.setText("Bỏ lưu");
+                } else {
+                    //Chưa lưu thì "Lưu lại"
+                    textBookmark.setText("Lưu lại");
+                }
+                mBottomSheetDialog.show();
+                bookmark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBottomSheetDialog.dismiss();
+                        if (article.isBookmarked()) {
+                            //Bỏ lưu
+                            article.setBookmarked(false);
+                            ReadRealmTool.deleteArticleBookmark(mContext, article);
+                            addFragmentCallback.updateListArticleBookmarkInAddFrag(false, article.getId(), article);
+                            Toast.makeText(mContext, "Bỏ lưu!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            //Lưu lại
+                            article.setBookmarked(true);
+                            ReadRealmTool.addArticleToRealm(mContext, article);
+                            addFragmentCallback.updateListArticleBookmarkInAddFrag(true, article.getId(), article);
+                            Toast.makeText(mContext, "Đã lưu!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBottomSheetDialog.dismiss();
+                    }
+                });
+            } else {
+                //Sự kiện khi kích vào một bài báo thường
+                //Chuyển sang màn hình Chi tiết các bài báo
+                Gson gson = new Gson();
+                String jsonListArticles = gson.toJson(mCurrentArrayArticles);
+                DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position);
+                detailNewsFragment.setAddFragmentCallback(addFragmentCallback);
+
                 addFragmentCallback.addFrgCallback(detailNewsFragment);
             }
+//            if (typeTabContent == ConstGeneralTypeTab.TYPE_TAB_HOME) {
+//                detailNewsFragment.setFragmentManager(GeneralHomeFragment.fragmentManagerHome);
+//                addFragmentCallback.addFrgCallback(detailNewsFragment);
+//            } else if (typeTabContent == ConstGeneralTypeTab.TYPE_TAB_LATEST_HOME) {
+//                detailNewsFragment.setFragmentManager(GeneralLatestNewsFragment.fragmentManagerLatest);
+//                addFragmentCallback.addFrgCallback(detailNewsFragment);
+//            }
         }
     }
 
@@ -194,5 +262,21 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
             currentItemCount = currentItemCount + NUMBER_VISIBLE_ARTICLES;
         }
         notifyDataSetChanged();
+    }
+
+    public void addNewArticleBookmarked(Article article) {
+        mCurrentArrayArticles.add(0, article);
+        notifyDataSetChanged();
+    }
+
+    public void removeArticleBookmarked(int idArticle) {
+        for (int i = 0; i < mCurrentArrayArticles.size(); i++) {
+            Article article = mCurrentArrayArticles.get(i);
+            if (article.getId() == idArticle) {
+                mCurrentArrayArticles.remove(i);
+                notifyItemRemoved(i);
+                break;
+            }
+        }
     }
 }

@@ -9,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollow;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements UpdateUIFollowBookmarkChild {
     //Đây là những thằng cha chính, hoặc những thằng con nhỏ nhất bên trong - GeneralFragment
     private ControlVoice controlVoice;
 

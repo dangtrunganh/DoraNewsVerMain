@@ -1,7 +1,6 @@
 package com.anhdt.doranewsvermain.fragment.generalfragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -11,8 +10,9 @@ import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
-import com.anhdt.doranewsvermain.fragment.HomeFragment;
+import com.anhdt.doranewsvermain.fragment.firstchildfragment.HomeFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.model.newsresult.Stories;
 
 import java.util.ArrayList;
 
@@ -24,8 +24,19 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
     public static final String DEFAULT_ID_ARG = "";
 
     public static FragmentManager fragmentManagerHome;
-    private ArrayList<UpdateUIFollow> observers = new java.util.ArrayList<>();
-//    private A
+    private ArrayList<UpdateUIFollowBookmarkChild> observers = new java.util.ArrayList<>();
+
+    private UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain;
+
+    public UpdateUIFollowBookmarkChild getUpdateUIFollowBookmarkChildFromMain() {
+        return updateUIFollowBookmarkChildFromMain;
+    }
+
+    public void setUpdateUIFollowBookmarkChildFromMain(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain) {
+        this.updateUIFollowBookmarkChildFromMain = updateUIFollowBookmarkChildFromMain;
+    }
+
+    //    private A
     public static GeneralHomeFragment newInstance() {
         Bundle args = new Bundle();
         GeneralHomeFragment fragment = new GeneralHomeFragment();
@@ -67,7 +78,7 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
             if (!idEvent.equals(DEFAULT_ID_ARG) && !idStory.equals(DEFAULT_ID_ARG)) {
                 FragmentTransaction ftDetailEvent = fragmentManager.beginTransaction();
                 ftDetailEvent.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(ConstGeneralTypeTab.TYPE_TAB_HOME, idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME,*/ idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
                 detailEventFragment.setAddFragmentCallback(this);
                 ftDetailEvent.add(R.id.main_container_frg_home, detailEventFragment);
                 ftDetailEvent.addToBackStack(null);
@@ -95,9 +106,6 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
         //========
         if (fragment instanceof DetailNewsFragment) {
             //Đầu tiên kiểm tra xem Fragment này có đang trùng với đỉnh stack ko?
-//            ArrayList<Article> newArticles = ((DetailNewsFragment) fragment).getmArrayNews(); //List mới
-//            String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
-//            DetailNewsFragment fragmentNeedUI = (DetailNewsFragment) fragmentManager.findFragmentByTag(fragmentTag);
             if (this.getControlVoice() != null) {
                 fragment.setControlVoice(this.getControlVoice());
             }
@@ -106,9 +114,7 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
         transaction.add(R.id.main_container_frg_home, fragment);
-        String tag = fragment.getClass().getName();
-        transaction.addToBackStack(tag);
-
+        transaction.addToBackStack(null);
         attach(fragment);
         transaction.commit();
     }
@@ -120,8 +126,8 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
         detach();
     }
 
-    public void attach(UpdateUIFollow updateUIFollow) {
-        observers.add(updateUIFollow);
+    public void attach(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChild) {
+        observers.add(updateUIFollowBookmarkChild);
     }
 
     public void detach() {
@@ -140,9 +146,31 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
     }
 
     @Override
-    public void updateListEventFollow(boolean isFollowed, String idStory) {
-        for (UpdateUIFollow observer : observers) {
-            observer.updateUIFollow(isFollowed, idStory);
+    public void updateListEventFollowInAddFrag(boolean isFollowed, String idStory, Stories stories) {
+        //Gọi về Main, bảo Main update
+        updateUIFollowBookmarkChildFromMain.updateUIFollow(isFollowed, idStory, stories);
+        //Cái này sẽ override, gọi lại từ Home sau
+//        for (UpdateUIFollowBookmarkChild observer : observers) {
+//            observer.updateUIFollow(isFollowed, idStory);
+//        }
+    }
+
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
+        for (UpdateUIFollowBookmarkChild observer : observers) {
+            observer.updateUIFollow(isFollowed, idStory, stories);
+        }
+    }
+
+    @Override
+    public void updateListArticleBookmarkInAddFrag(boolean isBookmarked, int idArticle, Article article) {
+        updateUIFollowBookmarkChildFromMain.updateUIBookmark(isBookmarked, idArticle, article);
+    }
+
+    @Override
+    public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+        for (UpdateUIFollowBookmarkChild observer : observers) {
+            observer.updateUIBookmark(isBookmarked, idArticle, article);
         }
     }
 }

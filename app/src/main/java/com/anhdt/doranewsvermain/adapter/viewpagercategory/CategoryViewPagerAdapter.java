@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.anhdt.doranewsvermain.fragment.NewsInCategoryFragment;
+import com.anhdt.doranewsvermain.fragment.secondchildfragment.NewsInCategoryFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 
 import java.util.ArrayList;

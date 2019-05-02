@@ -4,14 +4,20 @@ package com.anhdt.doranewsvermain.model.newsresult;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Source {
+import io.realm.RealmObject;
+
+public class Source extends RealmObject {
+    @SerializedName("id")
+    @Expose
+    private String id;
 
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("url")
+
+    @SerializedName("icon")
     @Expose
-    private String url;
+    private String icon;
 
     public String getName() {
         return name;
@@ -21,19 +27,31 @@ public class Source {
         this.name = name;
     }
 
-    public String getUrl() {
-        return url;
+    public String getId() {
+        return id;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public Source() {
     }
 
     @Override
     public String toString() {
         return "Source{" +
-                "name='" + name + '\'' +
-                ", url='" + url + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", icon='" + icon + '\'' +
                 '}';
     }
 }

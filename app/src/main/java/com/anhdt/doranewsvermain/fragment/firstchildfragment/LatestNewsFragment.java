@@ -1,4 +1,4 @@
-package com.anhdt.doranewsvermain.fragment;
+package com.anhdt.doranewsvermain.fragment.firstchildfragment;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -9,9 +9,12 @@ import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.viewpagercategory.CategoryViewPagerAdapter;
+import com.anhdt.doranewsvermain.fragment.secondchildfragment.NewsInCategoryFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
+import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -43,6 +46,7 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI {
     }
 
     public LatestNewsFragment() {
+
     }
 
     public static LatestNewsFragment newInstance(String uId) {
@@ -129,7 +133,12 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI {
     }
 
     @Override
-    public void updateUIFollow(boolean isFollowed, String idStory) {
+    public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
         //Không làm gì
+    }
+
+    @Override
+    public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+
     }
 }

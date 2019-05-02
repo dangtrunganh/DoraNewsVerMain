@@ -41,17 +41,17 @@ public class StoryAdapter extends PagerAdapter {
     private boolean isTextAnimating; //true nếu animation đang chạy, false nếu animation tắt rồi
 
     private String idStory;
-    private int typeTabContent;
+//    private int typeTabContent;
     private AddFragmentCallback addFragmentCallback;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public StoryAdapter(ArrayList<Event> arrayEvents, Context context, AutoScrollViewPager viewPager, String idStory, int typeTabContent, AddFragmentCallback addFragmentCallback) {
+    public StoryAdapter(ArrayList<Event> arrayEvents, Context context, AutoScrollViewPager viewPager, String idStory, /*int typeTabContent,*/ AddFragmentCallback addFragmentCallback) {
         this.arrayEvents = arrayEvents;
         this.mContext = context;
         this.inflater = LayoutInflater.from(context);
         this.viewPager = viewPager;
         this.idStory = idStory;
-        this.typeTabContent = typeTabContent;
+//        this.typeTabContent = typeTabContent;
         this.addFragmentCallback = addFragmentCallback;
 
 //        ViewPager view = new ViewPager(mContext);
@@ -96,7 +96,9 @@ public class StoryAdapter extends PagerAdapter {
 
 //        CustomView customView = new CustomView(mContext, itemView);
         if (event.getImage() != null) {
-            Picasso.get().load(event.getImage()).into(newsBackgroundLayout);
+            if (!event.getImage().equals("")) {
+                Picasso.get().load(event.getImage()).into(newsBackgroundLayout);
+            }
         }
         tvCategory.setText(event.getCategory().getName());
         tvNumberArticles.setText(String.valueOf(event.getNumArticles()) + " bài báo");
@@ -147,7 +149,7 @@ public class StoryAdapter extends PagerAdapter {
             Log.e("uu-id-out-story", idStory);
             //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là idStory
             String jsonListEvent = new Gson().toJson(arrayEvents);
-            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent/*, titleEvent*/, idStory, jsonListEvent);
+            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
             detailEventFragment.setAddFragmentCallback(addFragmentCallback);
             addFragmentCallback.addFrgCallback(detailEventFragment);
         });

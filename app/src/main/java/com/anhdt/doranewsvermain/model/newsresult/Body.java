@@ -4,7 +4,9 @@ package com.anhdt.doranewsvermain.model.newsresult;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Body {
+import io.realm.RealmObject;
+
+public class Body extends RealmObject {
 
     @SerializedName("content")
     @Expose
@@ -49,6 +51,9 @@ public class Body {
 
     public void setWidth(Integer width) {
         this.width = width;
+    }
+
+    public Body() {
     }
 
     @Override

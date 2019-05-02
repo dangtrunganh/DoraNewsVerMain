@@ -27,17 +27,17 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
     private ArrayList<Event> arrayListEvents;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
-    private int typeTabContent; //Cần biến này để biết được Fragment General nào sẽ xử lý chính
+//    private int typeTabContent; //Cần biến này để biết được Fragment General nào sẽ xử lý chính
     private String idStory;
     private AddFragmentCallback addFragmentCallback;
 
     private String idCurrentEvent;
 
-    public EventAdapterHorizontal(ArrayList<Event> arrayListEvents, Context mContext, int typeTabContent,
+    public EventAdapterHorizontal(ArrayList<Event> arrayListEvents, Context mContext/*, int typeTabContent*/,
                                   String idStory, AddFragmentCallback addFragmentCallback, String idCurrentEvent) {
         this.arrayListEvents = arrayListEvents;
         this.mContext = mContext;
-        this.typeTabContent = typeTabContent;
+//        this.typeTabContent = typeTabContent;
         this.idStory = idStory;
         this.addFragmentCallback = addFragmentCallback;
         this.idCurrentEvent = idCurrentEvent;
@@ -125,7 +125,7 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
                 String idEvent = event.getId();
                 Gson gson = new Gson();
                 String jsonListEvents = gson.toJson(arrayListEvents);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(typeTabContent, idEvent, idStory, jsonListEvents);
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent, idStory, jsonListEvents);
 
                 //Cần set lại addFragmentCallback, vì từ DetailEventFragment truyền sang cho EventAdapterHorizontal
                 //Nhưng detailEventFragment là cái hoàn toàn mới, cần callBack để back lại
