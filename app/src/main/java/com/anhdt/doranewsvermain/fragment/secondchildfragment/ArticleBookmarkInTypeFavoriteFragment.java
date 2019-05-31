@@ -9,18 +9,17 @@ import android.view.View;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.recyclerview.ArticleItemAdapter;
-import com.anhdt.doranewsvermain.constant.TypeNewsConst;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
-import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
-import com.anhdt.doranewsvermain.util.ReadRealmTool;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
 
 import java.util.ArrayList;
 
-public class ArticleBookmarkInTypeFavoriteFragment extends BaseNormalFragment  implements UpdateUIFollowBookmarkChild {
+public class ArticleBookmarkInTypeFavoriteFragment extends BaseFragmentNeedUpdateUI {
     private static final String CONNECTED = "CONNECTED";
     private static final String DISCONNECTED = "DISCONNECTED";
 
@@ -73,7 +72,7 @@ public class ArticleBookmarkInTypeFavoriteFragment extends BaseNormalFragment  i
 
         //===Load data====
         articles = new ArrayList<>();
-        articles = ReadRealmTool.getListArticleInLocal(mContext);
+        articles = ReadRealmToolForBookmarkArticle.getListArticleInLocal(mContext);
         articleItemAdapter = new ArticleItemAdapter(mContext,
                 articles, addFragmentCallback,
                 null, ArticleItemAdapter.IN_HOME);
@@ -100,12 +99,14 @@ public class ArticleBookmarkInTypeFavoriteFragment extends BaseNormalFragment  i
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
         //gọi hàm update
         //true - theo dõi
-        if (isBookmarked) {
-            //Theo dõi - thêm một story mới vào list theo dõi
-            articleItemAdapter.addNewArticleBookmarked(article);
-        } else {
-            //Hủy theo dõi, bỏ ra khỏi list
-            articleItemAdapter.removeArticleBookmarked(idArticle);
+        if (articleItemAdapter != null) {
+            if (isBookmarked) {
+                //Theo dõi - thêm một story mới vào list theo dõi
+                articleItemAdapter.addNewArticleBookmarked(article);
+            } else {
+                //Hủy theo dõi, bỏ ra khỏi list
+                articleItemAdapter.removeArticleBookmarked(idArticle);
+            }
         }
     }
 }

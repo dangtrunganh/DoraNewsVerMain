@@ -14,16 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
-import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
-import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralHomeFragment;
-import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralLatestNewsFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
-import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.GeneralTool;
-import com.anhdt.doranewsvermain.util.ReadRealmTool;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
@@ -174,13 +170,13 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
                         if (article.isBookmarked()) {
                             //Bỏ lưu
                             article.setBookmarked(false);
-                            ReadRealmTool.deleteArticleBookmark(mContext, article);
+                            ReadRealmToolForBookmarkArticle.deleteArticleBookmark(mContext, article);
                             addFragmentCallback.updateListArticleBookmarkInAddFrag(false, article.getId(), article);
                             Toast.makeText(mContext, "Bỏ lưu!", Toast.LENGTH_SHORT).show();
                         } else {
                             //Lưu lại
                             article.setBookmarked(true);
-                            ReadRealmTool.addArticleToRealm(mContext, article);
+                            ReadRealmToolForBookmarkArticle.addArticleToRealm(mContext, article);
                             addFragmentCallback.updateListArticleBookmarkInAddFrag(true, article.getId(), article);
                             Toast.makeText(mContext, "Đã lưu!", Toast.LENGTH_SHORT).show();
                         }

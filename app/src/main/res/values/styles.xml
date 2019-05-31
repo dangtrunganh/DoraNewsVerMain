@@ -25,4 +25,11 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="SearchTheme" parent="Widget.AppCompat.Light.SearchView">
+        <item name="searchIcon">@drawable/ic_search_black_24dp</item>
+        <item name="searchHintIcon">@drawable/ic_search_black_24dp</item>
+        <item name="closeIcon">@drawable/ic_exit_control_voice_black</item>
+        <item name="queryBackground">@drawable/solid</item>
+    </style>
 </resources>

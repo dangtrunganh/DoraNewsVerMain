@@ -19,7 +19,6 @@ import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.Control
 import java.util.ArrayList;
 
 public class GeneralFavoriteFragment extends BaseFragment implements AddFragmentCallback, ControlVoice {
-    public static FragmentManager fragmentManagerFavorite;
 
     //List observers call update UI
     private ArrayList<UpdateUIFollowBookmarkChild> observers = new ArrayList<>();
@@ -32,11 +31,6 @@ public class GeneralFavoriteFragment extends BaseFragment implements AddFragment
 
     public static GeneralFavoriteFragment newInstance() {
         GeneralFavoriteFragment generalFavoriteFragment = new GeneralFavoriteFragment();
-//        Bundle args = new Bundle();
-//        args.putString(PARAM_CATEGORY_SLUG, categoryJsonString);
-//        args.putString(PARAM_CATEGORY_NAME, categoryName);
-//        args.putBoolean(PARAM_HOT_EVENT, isHot);
-//        genreFragment.setArguments(args);
         return generalFavoriteFragment;
     }
 
@@ -46,28 +40,17 @@ public class GeneralFavoriteFragment extends BaseFragment implements AddFragment
     }
 
     private void addFrg() {
-        //Lấy list categories từ GeneralLatestNewsFragment tổng ra
-        fragmentManagerFavorite = getChildFragmentManager();
-//        Bundle bundle = getArguments();
+        FragmentManager fragmentManagerFavorite = getChildFragmentManager();
+
         FavoriteFragment favoriteFragment = FavoriteFragment.newInstance();
-//        Bundle args = new Bundle();
-//        args.putString(LatestNewsFragment.PARAM_LIST_CATEGORY_LATEST_NEWS_FRG, jsonCategories);
-//        articleBookmarkInTypeFavoriteFragment.setArguments(args);
         favoriteFragment.setAddFragmentCallback(this);
 
-
-//        FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction ft = fragmentManagerFavorite.beginTransaction();
         ft.replace(R.id.main_container_general_frg_favorite, favoriteFragment);
         ft.addToBackStack(null);
 
         attach(favoriteFragment);
         ft.commit();
-    }
-
-    @Override
-    protected int getFragmentLayout() {
-        return R.layout.fragment_general_favorite;
     }
 
     @Override
@@ -143,7 +126,6 @@ public class GeneralFavoriteFragment extends BaseFragment implements AddFragment
 
     @Override
     public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
-        Log.e("0099-", "follow");
         for (UpdateUIFollowBookmarkChild observer : observers) {
             observer.updateUIFollow(isFollowed, idStory, stories);
         }
@@ -159,5 +141,10 @@ public class GeneralFavoriteFragment extends BaseFragment implements AddFragment
         for (UpdateUIFollowBookmarkChild observer : observers) {
             observer.updateUIBookmark(isBookmarked, idArticle, article);
         }
+    }
+
+    @Override
+    protected int getFragmentLayout() {
+        return R.layout.fragment_general_favorite;
     }
 }

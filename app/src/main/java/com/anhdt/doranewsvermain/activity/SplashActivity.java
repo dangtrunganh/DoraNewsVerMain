@@ -150,28 +150,19 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 //        animationLogo.setAnimationListener(this);
     }
 
-    private String getDeviceId() {
-        @SuppressLint("HardwareIds") String android_id = Settings.Secure.getString(getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-//        Log.e("k-android_id", android_id);
-        return android_id;
-    }
-
     private void setUpUserId() {
         //Đọc userId trong Local, nếu không có tức là chưa đăng nhập lần nào --> Đăng ký mới
         uId = ReadCacheTool.getUId(SplashActivity.this);
-//        String jsonCategory = ReadCacheTool.getListCategoryInCache(SplashActivity.this);
-        if (uId.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_UID_DEFAULT) /*&&
-                jsonCategory.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_LIST_CATEGORY_DEFAULT)*/) {
-            //Tức là đang rỗng, chưa có uId trong SharedPreference
-            getTokenFirebaseAndSendToServer(); //Lấy token từ firebase, trong đó gọi hàm sendInfo lên Server
-        }
+        //uId có thể là rỗng ("")
+//        if (uId.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_UID_DEFAULT)) {
+        //Tức là đang rỗng, chưa có uId trong SharedPreference
+        getTokenFirebaseAndSendToServer(); //Lấy token từ firebase, trong đó gọi hàm sendInfo lên Server
+//        }
     }
 
     private void getTokenFirebaseAndSendToServer() {
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(SplashActivity.this, instanceIdResult -> {
             String mToken = instanceIdResult.getToken();
-//            Log.e("k-newToken", mToken);
             sendInfoToServer(mToken);
         });
     }
@@ -200,16 +191,19 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
             call.enqueue(new Callback<UserResult>() {
                 @Override
                 public void onResponse(Call<UserResult> call, Response<UserResult> response) {
-//                    ResponseBody responseBody = response.body();
                     UserResult userResult = response.body();
+                    if (userResult == null) {
+                        Toast.makeText(SplashActivity.this, "Error when login to server - null!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     uId = userResult.getUId();
                     if (uId == null) {
-//                        Log.e("su-login", "fail: uId null");
+                        Toast.makeText(SplashActivity.this, "Error when login to server!", Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.e("su-login", "mToken: " + mToken);
-                        Log.e("su-login", "deviceId: " + deviceId);
-                        Log.e("su-login", "uuid: " + userResult.getUId());
                         // store to local cache
+                        Log.e("mnx-UId:", uId);
+                        Log.e("mnx-mToken:", mToken);
+                        Log.e("mnx-deviceId:", deviceId);
                         ReadCacheTool.storeUIdMTokenDeviceId(SplashActivity.this, userResult.getUId(), mToken, deviceId);
                     }
                 }
@@ -229,33 +223,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 
     @Override
     public void onAnimationEnd(Animation animation) {
-//        textAppName.setVisibility(View.VISIBLE);
-//        spinKitView.setVisibility(View.VISIBLE);
 
-//        Animation animationAppName = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade_app_name);
-//        animationAppName.setFillAfter(true);
-//        textAppName.setAnimation(animationAppName);
-//        animationAppName.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                //Đọc data ra
-//                setUpUserId(); //- Chỉ thực hiện khi đọc list category chưa có, vì nếu không, mỗi lần splash chạy là lại phải đọc uId lên?
-//                //Hay là đọc uId ở đây để MainAct đỡ phải gọi?
-//
-//                setUpDataCategory();
-//                //Sau đó navigate sang màn hình tiếp theo, đã navigate trong setUpDataCategory() rồi
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
     }
 
     @Override
@@ -299,9 +267,12 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
             intentResult.putExtra(ConstParamTransfer.TRANSFER_LIST_CATEGORY_FR_SPLASH_TO_MAIN, json);
 
             //Mặc định setUser chạy trước, do đó, ta sẽ truyền hết uID đã có sang các màn hình khác nhau
-            if (!uId.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_UID_DEFAULT)) {
-                intentResult.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN, uId);
+//            if (!uId.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_UID_DEFAULT)) {
+            if (uId == null) {
+                uId = ReadCacheTool.getUId(SplashActivity.this);
             }
+            intentResult.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN, uId);
+//            }
             startActivity(intentResult);
             finish();
         }

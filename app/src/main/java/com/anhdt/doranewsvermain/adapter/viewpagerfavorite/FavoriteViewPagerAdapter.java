@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
 import com.anhdt.doranewsvermain.fragment.firstchildfragment.FavoriteFragment;
 import com.anhdt.doranewsvermain.fragment.secondchildfragment.ArticleBookmarkInTypeFavoriteFragment;
@@ -29,7 +30,7 @@ public class FavoriteViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public BaseNormalFragment getItem(int position) {
+    public BaseFragmentNeedUpdateUI getItem(int position) {
         switch (position) {
             case 0:
                 return storyFollowedInTypeFavoriteFragment;

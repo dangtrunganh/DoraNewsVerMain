@@ -19,13 +19,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.broadcastreceiver.NetworkChangeReceiver;
-import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.constant.ConstServiceFirebase;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
@@ -40,8 +41,11 @@ import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralSearchFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
+import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 import com.anhdt.doranewsvermain.service.voice.VoicePlayerService;
 import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
+import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForNotification;
 import com.anhdt.doranewsvermain.util.VoiceTool;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -81,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private final GeneralHomeFragment generalHomeFragment = GeneralHomeFragment.newInstance();
     private final GeneralLatestNewsFragment generalLatestNewsFragment = GeneralLatestNewsFragment.newInstance();
-//    private final GeneralSearchFragment generalSearchFragment = GeneralSearchFragment.newInstance();
+    private final GeneralSearchFragment generalSearchFragment = GeneralSearchFragment.newInstance();
     private final GeneralNotificationFragment generalNotificationFragment = GeneralNotificationFragment.newInstance();
     private final GeneralFavoriteFragment generalFavoriteFragment = GeneralFavoriteFragment.newInstance();
 
@@ -97,7 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String NAME_HOME_FRAGMENT = "HOME_FRAGMENT";
     private static final String NAME_LATEST_NEWS_FRAGMENT = "LATEST_NEWS_FRAGMENT";
     private static final String NAME_FAVORITE_FRAGMENT = "FAVORITE_FRAGMENT";
-    private static final String NAME_MORE_FRAGMENT = "MORE_FRAGMENT";
+    private static final String NAME_NOTIFICATION_FRAGMENT = "NOTIFICATION_FRAGMENT";
+    private static final String NAME_SEARCH_FRAGMENT = "SEARCH_FRAGMENT";
     private boolean doubleBackToExitPressedOnce = false;
     private NetworkChangeReceiver receiver;
 
@@ -131,16 +136,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void loadDataToNotice() {
-        constraintLayoutViewNotice.setVisibility(View.VISIBLE);
-        textTitleHot.setText(titleHot);
-        textContentViewNotice.setText(contentNotice);
-        Glide.with(this).load(this.urlImageFromBroadcast).
-                apply(new RequestOptions().override(400, 0).
-                        placeholder(R.drawable.image_default).error(R.drawable.image_default))
-                .into(imageViewNotice);
-        Handler handler = new Handler();
-        Runnable delayrunnable = () -> constraintLayoutViewNotice.setVisibility(GONE);
-        handler.postDelayed(delayrunnable, 4000);
+        //Lưu xuống db
+        NotificationResult notificationResult = new NotificationResult(titleHot, contentNotice, urlImageFromBroadcast,
+                idEventFromBroadcast, idStoryFromBroadcast);
+
+        boolean x = ReadRealmToolForNotification.addNotificationToRealm(MainActivity.this, notificationResult);
+        if (x) {
+            //Gọi update bên Notification Fragment
+            generalNotificationFragment.addNotification(notificationResult);
+        }
+
+        if (activeFragment != generalNotificationFragment) {
+            constraintLayoutViewNotice.setVisibility(View.VISIBLE);
+            textTitleHot.setText(titleHot);
+            textContentViewNotice.setText(contentNotice);
+            Glide.with(this).load(this.urlImageFromBroadcast).
+                    apply(new RequestOptions().override(400, 0).
+                            placeholder(R.drawable.image_default).error(R.drawable.image_default))
+                    .into(imageViewNotice);
+            Handler handler = new Handler();
+            Runnable delayrunnable = () -> constraintLayoutViewNotice.setVisibility(GONE);
+            handler.postDelayed(delayrunnable, 4000);
+        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -165,14 +182,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 activeAddFragmentCallback = generalLatestNewsFragment;
                 return true;
             case R.id.navigation_search:
-                //=====
+                if (activeFragment == generalSearchFragment) {
+                    generalSearchFragment.popAllBackStack();
+                    return true;
+                }
+                fm.beginTransaction().hide(activeFragment).show(generalSearchFragment).commit();
+                activeFragment = generalSearchFragment;
+                activeAddFragmentCallback = generalSearchFragment;
                 return true;
             case R.id.navigation_notification:
+                if (activeFragment == generalNotificationFragment) {
+                    generalNotificationFragment.popAllBackStack();
+                    return true;
+                }
                 fm.beginTransaction().hide(activeFragment).show(generalNotificationFragment).commit();
                 activeFragment = generalNotificationFragment;
                 activeAddFragmentCallback = generalNotificationFragment;
                 return true;
             case R.id.navigation_favorite:
+                if (activeFragment == generalFavoriteFragment) {
+                    generalFavoriteFragment.popAllBackStack();
+                    return true;
+                }
                 fm.beginTransaction().hide(activeFragment).show(generalFavoriteFragment).commit();
                 activeFragment = generalFavoriteFragment;
                 activeAddFragmentCallback = generalFavoriteFragment;
@@ -276,10 +307,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         super.onDestroy();
     }
+    public void hideSoftKeyboard() {
+        if(getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
 
     private void initViews() {
-        navigation = findViewById(R.id.navigation);
+//        hideSoftKeyboard();
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        navigation = findViewById(R.id.navigation);
 
         textConnectionState = findViewById(R.id.text_connection_state);
         textTitleHot = findViewById(R.id.text_title_hot_view_notice);
@@ -342,14 +381,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         args.putString(GeneralLatestNewsFragment.PARAM_U_ID_GENERAL_LATEST_NEWS_FRG, uId);
         generalLatestNewsFragment.setArguments(args);
 
+        //attach
         generalLatestNewsFragment.setUpdateUIFollowBookmarkChildFromMain(this);
         attach(generalLatestNewsFragment);
 
         //NavigationBottomBar
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        // attaching bottom sheet behaviour - hide / show on scroll
-//        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) navigation.getLayoutParams();
-//        layoutParams.setBehavior(new BottomNavigationBehavior());
         //=======
 
 
@@ -357,13 +394,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         generalLatestNewsFragment.setControlVoice(this);
         generalFavoriteFragment.setControlVoice(this);
         generalNotificationFragment.setControlVoice(this);
+        generalSearchFragment.setControlVoice(this);
 
         //attach vào list observers, ra lệnh update khi cần
         generalFavoriteFragment.setUpdateUIFollowBookmarkChildFromMain(this);
         attach(generalFavoriteFragment);
-//        attach(generalNotificationFragment);
 
-        fm.beginTransaction().add(R.id.container, generalNotificationFragment, NAME_MORE_FRAGMENT).hide(generalNotificationFragment).commit();
+        generalNotificationFragment.setUpdateUIFollowBookmarkChildFromMain(this);
+        attach(generalNotificationFragment);
+
+        generalSearchFragment.setUpdateUIFollowBookmarkChildFromMain(this);
+        attach(generalSearchFragment);
+
+        fm.beginTransaction().add(R.id.container, generalSearchFragment, NAME_SEARCH_FRAGMENT).hide(generalSearchFragment).commit();
+        fm.beginTransaction().add(R.id.container, generalNotificationFragment, NAME_NOTIFICATION_FRAGMENT).hide(generalNotificationFragment).commit();
         fm.beginTransaction().add(R.id.container, generalFavoriteFragment, NAME_FAVORITE_FRAGMENT).hide(generalFavoriteFragment).commit();
         fm.beginTransaction().add(R.id.container, generalLatestNewsFragment, NAME_LATEST_NEWS_FRAGMENT).hide(generalLatestNewsFragment).commit();
         fm.beginTransaction().add(R.id.container, generalHomeFragment, NAME_HOME_FRAGMENT).commit();
@@ -391,19 +435,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Bật lên chi tiết màn hình đó
 //                noticeIsClosed = true;
                 constraintLayoutViewNotice.setVisibility(View.GONE);
-                if (activeFragment == generalHomeFragment) {
-                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME, */idEventFromBroadcast, idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY);
-                    detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
-                    activeAddFragmentCallback.addFrgCallback(detailEventFragment);
-                } else if (activeFragment == generalLatestNewsFragment) {
-                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_LATEST_HOME,*/ idEventFromBroadcast, idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY);
-                    detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
-                    activeAddFragmentCallback.addFrgCallback(detailEventFragment);
-                } else if (activeFragment == generalFavoriteFragment) {
-                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_LATEST_HOME,*/ idEventFromBroadcast, idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY);
-                    detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
-                    activeAddFragmentCallback.addFrgCallback(detailEventFragment);
-                }
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME, */idEventFromBroadcast, idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
+                activeAddFragmentCallback.addFrgCallback(detailEventFragment);
+//                if (activeFragment == generalHomeFragment) {
+//                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME, */idEventFromBroadcast, idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+//                    detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
+//                    activeAddFragmentCallback.addFrgCallback(detailEventFragment);
+//                } else if (activeFragment == generalLatestNewsFragment) {
+//                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_LATEST_HOME,*/ idEventFromBroadcast, idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+//                    detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
+//                    activeAddFragmentCallback.addFrgCallback(detailEventFragment);
+//                } else if (activeFragment == generalFavoriteFragment) {
+//                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_LATEST_HOME,*/ idEventFromBroadcast, idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+//                    detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
+//                    activeAddFragmentCallback.addFrgCallback(detailEventFragment);
+//                }
                 break;
             case R.id.image_close_view_notice:
                 constraintLayoutViewNotice.setVisibility(View.GONE);

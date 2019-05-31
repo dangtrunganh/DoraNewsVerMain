@@ -1,13 +1,16 @@
 package com.anhdt.doranewsvermain.fragment.firstchildfragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
+import com.anhdt.doranewsvermain.activity.SettingsActivity;
 import com.anhdt.doranewsvermain.adapter.viewpagercategory.CategoryViewPagerAdapter;
 import com.anhdt.doranewsvermain.fragment.secondchildfragment.NewsInCategoryFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
@@ -20,14 +23,16 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class LatestNewsFragment extends BaseFragmentNeedUpdateUI {
+public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View.OnClickListener {
     public static final String PARAM_LIST_CATEGORY_LATEST_NEWS_FRG = "PARAM_LIST_CATEGORY_LATEST_NEWS_FRG";
     private static final String ARGS_U_ID_LATEST_NEWS_FRG = "ARGS_U_ID_LATEST_NEWS_FRG";
 
     private ArrayList<Category> arrayCategories;
     private ViewPager viewPagerCategories;
     private TabLayout tabLayoutCategories;
+    private ImageView imageSettings;
     private Toolbar toolbar;
 
     private CategoryViewPagerAdapter categoryViewPagerAdapter;
@@ -63,6 +68,8 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI {
         if (view == null) {
             return;
         }
+        imageSettings = view.findViewById(R.id.circle_button_person_latest_frg);
+        imageSettings.setOnClickListener(this);
         viewPagerCategories = view.findViewById(R.id.view_pager_category);
         viewPagerCategories.setOffscreenPageLimit(1);
         tabLayoutCategories = view.findViewById(R.id.tab_layout_category);
@@ -140,5 +147,18 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI {
     @Override
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.circle_button_person_latest_frg:
+                //Mở màn settings
+                startActivity(new Intent(getContext(), SettingsActivity.class));
+                Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+                break;
+            default:
+                break;
+        }
     }
 }

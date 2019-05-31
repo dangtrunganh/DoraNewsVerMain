@@ -72,9 +72,11 @@ public class VoicePlayerManager implements MediaPlayer.OnPreparedListener, Media
         String content = article.getTitle() + ". " + GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM);
         int length = content.length();
         if (length >= 999) {
-            content = content.substring(0, 500);
+            content = content.substring(0, 800);
         }
-        return "https://tts.vbeecore.com/api/tts?app_id=5cbdc6a45f942864b59ce724&key=49e53f296478fbc5fcc5438d135757de&voice=sg_female_xuanhong_vdts_48k-hsmm&rate=1&time=1555941100680&user_id=47734&service_type=1&input_text="
+//        return "https://tts.vbeecore.com/api/tts?app_id=5cbdc6a45f942864b59ce724&key=49e53f296478fbc5fcc5438d135757de&voice=sg_female_xuanhong_vdts_48k-hsmm&rate=1&time=1555941100680&user_id=47734&service_type=1&input_text="
+//                + content;
+        return "https://tts.vbeecore.com/api/tts?app_id=5cbdc6a45f942864b59ce724&key=00cb27c39da69915bff4e1c05d6f0883&voice=hn_male_xuantin_vdts_48k-hsmm&rate=1&time=1557427535883&user_id=47734&service_type=1&input_text="
                 + content;
     }
 

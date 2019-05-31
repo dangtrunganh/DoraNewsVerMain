@@ -34,7 +34,7 @@ import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
-import com.anhdt.doranewsvermain.util.ReadRealmTool;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -412,7 +412,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 
                     //=====set up bookmark=====
                     //Không biết như này có được không?
-                    ReadRealmTool.setListBookmark(getContext(), articlesArray);
+                    ReadRealmToolForBookmarkArticle.setListBookmark(getContext(), articlesArray);
                     //=========================
                     articleItemAdapter = new ArticleItemAdapter(getContext(),
                             articlesArray,

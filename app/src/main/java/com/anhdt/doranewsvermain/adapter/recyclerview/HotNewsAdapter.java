@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -41,7 +40,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
-import com.anhdt.doranewsvermain.util.ReadRealmTool;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -200,8 +201,8 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         Datum datum = arrayDatums.get(position);
 //        if (datum == null) {
-        Log.e("ppl-", position + "");
-        Log.e("ppl-", arrayDatums.toString());
+//        Log.e("ppl-", position + "");
+//        Log.e("ppl-", arrayDatums.toString());
 //        }
         int typeItem = datum.getType();
         switch (typeItem) {
@@ -324,7 +325,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void bindData(ArrayList<Article> articleArrayList) {
             //=====set up bookmark=====
             //Không biết như này có được không?
-            ReadRealmTool.setListBookmark(mContext, articleArrayList);
+            ReadRealmToolForBookmarkArticle.setListBookmark(mContext, articleArrayList);
             //=========================
             ArticleItemAdapter articleItemAdapter = new ArticleItemAdapter(mContext,
                     articleArrayList, addFragmentCallback,
@@ -368,9 +369,14 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvTimeReadable.setText(event.getReadableTime());
             tvNumberArticles.setText(String.valueOf(event.getNumArticles()) + " bài báo");
 
+
             if (event.getImage() != null) {
                 if (!event.getImage().equals("")) {
-                    Picasso.get().load(event.getImage()).into(lnlCoverEvent);
+//                    Picasso.get().load(event.getImage()).into(lnlCoverEvent);
+                    Glide.with(itemView.getContext()).load(event.getImage()).
+                            apply(new RequestOptions().override(400, 0).
+                                    placeholder(R.drawable.image_default).error(R.drawable.image_default))
+                            .into(lnlCoverEvent);
                 }
             }
         }
@@ -483,6 +489,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             textViewStory.setOnClickListener(this);
 
             //Nếu cần tắt animation đi
+//            autoScrollViewPagerStories.stopAutoScroll();
             autoScrollViewPagerStories.setScrollDurationFactor(4);
             autoScrollViewPagerStories.setInterval(5000);
         }
@@ -541,6 +548,9 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void removeItemLoading() {
         //Thêm vào trước Footer
+        if (arrayDatums.size() < 2) {
+            return;
+        }
         arrayDatums.remove(arrayDatums.size() - 2);
         notifyItemRemoved(arrayDatums.size() - 1);
     }

@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -90,12 +91,25 @@ public class GeneralTool {
         return mdyFormat.format(myDate);
     }
 
-    private static String convertUTCTimeToLocalTime(String timeUTC) {
+    public static String convertUTCTimeToLocalTime(String timeUTC) {
         String timeUTCBefore = timeUTC.split("T")[0];
         SimpleDateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date date = utcDateFormat.parse(timeUTCBefore);
             @SuppressLint("SimpleDateFormat") DateFormat out = new SimpleDateFormat("dd MM yyyy");
+            return out.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String convertUTCTimeToSpecialLocalTime(String timeUTC, String formatTime) {
+        String timeUTCBefore = timeUTC.split("T")[0];
+        SimpleDateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = utcDateFormat.parse(timeUTCBefore);
+            @SuppressLint("SimpleDateFormat") DateFormat out = new SimpleDateFormat(formatTime);
             return out.format(date);
         } catch (ParseException e) {
             e.printStackTrace();

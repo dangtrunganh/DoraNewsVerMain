@@ -152,6 +152,7 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         }
 
+        @SuppressLint("SetTextI18n")
         public void bindData(ItemDetailStory itemDetailStory) {
             //Title top là trên cùng - time line
             Event event = itemDetailStory.getEvent();
@@ -168,7 +169,8 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             //Chung
             textCategory.setText(event.getCategory().getName());
             textTitleEvent.setText(event.getTitle());
-            textTimeEvent.setText(event.getReadableTime());
+//            textTimeEvent.setText(event.getReadableTime());
+            textTimeEvent.setText(GeneralTool.convertUTCTimeToSpecialLocalTime(event.getTime(), "dd/MM/yyyy") + " - " + event.getNumArticles() + " bài báo");
             if (event.getImage() != null) {
                 Glide.with(mContext).load(event.getImage()).
                         apply(new RequestOptions().override(400, 0).

@@ -22,10 +22,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anhdt.doranewsvermain.R;
-import com.anhdt.doranewsvermain.customview.NewsBackgroundLayout;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -97,7 +98,12 @@ public class StoryAdapter extends PagerAdapter {
 //        CustomView customView = new CustomView(mContext, itemView);
         if (event.getImage() != null) {
             if (!event.getImage().equals("")) {
-                Picasso.get().load(event.getImage()).into(newsBackgroundLayout);
+//                Picasso.get().load(event.getImage()).into(newsBackgroundLayout);
+
+                Glide.with(itemView.getContext()).load(event.getImage()).
+                        apply(new RequestOptions().override(400, 0).
+                                placeholder(R.drawable.image_default).error(R.drawable.image_default))
+                        .into(newsBackgroundLayout);
             }
         }
         tvCategory.setText(event.getCategory().getName());

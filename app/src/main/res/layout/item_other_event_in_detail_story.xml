@@ -104,12 +104,12 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="10dp"
         android:ellipsize="end"
+        android:fontFamily="sans-serif"
         android:maxLines="4"
         android:text="Giá dầu trượt khỏi đỉnh của 5 tháng, dù nguồn cung thắt lại"
         android:textColor="@color/black"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:fontFamily="sans-serif"
         app:layout_constraintLeft_toLeftOf="@id/text_category_item_other"
         app:layout_constraintRight_toLeftOf="@id/card_view_item_other"
         app:layout_constraintTop_toBottomOf="@id/text_category_item_other" />
@@ -126,15 +126,14 @@
         android:textColor="@color/black"
         android:textSize="12sp"
         android:textStyle="normal"
-        app:layout_constraintLeft_toLeftOf="@id/text_category_item_other"
-        app:layout_constraintTop_toBottomOf="@id/card_view_item_other"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintLeft_toLeftOf="@id/text_category_item_other"
+        app:layout_constraintTop_toBottomOf="@id/card_view_item_other" />
 
     <ImageView
         android:id="@+id/image_more_item_other"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/ic_dot_horizontal"
         app:layout_constraintBottom_toBottomOf="@id/text_time_item_other"
         app:layout_constraintRight_toRightOf="@id/card_view_item_other"

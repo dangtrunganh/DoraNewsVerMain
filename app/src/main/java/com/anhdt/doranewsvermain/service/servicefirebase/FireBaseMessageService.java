@@ -20,8 +20,8 @@ public class FireBaseMessageService/* extends FirebaseMessagingService */{
 //    private static final String NOTIFICATION_NUMBER = "NOTIFICATION_NUMBER";
 //    @Override
 //    public void onMessageReceived(RemoteMessage remoteMessage) {
-//        if (remoteMessage.getData().size() > 0) { // khi nhận được dữ liệu
-//            final String messageResponse = remoteMessage.getData().get("message");
+//        if (remoteMessage.getDataSearchResult().size() > 0) { // khi nhận được dữ liệu
+//            final String messageResponse = remoteMessage.getDataSearchResult().get("message");
 //            sendNotification(messageResponse); //Tiến hành gửi thông báo, tạo notification
 //            //.... hoặc tải dữ liệu, update dữ liệu, ra bất cứ lệnh gì cho app
 //        }

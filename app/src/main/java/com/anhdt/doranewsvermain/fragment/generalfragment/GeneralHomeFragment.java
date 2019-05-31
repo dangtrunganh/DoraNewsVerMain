@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import com.anhdt.doranewsvermain.MainActivity;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
@@ -13,6 +14,8 @@ import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.firstchildfragment.HomeFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
+import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForNotification;
 
 import java.util.ArrayList;
 
@@ -76,6 +79,15 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
         //Thêm DetailEventFragment nếu idEvent và idStory != ""
         if (idEvent != null && idStory != null) {
             if (!idEvent.equals(DEFAULT_ID_ARG) && !idStory.equals(DEFAULT_ID_ARG)) {
+                //Co intent ban ve, mo detail event len (khi app o background)
+//                NotificationResult notificationResult = new NotificationResult("Tin hot", contentNotice, urlImageFromBroadcast,
+//                        idEvent, idStory);
+//
+//                boolean x = ReadRealmToolForNotification.addNotificationToRealm(MainActivity.this, notificationResult);
+//                if (x) {
+//                    //Gọi update bên Notification Fragment
+//                    generalNotificationFragment.addNotification(notificationResult);
+//                }
                 FragmentTransaction ftDetailEvent = fragmentManager.beginTransaction();
                 ftDetailEvent.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
                 DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME,*/ idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);

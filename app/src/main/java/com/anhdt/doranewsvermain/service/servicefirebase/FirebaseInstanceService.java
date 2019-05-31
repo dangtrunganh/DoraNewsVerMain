@@ -30,6 +30,30 @@ public class FirebaseInstanceService extends FirebaseMessagingService {
 //        registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
+//    public void HandleIntent(Intent p0)// this method will fire when the app in background and closed state
+//    {
+//        base.HandleIntent(p0);
+//        if (p0.Extras != null)
+//        {
+//            foreach (var key in p0.Extras.KeySet())
+//            {
+//                var value = p0.Extras.GetString(key);
+//                Log.Debug(TAG, "Key: {0} Value: {1}", key, value);
+//                if(key== "gcm.notification.title")
+//                {
+//                    Log.Debug("Delay Notification Title", "" + value);
+//                    getBGTitle = value;//declared local variable
+//                }
+//                else if(key== "gcm.notification.body")
+//                {
+//                    Log.Debug("Delay Notification Body", "" + value);
+//                    getBGBody = value;//declared local variable
+//                    insertData(getBGTitle,getBGBody)//call method for store SQLite Insert
+//                }
+//            }
+//        }
+//    }
+
     //Main class
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {

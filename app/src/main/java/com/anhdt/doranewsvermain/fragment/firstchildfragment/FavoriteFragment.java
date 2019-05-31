@@ -1,12 +1,15 @@
 package com.anhdt.doranewsvermain.fragment.firstchildfragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.anhdt.doranewsvermain.R;
+import com.anhdt.doranewsvermain.activity.SettingsActivity;
 import com.anhdt.doranewsvermain.adapter.viewpagerfavorite.FavoriteViewPagerAdapter;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
@@ -16,10 +19,13 @@ import com.anhdt.doranewsvermain.fragment.secondchildfragment.StoryFollowedInTyp
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 
-public class FavoriteFragment extends BaseFragmentNeedUpdateUI {
+import java.util.Objects;
+
+public class FavoriteFragment extends BaseFragmentNeedUpdateUI implements View.OnClickListener {
     private ViewPager viewPagerTwoTypeTab;
     private TabLayout tabLayoutTwoTypeTab;
     private Toolbar toolbar;
+    private ImageView imageSettings;
 
     private FavoriteViewPagerAdapter favoriteViewPagerAdapter;
 
@@ -57,10 +63,12 @@ public class FavoriteFragment extends BaseFragmentNeedUpdateUI {
         if (view == null) {
             return;
         }
+        imageSettings = view.findViewById(R.id.circle_button_person_favorite_frg);
         viewPagerTwoTypeTab = view.findViewById(R.id.view_pager_type_favorite);
         viewPagerTwoTypeTab.setOffscreenPageLimit(1);
         tabLayoutTwoTypeTab = view.findViewById(R.id.tab_layout_type_favorite);
         toolbar = view.findViewById(R.id.actionbar_favorite);
+        imageSettings.setOnClickListener(this);
 
         setUpViewPager(viewPagerTwoTypeTab);
         tabLayoutTwoTypeTab.setupWithViewPager(viewPagerTwoTypeTab);
@@ -103,5 +111,18 @@ public class FavoriteFragment extends BaseFragmentNeedUpdateUI {
     @Override
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
         updateUIBookmarkSecondChildTab.updateUIBookmark(isBookmarked, idArticle, article);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.circle_button_person_favorite_frg:
+                //Mở màn settings
+                startActivity(new Intent(getContext(), SettingsActivity.class));
+                Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+                break;
+            default:
+                break;
+        }
     }
 }
