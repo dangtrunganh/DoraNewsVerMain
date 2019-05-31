@@ -5,6 +5,7 @@ import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
+import com.anhdt.doranewsvermain.model.searchresult.DatumSearchResult;
 import com.anhdt.doranewsvermain.model.userresult.UserResult;
 
 import okhttp3.RequestBody;
@@ -32,8 +33,14 @@ public interface ServerAPI {
     @GET("categories")
     Call<CategoryResult> getResultCategory();
 
+
+    //=====POST=====
     @POST("active")
     Call<UserResult> login(@Body RequestBody body);
+
+    @POST("search")
+    Call<DatumSearchResult> searchEvent(@Body RequestBody body);
+    //=====POST=====
 
     @GET("event/detail")
     Call<Event> getDetailEvent(@Query("eventid") String eventId,

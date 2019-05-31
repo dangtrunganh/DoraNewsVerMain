@@ -17,6 +17,7 @@ import com.anhdt.doranewsvermain.adapter.recyclerview.StoryFollowedAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.LoadPageConst;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
@@ -37,7 +38,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class StoryFollowedInTypeFavoriteFragment extends BaseNormalFragment implements UpdateUIFollowBookmarkChild {
+public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateUI {
     private static final String CONNECTED = "CONNECTED";
     private static final String DISCONNECTED = "DISCONNECTED";
 
@@ -151,7 +152,7 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseNormalFragment impl
                 public void onResponse(Call<News> call, Response<News> response) {
                     News news = response.body();
                     if (news == null) {
-                        Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
                         mShimmerViewContainer.stopShimmerAnimation();
                         mShimmerViewContainer.setVisibility(View.GONE);
                         swipeContainer.setRefreshing(false);

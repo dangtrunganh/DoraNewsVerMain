@@ -205,14 +205,14 @@ public class NewsInCategoryFragment extends BaseNormalFragment {
                     }
                     //=========
                     if (typeLoadData == LoadPageConst.LOAD_MORE_PAGE) {
-                        if (/*Collections.disjoint(arrayListDatum, news.getData())*/!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())) {
+                        if (/*Collections.disjoint(arrayListDatum, news.getDataSearchResult())*/!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())) {
                             //List tổng có chứa list trả về hay ko? Nếu có thi thôi
                             //ko trùng thì vào trong này
                             arrayListDatum.addAll(news.getData());
                         }
                         hotNewsAdapter.updateListNews(news.getData()); //add all, nếu trùng cả danh sách thì thôi ko add nữa
                     } else if (typeLoadData == LoadPageConst.RELOAD_INIT_CURRENT_PAGE) {
-                        if (!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())/*arrayListDatum.equals(news.getData())*/) {
+                        if (!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())/*arrayListDatum.equals(news.getDataSearchResult())*/) {
                             //List tổng ko chứa cả list con mới bắn về, thực hiện update tại đây
                             arrayListDatum.clear();
                             arrayListDatum.addAll(news.getData());

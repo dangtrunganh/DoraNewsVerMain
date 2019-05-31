@@ -11,10 +11,10 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_centerVertical="true"
         android:padding="15dp"
-        android:src="@drawable/ic_search_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <!--android:src="@drawable/ic_search_black_24dp"-->
 
     <TextView
         android:layout_width="0dp"
@@ -31,16 +31,26 @@
         app:layout_constraintRight_toLeftOf="@id/circle_button_person_favorite_frg"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <at.markushi.ui.CircleButton
+    <ImageView
         android:id="@+id/circle_button_person_favorite_frg"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="?attr/actionBarSize"
         android:padding="15dp"
-        android:src="@drawable/ic_person_black_24dp"
-        app:cb_color="#cdcfc8"
-        app:cb_pressedRingWidth="8dp"
+        android:src="@drawable/ic_setting"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <!--<at.markushi.ui.CircleButton-->
+    <!--android:id="@+id/circle_button_person_favorite_frg"-->
+    <!--android:layout_width="?attr/actionBarSize"-->
+    <!--android:layout_height="?attr/actionBarSize"-->
+    <!--android:padding="15dp"-->
+    <!--android:src="@drawable/ic_setting"-->
+    <!--app:cb_color="#cdcfc8"-->
+    <!--app:cb_pressedRingWidth="8dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent" />-->
 
 </android.support.constraint.ConstraintLayout>

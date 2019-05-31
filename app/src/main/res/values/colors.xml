@@ -18,4 +18,7 @@
     <color name="colorLogo">#3694c9</color>
     <color name="white">#fff</color>
     <color name="black">#000</color>
+
+    <color name="colorSearchView">#93666262</color>
+    <color name="colorNoTransparent">#666262</color>
 </resources>

@@ -7,10 +7,9 @@ import com.anhdt.doranewsvermain.model.newsresult.Article;
 import java.util.ArrayList;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
-public class ReadRealmTool {
+public class ReadRealmToolForBookmarkArticle {
     private static final String FILE_NAME_DB_LIST_ARTICLES = "ListArticles.realm";
 
     public static void addArticleToRealm(Context mContext, Article article) {
@@ -44,7 +43,7 @@ public class ReadRealmTool {
     }
 
     public static void setListBookmark(Context mContext, ArrayList<Article> articles) {
-        ArrayList<Article> listBookmarkArticles = ReadRealmTool.getListArticleInLocal(mContext);
+        ArrayList<Article> listBookmarkArticles = ReadRealmToolForBookmarkArticle.getListArticleInLocal(mContext);
         if (listBookmarkArticles.size() == 0) {
             return;
         }

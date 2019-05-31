@@ -1,6 +1,7 @@
 package com.anhdt.doranewsvermain.fragment.firstchildfragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -9,11 +10,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.ActionNetworkStateChange;
 import com.anhdt.doranewsvermain.R;
+import com.anhdt.doranewsvermain.activity.SettingsActivity;
 import com.anhdt.doranewsvermain.adapter.recyclerview.HotNewsAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.broadcastreceiver.NetworkChangeReceiver;
@@ -39,7 +42,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetworkStateChange {
+public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnClickListener {
     private static final String ARGS_U_ID_HOME_FRG = "ARGS_U_ID_HOME_FRG";
 
     //Các biến lưu trữ trạng thái mạng trước đó để bật tắt animation skeleton
@@ -49,6 +52,7 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
     private RecyclerView recyclerViewHotNews;
     private Toolbar toolbar;
     private TextView textNoNetwork;
+    private ImageView imageSettings;
     private ShimmerFrameLayout mShimmerViewContainer;
     private SwipeRefreshLayout swipeContainer;
 
@@ -102,6 +106,8 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
         if (view == null) {
             return;
         }
+        imageSettings = view.findViewById(R.id.circle_button_person);
+        imageSettings.setOnClickListener(this);
         textNoNetwork = view.findViewById(R.id.text_no_network);
         textNoNetwork.setVisibility(View.GONE);
         swipeContainer = view.findViewById(R.id.swipe_container_frg_home);
@@ -189,19 +195,19 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
                         swipeContainer.setRefreshing(false);
                         return;
                     }
-//                    if (news.getData().size() == 0) {
+//                    if (news.getDataSearchResult().size() == 0) {
 //                        //Khi data nhận về == 0 thì chuyển flag = true, tức là sẽ không load tiếp nữa
 //                        hotNewsAdapter.setFlagFinishLoadData(true);
 //                    }
                     if (typeLoadData == LoadPageConst.LOAD_MORE_PAGE) {
-                        if (/*Collections.disjoint(arrayListDatum, news.getData())*/!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())) {
+                        if (/*Collections.disjoint(arrayListDatum, news.getDataSearchResult())*/!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())) {
                             //List tổng có chứa list trả về hay ko? Nếu có thi thôi
                             //ko trùng thì vào trong này
                             arrayListDatum.addAll(news.getData());
                         }
                         hotNewsAdapter.updateListNews(news.getData()); //add all, nếu trùng cả danh sách thì thôi ko add nữa
                     } else if (typeLoadData == LoadPageConst.RELOAD_INIT_CURRENT_PAGE) {
-                        if (!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())/*arrayListDatum.equals(news.getData())*/) {
+                        if (!GeneralTool.checkIfParentHasChild(arrayListDatum, (ArrayList<Datum>) news.getData())/*arrayListDatum.equals(news.getDataSearchResult())*/) {
                             //List tổng ko chứa cả list con mới bắn về, thực hiện update tại đây
                             arrayListDatum.clear();
                             arrayListDatum.addAll(news.getData());
@@ -263,22 +269,35 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements ActionNetw
         //hiển thị progressBar ở đây
     }
 
-    @Override
-    public void actionWhenNetworkChange(String newState) {
-        if (newState.equals(NetworkChangeReceiver.CONNECTED)) {
-            //Cái này chỉ gọi khi nào quay lại trực tuyến
-        } else if (newState.equals(NetworkChangeReceiver.DISCONNECTED)) {
-            //Cái này gọi khi mất mạng
-        }
-    }
+//    @Override
+//    public void actionWhenNetworkChange(String newState) {
+//        if (newState.equals(NetworkChangeReceiver.CONNECTED)) {
+//            //Cái này chỉ gọi khi nào quay lại trực tuyến
+//        } else if (newState.equals(NetworkChangeReceiver.DISCONNECTED)) {
+//            //Cái này gọi khi mất mạng
+//        }
+//    }
 
     @Override
     public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
-        //Không làm gì
+        //Phải update lại biến isFollowed cho story bị thay đổi, cả trong LatestNews
     }
 
     @Override
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+        //Phải update lại biến bookmark cho bài báo bị thay đổi, cả trong LatestNews và DetailEvent
+    }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.circle_button_person:
+                //Mở màn settings
+                startActivity(new Intent(getContext(), SettingsActivity.class));
+                Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+                break;
+            default:
+                break;
+        }
     }
 }
