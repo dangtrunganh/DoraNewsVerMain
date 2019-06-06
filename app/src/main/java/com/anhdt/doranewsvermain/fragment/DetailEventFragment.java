@@ -33,6 +33,7 @@ import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
+import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
 import com.bumptech.glide.Glide;
@@ -43,6 +44,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -489,9 +491,19 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             }
 //            Gson gson = new Gson();
 //            String jsonListEvents = gson.toJson(arrayListEvent);
-            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabHomeOrLatest*//*, jsonListEvents*//*,*/ idStory);
-            detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
-            addFragmentCallback.addFrgCallback(detailStoryFragment);
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabHomeOrLatest*//*, jsonListEvents*//*,*/ idStory);
+                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+                addFragmentCallback.addFrgCallback(detailStoryFragment);
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
+
         } else if (v.getId() == R.id.image_show_all_event_in_stories) {
             //Sự kiện Click vào xem tất cả story
             if (arrayListEvent == null) {
@@ -502,9 +514,18 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             }
 //            Gson gson = new Gson();
 //            String jsonListEvents = gson.toJson(arrayListEvent);
-            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabHomeOrLatest*//*, jsonListEvents*//*,*/ idStory);
-            detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
-            addFragmentCallback.addFrgCallback(detailStoryFragment);
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabHomeOrLatest*//*, jsonListEvents*//*,*/ idStory);
+                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+                addFragmentCallback.addFrgCallback(detailStoryFragment);
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
         } else if (v.getId() == R.id.text_load_more_news) {
             //Khi ấn xem thêm thì load thêm ra
 //            Toast.makeText(getContext(), "Clicked load more!", Toast.LENGTH_SHORT).show();
@@ -523,43 +544,53 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             //Trạng thái hiện tại đang là UnFollow, click vào sẽ là Follow
             //Trạng thái hiện tại đang là Follow
             //Khi Click vào sẽ follow - Chú ý là FOLLOW!!!
-            dialog.show();
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+                dialog.show();
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
 
 
-            final ServerAPI apiService = retrofit.create(ServerAPI.class);
+                final ServerAPI apiService = retrofit.create(ServerAPI.class);
 
-            Call<Stories> call = apiService.followEvent(uId, eventId, RootAPIUrlConst.FOLLOW);
+                Call<Stories> call = apiService.followEvent(uId, eventId, RootAPIUrlConst.FOLLOW);
 
-            call.enqueue(new Callback<Stories>() {
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
-                    Stories stories = response.body();
-                    if (stories == null) {
-                        Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                call.enqueue(new Callback<Stories>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
+                        Stories stories = response.body();
+                        if (stories == null) {
+                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            return;
+                        }
+                        stateFollow = stories.getFollow();
+                        String idStoryResult = stories.getStoryId();
+                        if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
+                            //success, follow thành công
+                            //Thông báo cho MainActivity thay đổi UI button
+                            addFragmentCallback.updateListEventFollowInAddFrag(true, idStoryResult, stories);
+                        }
                         dialog.dismiss();
-                        return;
                     }
-                    stateFollow = stories.getFollow();
-                    String idStoryResult = stories.getStoryId();
-                    if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
-                        //success, follow thành công
-                        //Thông báo cho MainActivity thay đổi UI button
-                        addFragmentCallback.updateListEventFollowInAddFrag(true, idStoryResult, stories);
-                    }
-                    dialog.dismiss();
-                }
 
-                @Override
-                public void onFailure(Call<Stories> call, Throwable t) {
-                    Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Stories> call, Throwable t) {
+                        Toast.makeText(getContext(), "Theo dõi thất bại!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
+
         } else {
             Toast.makeText(getContext(), "State is undefined!", Toast.LENGTH_SHORT).show();
         }
@@ -573,48 +604,60 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
         alertDialog.setCanceledOnTouchOutside(false); //Vo hieu hoa khong cho kich ra ngoai de tat dialog
         alertDialog.setCancelable(false); //Vo hieu hoa khong cho an back de tat dialog
 
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Tớ đồng ý", (dialogg, which) -> {
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", (dialogg, which) -> {
             //Noi dung xu ly khi click vao button, mac dinh dialog se close sau khi click vao
-            dialog.show();
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            final ServerAPI apiService = retrofit.create(ServerAPI.class);
 
-            Call<Stories> call = apiService.followEvent(uId, eventId, RootAPIUrlConst.UN_FOLLOW);
+            //Kiểm tra state mạng========
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+                ///====
+                dialog.show();
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                final ServerAPI apiService = retrofit.create(ServerAPI.class);
 
-            call.enqueue(new Callback<Stories>() {
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
-                    Stories stories = response.body();
-                    if (stories == null) {
-                        Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                Call<Stories> call = apiService.followEvent(uId, eventId, RootAPIUrlConst.UN_FOLLOW);
+
+                call.enqueue(new Callback<Stories>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
+                        Stories stories = response.body();
+                        if (stories == null) {
+                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            return;
+                        }
+                        stateFollow = stories.getFollow();
+                        String idStoryResult = stories.getStoryId();
+                        if (stateFollow == RootAPIUrlConst.UN_FOLLOW_INTEGER) {
+                            //success, bỏ follow thành công
+                            //Thông báo cho MainActivity thay đổi UI button
+                            addFragmentCallback.updateListEventFollowInAddFrag(false, idStoryResult, stories);
+                        }
                         dialog.dismiss();
-                        return;
                     }
-                    stateFollow = stories.getFollow();
-                    String idStoryResult = stories.getStoryId();
-                    if (stateFollow == RootAPIUrlConst.UN_FOLLOW_INTEGER) {
-                        //success, bỏ follow thành công
-                        //Thông báo cho MainActivity thay đổi UI button
-                        addFragmentCallback.updateListEventFollowInAddFrag(false, idStoryResult, stories);
-                    }
-                    dialog.dismiss();
-                }
 
-                @Override
-                public void onFailure(Call<Stories> call, Throwable t) {
-                    Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Stories> call, Throwable t) {
+                        Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, whichNew) -> dialog.dismiss());
+                alertDialog.show();
+            }
+            //Kiểm tra state mạng========
         });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Hủy", (dialog, which) -> {
             //Noi dung xu ly khi click vao button, mac dinh dialog se close sau khi click vao
         });
-
     }
 
 
@@ -629,5 +672,6 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
     @Override
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
         //Kiểm tra xem list article có thằng nào trong list bookmark ko thì update ở đây
+        articleItemAdapter.updateUIBookmark(isBookmarked, idArticle, article);
     }
 }

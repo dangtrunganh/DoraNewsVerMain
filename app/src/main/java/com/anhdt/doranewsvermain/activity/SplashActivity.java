@@ -210,7 +210,8 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 
                 @Override
                 public void onFailure(Call<UserResult> call, Throwable t) {
-                    Toast.makeText(SplashActivity.this, "Fail to login!", Toast.LENGTH_SHORT).show();
+                    Log.e("login-", "fail");
+//                    Toast.makeText(SplashActivity.this, "Fail to login!", Toast.LENGTH_SHORT).show();
                 }
             });
         }

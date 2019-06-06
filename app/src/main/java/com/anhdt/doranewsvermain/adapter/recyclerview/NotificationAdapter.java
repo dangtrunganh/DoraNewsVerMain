@@ -3,44 +3,55 @@ package com.anhdt.doranewsvermain.adapter.recyclerview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.anhdt.doranewsvermain.MainActivity;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.TypeNewsConst;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.DetailStoryFragment;
+import com.anhdt.doranewsvermain.fragment.firstchildfragment.UpdateListNotification;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForNotification;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private ArrayList<NotificationResult> arrayNotifications;
     private AddFragmentCallback addFragmentCallback;
     private LayoutInflater mLayoutInflater;
+    private UpdateListNotification updateListNotification;
 //    private RecyclerView recyclerView;
 
     private final int VIEW_TYPE_NOTIFICATION = 1, VIEW_TYPE_FOOTER = 2;
 
-    public NotificationAdapter(Context mContext, ArrayList<NotificationResult> arrayNotifications, AddFragmentCallback addFragmentCallback) {
+    public NotificationAdapter(Context mContext, ArrayList<NotificationResult> arrayNotifications, AddFragmentCallback addFragmentCallback, UpdateListNotification updateListNotification) {
         this.mContext = mContext;
         this.arrayNotifications = arrayNotifications;
         this.addFragmentCallback = addFragmentCallback;
         if (this.arrayNotifications != null) {
             this.arrayNotifications.add(null);
         }
+        this.updateListNotification = updateListNotification;
     }
 
     @Override
@@ -140,13 +151,53 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @Override
         public void onClick(View v) {
+            int position = getAdapterPosition();
+            NotificationResult notificationResultSelected = arrayNotifications.get(position);
+
             if (v.getId() == R.id.image_more_item_notification) {
                 //More? Xóa notice?
+                //==============
+                //click more button
+                BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(mContext);
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View sheetView = inflater.inflate(R.layout.fragment_bottom_sheet_book_mark_article, null);
+                LinearLayout bookmark = sheetView.findViewById(R.id.layout_bookmark_menu_bottom);
+                LinearLayout cancel = sheetView.findViewById(R.id.layout_cancel_menu_bottom);
+                TextView textBookmark = sheetView.findViewById(R.id.text_bookmark_menu_bottom);
+                mBottomSheetDialog.setContentView(sheetView);
+
+                textBookmark.setText("Xóa thông báo");
+                mBottomSheetDialog.show();
+                bookmark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBottomSheetDialog.dismiss();
+                        ReadRealmToolForNotification.deleteNotification(mContext, notificationResultSelected);
+                        updateListNotification.removeNotification(notificationResultSelected.getIdEvent());
+                    }
+                });
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBottomSheetDialog.dismiss();
+                    }
+                });
+
+                //==============
             } else {
                 //Click tổng thể, bật chi tiết event lên
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
-                detailEventFragment.setAddFragmentCallback(addFragmentCallback);
-                addFragmentCallback.addFrgCallback(detailEventFragment);
+                if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
+                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                    detailEventFragment.setAddFragmentCallback(addFragmentCallback);
+                    addFragmentCallback.addFrgCallback(detailEventFragment);
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                    alertDialog.setTitle("Thông báo");
+                    alertDialog.setMessage("Không có kết nối mạng");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            (dialog, which) -> dialog.dismiss());
+                    alertDialog.show();
+                }
             }
 //            //Hiện chỉ bắt sự kiện click vào cả item to, mở ra màn chi tiết event tương ứng?
 //            if (idStory == null) {
@@ -177,7 +228,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
-    public void removeStoryFollowed(String idEvent) {
+    public void removeNotification(String idEvent) {
         for (int i = 0; i < arrayNotifications.size(); i++) {
             NotificationResult currentNotification = arrayNotifications.get(i);
             if (currentNotification.getIdEvent().equals(idEvent)) {
@@ -186,5 +237,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             }
         }
+    }
+
+    public ArrayList<NotificationResult> getArrayNotifications() {
+        return arrayNotifications;
     }
 }

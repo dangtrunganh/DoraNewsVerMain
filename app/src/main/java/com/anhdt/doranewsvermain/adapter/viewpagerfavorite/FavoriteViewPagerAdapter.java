@@ -16,15 +16,12 @@ import com.anhdt.doranewsvermain.model.newsresult.Category;
 import java.util.ArrayList;
 
 public class FavoriteViewPagerAdapter extends FragmentStatePagerAdapter {
-
-    //    private ArrayList<BaseNormalFragment> arrayFragments;
     private StoryFollowedInTypeFavoriteFragment storyFollowedInTypeFavoriteFragment;
     private ArticleBookmarkInTypeFavoriteFragment articleBookmarkInTypeFavoriteFragment;
 
     public FavoriteViewPagerAdapter(FragmentManager fm, StoryFollowedInTypeFavoriteFragment storyFollowedInTypeFavoriteFragment,
                                     ArticleBookmarkInTypeFavoriteFragment articleBookmarkInTypeFavoriteFragment) {
         super(fm);
-//        this.arrayFragments = new ArrayList<>();
         this.storyFollowedInTypeFavoriteFragment = storyFollowedInTypeFavoriteFragment;
         this.articleBookmarkInTypeFavoriteFragment = articleBookmarkInTypeFavoriteFragment;
     }

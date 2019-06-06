@@ -3,6 +3,9 @@ package com.anhdt.doranewsvermain.fragment.secondchildfragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,6 +19,7 @@ import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
@@ -59,6 +63,12 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
     public ArticleFramentInDetailNewsFragment() {
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.clear();
+    }
+
     public static ArticleFramentInDetailNewsFragment newInstance(String jsonStringCurrentArticle, String jsonListTotalArticles, int position) {
         ArticleFramentInDetailNewsFragment articleFramentInDetailNewsFragment = new ArticleFramentInDetailNewsFragment();
         Bundle args = new Bundle();
@@ -79,6 +89,14 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
         TextView txtTitleNews = view.findViewById(R.id.text_fr_title_detail_news);
         TextView txtContentNews = view.findViewById(R.id.text_content_fr_detail_news);
         Button btnReadMore = view.findViewById(R.id.btn_read_more_fr_detail_news);
+        TextView txtSourceSummary = view.findViewById(R.id.text_source_summary);
+
+        String uId = ReadCacheTool.getUId(Objects.requireNonNull(getContext()));
+        if (uId.equals("e062813b-5c42-419e-a6fe-023dfebe005d")) {
+            txtSourceSummary.setText("(Tóm tắt bởi DTA - AI)");
+        } else {
+            txtSourceSummary.setText("(Tóm tắt bởi Dora - AI)");
+        }
 
         //====
         Typeface custom_font = Typeface.createFromAsset(Objects.requireNonNull(getActivity()).getAssets(), "fonts/calibril.ttf");
@@ -120,21 +138,27 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
         txtTitleNews.setText(currentArticles.getTitle());
 
         //Summary
-        txtContentNews.setText(GeneralTool.getSummaryOfArticle(currentArticles, ConstParam.MEDIUM));
-//        for (int i = 0; i < currentArticles.getMedias().size(); i++) {
-//            if (currentArticles.getMedias().get(i).getType().equals(ConstParam.MEDIUM)) {
-//                String summarization = currentArticles.getMedias().get(i).getBody().get(0).getContent();
-//                txtContentNews.setText(summarization);
-//                break;
-//            }
-//        }
+        String mediumSummary = GeneralTool.getSummaryOfArticle(currentArticles, ConstParam.MEDIUM);
+        String upperString = mediumSummary.substring(0,1).toUpperCase() + mediumSummary.substring(1);
+        txtContentNews.setText(upperString);
 
         btnReadMore.setOnClickListener(view1 -> {
             //Xử lý sự kiện khi click vào button xem chi tiết bài báo, mở ra 1 activity riêng, tạm thời show
             //cmn web view ra :v
-            Intent intent = new Intent(view1.getContext(), ReadOriginalArticleActivity.class);
-            intent.putExtra(ConstParamTransfer.TRANSFER_URL_FR_DETAIL_ARTICLE_TO_READ_ORIGINAL_ACT, currentArticles.getUrl());
-            startActivity(intent);
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+                Intent intent = new Intent(view1.getContext(), ReadOriginalArticleActivity.class);
+                intent.putExtra(ConstParamTransfer.TRANSFER_URL_FR_DETAIL_ARTICLE_TO_READ_ORIGINAL_ACT, currentArticles.getUrl());
+                startActivity(intent);
+            } else {
+                //Mất mạng
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
+
         });
         btnPlay = view.findViewById(R.id.image_play_fr_detail_news);
 //        boundService();
@@ -180,19 +204,30 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.image_play_fr_detail_news:
-                if (mIsPlaying) {
-                    btnPlay.setPressed(true);
-                    mIsPlaying = false;
-                } else {
-                    btnPlay.setPressed(false);
-                    mIsPlaying = true;
-                }
+                if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+                    if (mIsPlaying) {
+                        btnPlay.setPressed(true);
+                        mIsPlaying = false;
+                    } else {
+                        btnPlay.setPressed(false);
+                        mIsPlaying = true;
+                    }
 //                Toast.makeText(getContext(), "Play!", Toast.LENGTH_SHORT).show();
 //                changeStateFromDetailArticle();
-                //handle khi click vào play voice
-                if (this.controlVoice != null) {
-                    controlVoice.playVoiceAtPosition(listTotalArticles, position);
+                    //handle khi click vào play voice
+                    if (this.controlVoice != null) {
+                        controlVoice.playVoiceAtPosition(listTotalArticles, position);
+                    }
+                } else {
+                    //Mất mạng
+                    AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                    alertDialog.setTitle("Thông báo");
+                    alertDialog.setMessage("Không có kết nối mạng để nghe bài báo này");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            (dialog, which) -> dialog.dismiss());
+                    alertDialog.show();
                 }
+
 //                if (mIsPlaying) {
 ////                    mMediaBrowserHelper.getTransportControls().pause();
 //                } else {

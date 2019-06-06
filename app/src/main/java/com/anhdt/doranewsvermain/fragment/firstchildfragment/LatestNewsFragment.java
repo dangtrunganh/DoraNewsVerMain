@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.activity.SettingsActivity;
 import com.anhdt.doranewsvermain.adapter.viewpagercategory.CategoryViewPagerAdapter;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.fragment.secondchildfragment.NewsInCategoryFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
@@ -39,6 +40,8 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
 
     private AddFragmentCallback addFragmentCallback;
 
+    private ArrayList<UpdateUIFollowBookmarkChild> observers = new ArrayList<>();
+
 //    private ArrayList<Datum> arrayDatum;
 
 
@@ -52,6 +55,10 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
 
     public LatestNewsFragment() {
 
+    }
+
+    public void attach(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChild) {
+        observers.add(updateUIFollowBookmarkChild);
     }
 
     public static LatestNewsFragment newInstance(String uId) {
@@ -102,6 +109,7 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
             }
             newsInCategoryFrament.setAddFragmentCallback(addFragmentCallback);
             fragments.add(newsInCategoryFrament);
+            attach(newsInCategoryFrament);
         }
 
         //ok?
@@ -142,11 +150,16 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
     @Override
     public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
         //Không làm gì
+        //Nếu sau này tab này có thêm event hay story thì làm tương tự updateUIBookmark bên dưới
     }
 
     @Override
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
-
+        for (UpdateUIFollowBookmarkChild observer : observers) {
+            if (observer != null) {
+                observer.updateUIBookmark(isBookmarked, idArticle, article);
+            }
+        }
     }
 
     @Override

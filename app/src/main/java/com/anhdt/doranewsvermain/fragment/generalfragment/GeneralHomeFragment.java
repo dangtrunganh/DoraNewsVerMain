@@ -31,6 +31,8 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
     private UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain;
 
+    private ArrayList<Article> articlesPlayedOnTopEachFragment = new ArrayList<>();
+
     public UpdateUIFollowBookmarkChild getUpdateUIFollowBookmarkChildFromMain() {
         return updateUIFollowBookmarkChildFromMain;
     }
@@ -177,6 +179,21 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
     @Override
     public void updateListArticleBookmarkInAddFrag(boolean isBookmarked, int idArticle, Article article) {
         updateUIFollowBookmarkChildFromMain.updateUIBookmark(isBookmarked, idArticle, article);
+    }
+
+    @Override
+    public ArrayList<Article> getListArticlesPlayedOnTopEachFragment() {
+        return articlesPlayedOnTopEachFragment;
+    }
+
+    @Override
+    public void setListArticlesPlayedOnTopEachFragment(ArrayList<Article> articles) {
+        articlesPlayedOnTopEachFragment = articles;
+    }
+
+    @Override
+    public void clearListArticlesPlayedOnTopEachFragment() {
+        articlesPlayedOnTopEachFragment = new ArrayList<>();
     }
 
     @Override

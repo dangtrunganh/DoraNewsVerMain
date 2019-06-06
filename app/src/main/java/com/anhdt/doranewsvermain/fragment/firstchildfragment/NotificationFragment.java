@@ -2,6 +2,7 @@ package com.anhdt.doranewsvermain.fragment.firstchildfragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
     private RecyclerView recyclerViewNotification;
     private SwipeRefreshLayout swipeContainer;
     private ImageView imageSettings;
+    private ConstraintLayout constraintLayoutNoNetwork;
     private ArrayList<NotificationResult> arrayListNotifications;
 
     private NotificationAdapter notificationAdapter;
@@ -58,6 +60,8 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
         if (view == null) {
             return;
         }
+        constraintLayoutNoNetwork = view.findViewById(R.id.constraint_state_wifi_off_frg_notification);
+//        constraintLayoutNoNetwork.setVisibility(View.GONE);
         imageSettings = view.findViewById(R.id.circle_button_person_frg_notification);
         imageSettings.setOnClickListener(this);
         swipeContainer = view.findViewById(R.id.swipe_container_frg_notification);
@@ -75,7 +79,15 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
 
         //===Adapter====LoadData======
         arrayListNotifications = ReadRealmToolForNotification.getListNotificationInLocal(getContext());
-        notificationAdapter = new NotificationAdapter(getContext(), arrayListNotifications, addFragmentCallback);
+        if (arrayListNotifications.size() == 0) {
+            //Hiển thị màn hình chưa có thông báo nào
+            constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
+            recyclerViewNotification.setVisibility(View.GONE);
+        } else {
+            constraintLayoutNoNetwork.setVisibility(View.GONE);
+            recyclerViewNotification.setVisibility(View.VISIBLE);
+        }
+        notificationAdapter = new NotificationAdapter(getContext(), arrayListNotifications, addFragmentCallback, this);
         recyclerViewNotification.setAdapter(notificationAdapter);
     }
 
@@ -101,8 +113,29 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
 
     @Override
     public void addNotification(NotificationResult notificationResult) {
-        Log.e("y9y-", notificationResult.toString());
+//        Log.e("y9y-", notificationResult.toString());
         notificationAdapter.addNewNotifications(notificationResult);
+        if (notificationAdapter.getArrayNotifications().size() == 1) {
+            //Vì luôn có ít nhất một phần tử null làm footer
+            constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
+            recyclerViewNotification.setVisibility(View.GONE);
+        } else {
+            constraintLayoutNoNetwork.setVisibility(View.GONE);
+            recyclerViewNotification.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void removeNotification(String idNotification) {
+        notificationAdapter.removeNotification(idNotification);
+        if (notificationAdapter.getArrayNotifications().size() == 1) {
+            //Vì luôn có ít nhất một phần tử null làm footer
+            constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
+            recyclerViewNotification.setVisibility(View.GONE);
+        } else {
+            constraintLayoutNoNetwork.setVisibility(View.GONE);
+            recyclerViewNotification.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

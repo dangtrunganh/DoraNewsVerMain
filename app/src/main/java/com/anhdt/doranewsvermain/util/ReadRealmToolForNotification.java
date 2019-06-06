@@ -22,7 +22,7 @@ public class ReadRealmToolForNotification {
             articleRealm.commitTransaction();
             return true;
         } catch (Exception e) {
-            Toast.makeText(mContext, "Error, this event is already in db!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContext, "Error, this event is already in db!", Toast.LENGTH_SHORT).show();
             articleRealm.commitTransaction();
             return false;
         }

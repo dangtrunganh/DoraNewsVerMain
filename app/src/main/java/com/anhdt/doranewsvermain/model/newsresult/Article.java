@@ -172,4 +172,9 @@ public class Article extends RealmObject {
                 ", medias=" + medias +
                 '}';
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

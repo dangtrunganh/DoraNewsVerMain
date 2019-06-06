@@ -23,6 +23,8 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
 
     private UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain;
 
+    private ArrayList<Article> articlesPlayedOnTopEachFragment = new ArrayList<>();
+
     public UpdateUIFollowBookmarkChild getUpdateUIFollowBookmarkChildFromMain() {
         return updateUIFollowBookmarkChildFromMain;
     }
@@ -165,5 +167,20 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
         for (UpdateUIFollowBookmarkChild observer : observers) {
             observer.updateUIBookmark(isBookmarked, idArticle, article);
         }
+    }
+
+    @Override
+    public ArrayList<Article> getListArticlesPlayedOnTopEachFragment() {
+        return articlesPlayedOnTopEachFragment;
+    }
+
+    @Override
+    public void setListArticlesPlayedOnTopEachFragment(ArrayList<Article> articles) {
+        articlesPlayedOnTopEachFragment = articles;
+    }
+
+    @Override
+    public void clearListArticlesPlayedOnTopEachFragment() {
+        articlesPlayedOnTopEachFragment = new ArrayList<>();
     }
 }

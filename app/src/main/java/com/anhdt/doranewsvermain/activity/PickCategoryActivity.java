@@ -1,9 +1,12 @@
 package com.anhdt.doranewsvermain.activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,12 +25,14 @@ import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.model.categoryresult.CategoryResult;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
+import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +44,10 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
     private Button btnPick;
     private TextView txtPickDone;
     private RecyclerView mRecyclerPick;
+    private ConstraintLayout constraintLayoutNoNetwork;
+    private Button btnTryReconnect;
+    private ProgressDialog dialog;
+
     private CategoryAdapter mCategoryAdapter;
     private CategoryResult mCategoryResult;
 
@@ -46,6 +55,7 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
     private ArrayList<Category> mCategoryListInLocal;
 
     private String uId;
+    private boolean isExistListCategoriesInLocal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +70,25 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
     private void getUIdFromIntent() {
         Intent intent = getIntent();
         if (intent == null) {
-            return;
+            uId = ReadCacheTool.getUId(this);
+        } else {
+            uId = intent.getStringExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_PICK_CATEGORY);
         }
-        uId = intent.getStringExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_PICK_CATEGORY);
     }
 
     private void initViews() {
         btnPick = findViewById(R.id.btn_pick_done);
         txtPickDone = findViewById(R.id.text_pick_done);
         mRecyclerPick = findViewById(R.id.recycler_pick_category);
+        constraintLayoutNoNetwork = findViewById(R.id.constraint_state_wifi_off_pick_category);
+        btnTryReconnect = findViewById(R.id.button_try_refresh_network_pick_category);
+
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading...");
+        dialog.setCancelable(false);
+
         btnPick.setOnClickListener(this);
+        btnTryReconnect.setOnClickListener(this);
 
         setUpAdapter();
     }
@@ -80,42 +99,31 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         mRecyclerPick.setLayoutManager(mLayoutManager);
         mRecyclerPick.setAdapter(mCategoryAdapter);
-//        mCategoryAdapter.notifyDataSetChanged();
-        loadCategories();
+        isExistListCategoriesInLocal = getListCategoriesChosen();
+
+        getDataFromServer();
     }
 
-    @SuppressLint("SetTextI18n")
-    private void loadCategories() {
-        //Dựa vào getType() đưa ra load loại event tương ứng
-//        mCategoryListInLocal = new ArrayList<>();
-//        boolean x = loadCategoriesInLocal();
-
-        //Đoạn này logic lằng nhằng?
-//        if (x) {
-        //Tức là nếu truyền vào true, thì thực hiện update property boolean
-        ArrayList<Category> hihi = getListCategoryFromAPI(getListCategoriesChosen());
-//        }
+    private void getDataFromServer() {
+        if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(this))) {
+            //Có mạng
+            dialog.show();
+            mRecyclerPick.setVisibility(View.VISIBLE);
+            constraintLayoutNoNetwork.setVisibility(View.GONE);
+            getListCategoryFromAPI(isExistListCategoriesInLocal);
+        } else {
+            //Mất mạng
+            mRecyclerPick.setVisibility(View.GONE);
+            constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
+        }
     }
-
-//    private boolean loadCategoriesInLocal() {
-//        //Đọc từ pre ra
-//        mCategoryListInLocal = getListCategoriesChosen();
-//        if (mCategoryListInLocal == null) {
-//            mCategoryListInLocal = null;
-//            return false;
-//        }
-//        if (mCategoryListInLocal.size() == 0) {
-//            mCategoryListInLocal = null;
-//            return false;
-//        }
-//        return true;
-//    }
 
     private boolean getListCategoriesChosen() {
         mCategoryListInLocal = new ArrayList<>();
         SharedPreferences pre = getSharedPreferences
                 (ConstLocalCaching.FILE_NAME_PREF_LIST_CATEGORY, MODE_PRIVATE);
         String json = pre.getString(ConstLocalCaching.KEY_PREF_LIST_CATEGORY, ConstLocalCaching.DEFAULT_VALUE_PREF_LIST_CATEGORY_DEFAULT);
+        assert json != null;
         if (json.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_LIST_CATEGORY_DEFAULT)) {
             return false;
         }
@@ -124,13 +132,11 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
         Gson gson = new Gson();
         mCategoryListInLocal = gson.fromJson(json, new TypeToken<List<Category>>() {
         }.getType());
-
-        Log.e("ListCategories-Local", mCategoryListInLocal.toString());
-
+//        Log.e("ListCategories-Local", mCategoryListInLocal.toString());
         return true;
     }
 
-    private ArrayList<Category> getListCategoryFromAPI(final boolean flag) {
+    private void getListCategoryFromAPI(final boolean flag) {
         //flag = true: Đã có trong local list các category đã chọn
         //flag = false: Không có trong local
         Retrofit retrofit = new Retrofit.Builder()
@@ -146,20 +152,14 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
                 mCategoryResult = response.body();
                 if (mCategoryResult == null) {
                     Toast.makeText(getApplicationContext(), "Failed to load data - null", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
                     return;
                 }
                 mCategoryListTest = (ArrayList<Category>) mCategoryResult.getData();
-                Log.e("API===", mCategoryListTest.toString());
-
                 if (flag) {
                     //flag = true: Đã có trong local list các category đã chọn, thì khởi tạo, tick đã chọn cho các category đó
-                    Log.e("ListTest.size()", mCategoryListTest.size() + "");
-                    Log.e("ListLocal.size()", mCategoryListTest.size() + "");
-                    int k = 0;
                     for (Category category : mCategoryListTest) {
                         for (Category categoryLocal : mCategoryListInLocal) {
-                            k++;
-                            Log.e("k=", String.valueOf(k));
                             if (category.getId().equals(categoryLocal.getId())) {
                                 //Set selected cho các category đã chọn trong Local
                                 category.setSelected(true);
@@ -180,20 +180,20 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
                 }
 
                 mCategoryAdapter.updateListCategories(mCategoryListTest);
-//                Log.e("1111", "kkkk");
+                dialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<CategoryResult> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "Failed to load category - onFailure", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
             }
         });
-        return mCategoryListTest;
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        return;
 //        startActivity(new Intent(PickCategoryActivity.this, MainActivity.class));
 //        finish();
     }
@@ -225,6 +225,10 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
 
                 startActivity(intentResult);
                 finish();
+                break;
+            case R.id.button_try_refresh_network_pick_category:
+                //try to reconnect network
+                getDataFromServer();
                 break;
             default:
                 break;

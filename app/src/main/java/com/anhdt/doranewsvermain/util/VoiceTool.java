@@ -36,6 +36,21 @@ public class VoiceTool {
     }
 
     public static boolean checkIfTwoListEqual(ArrayList<Article> articles1, ArrayList<Article> articles2) {
-        return articles1.toString().equals(articles2.toString());
+        String idListArticle1 = "";
+        String idListArticle2 = "";
+        for (Article articleTemp1 : articles1) {
+            if (articleTemp1 == null) {
+                continue;
+            }
+            idListArticle1 += articleTemp1.getId();
+        }
+
+        for (Article articleTemp2 : articles2) {
+            if (articleTemp2 == null) {
+                continue;
+            }
+            idListArticle2 += articleTemp2.getId();
+        }
+        return idListArticle1.equals(idListArticle2);
     }
 }

@@ -5,6 +5,7 @@ import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
+import com.anhdt.doranewsvermain.model.newssourceresult.GeneralDataNewsSource;
 import com.anhdt.doranewsvermain.model.searchresult.DatumSearchResult;
 import com.anhdt.doranewsvermain.model.userresult.UserResult;
 
@@ -33,13 +34,17 @@ public interface ServerAPI {
     @GET("categories")
     Call<CategoryResult> getResultCategory();
 
+    @GET("categories/pick")
+    Call<CategoryResult> sendCategoriesPicked(@Query("uid") String uid,
+                                              @Query("picklist") String pickList);
+
 
     //=====POST=====
     @POST("active")
     Call<UserResult> login(@Body RequestBody body);
 
-    @POST("search")
-    Call<DatumSearchResult> searchEvent(@Body RequestBody body);
+//    @POST("search")
+//    Call<DatumSearchResult> searchEvent(@Body RequestBody body);
     //=====POST=====
 
     @GET("event/detail")
@@ -62,4 +67,23 @@ public interface ServerAPI {
 
     @GET("follow/stories")
     Call<News> getListStoriesFollowed(@Query("uid") String uId); //Return list stories followed
+
+    @GET("sources")
+    Call<GeneralDataNewsSource> getListNewsSource(); //list news source
+
+    //Send pick category and news source information to server
+    @GET("sources/pick")
+    Call<GeneralDataNewsSource> sendNewsSourcePicked(@Query("uid") String uid,
+                                                     @Query("picklist") String pickList); //list news source
+
+    @GET("sources/pick")
+    Call<GeneralDataNewsSource> getNewsSourcePicked(@Query("uid") String uid); //get list news source picked
+
+
+    //=====POST====Search=====
+    @POST("search/events")
+    Call<News> searchEvents(@Body RequestBody body);
+
+    @POST("search/articles")
+    Call<News> searchArticles(@Body RequestBody body);
 }

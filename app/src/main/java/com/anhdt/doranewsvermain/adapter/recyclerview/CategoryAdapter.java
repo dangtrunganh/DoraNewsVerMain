@@ -31,10 +31,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     private Button btnChoose;
 
     @SuppressLint("SetTextI18n")
-    public CategoryAdapter(List<Category> mListCategories, Context mContext, TextView textQuantityChoosen, Button btnChose) {
+    public CategoryAdapter(List<Category> mListCategories, Context mContext, TextView textQuantityChosen, Button btnChose) {
         this.mListCategories = mListCategories;
         this.mContext = mContext;
-        this.textQuantityChosen = textQuantityChoosen;
+        this.textQuantityChosen = textQuantityChosen;
         this.mListCategoryChosen = new ArrayList<>();
         this.btnChoose = btnChose;
     }
@@ -81,9 +81,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             if (category == null) {
                 return;
             }
-//            Log.e("Category111: ", category.toString());
             if (category.getUrlImage() != null) {
-//                Log.e("Category: ", category.getUrlImage());
                 Glide.with(itemView.getContext()).load(category.getUrlImage()).
                         apply(new RequestOptions().override(400, 0).
                                 placeholder(R.drawable.image_default).error(R.drawable.image_default))
@@ -126,14 +124,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 //                        mListCategoryChosen.remove(category1);
 //                    }
 //                }
-
                 for (Iterator<Category> iterator = mListCategoryChosen.iterator(); iterator.hasNext(); ) {
                     Category value = iterator.next();
                     if (value.getId().equals(category.getId())) {
                         iterator.remove();
                     }
                 }
-
 //                mListCategoryChosen.remove(category);
                 Log.e("AFTER", mListCategoryChosen.size() + " " + mListCategoryChosen.toString());
                 textQuantityChosen.setText("(Đã chọn " + mListCategoryChosen.size() + "/" + mListCategories.size() + ")");
