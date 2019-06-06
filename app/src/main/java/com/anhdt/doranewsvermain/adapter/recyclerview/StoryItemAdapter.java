@@ -3,6 +3,7 @@ package com.anhdt.doranewsvermain.adapter.recyclerview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.TypeNewsConst;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
+import com.anhdt.doranewsvermain.fragment.DetailStoryFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
@@ -24,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //Click ở bất kì vị trí nào cũng đều có event, get event ID ra mà sổ ra màn Detail nhé
@@ -307,9 +310,18 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //                } else {
                 Gson gson = new Gson();
                 String jsonListEvent = gson.toJson(arrayEventsResult);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
-                detailEventFragment.setAddFragmentCallback(addFragmentCallback);
-                addFragmentCallback.addFrgCallback(detailEventFragment);
+                if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
+                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
+                    detailEventFragment.setAddFragmentCallback(addFragmentCallback);
+                    addFragmentCallback.addFrgCallback(detailEventFragment);
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                    alertDialog.setTitle("Thông báo");
+                    alertDialog.setMessage("Không có kết nối mạng");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            (dialog, which) -> dialog.dismiss());
+                    alertDialog.show();
+                }
 //                }
             }
         }

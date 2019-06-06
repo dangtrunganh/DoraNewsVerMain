@@ -9,6 +9,7 @@ import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
 import android.util.DisplayMetrics;
@@ -25,12 +26,14 @@ import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
+import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 
@@ -155,9 +158,19 @@ public class StoryAdapter extends PagerAdapter {
             Log.e("uu-id-out-story", idStory);
             //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là idStory
             String jsonListEvent = new Gson().toJson(arrayEvents);
-            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
-            detailEventFragment.setAddFragmentCallback(addFragmentCallback);
-            addFragmentCallback.addFrgCallback(detailEventFragment);
+
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
+                detailEventFragment.setAddFragmentCallback(addFragmentCallback);
+                addFragmentCallback.addFrgCallback(detailEventFragment);
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
         });
         return itemView;
     }

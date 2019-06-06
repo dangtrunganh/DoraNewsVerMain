@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,7 +52,8 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
 
     private RecyclerView recyclerViewHotNews;
     private Toolbar toolbar;
-    private TextView textNoNetwork;
+//    private TextView textNoNetwork;
+    private ConstraintLayout constraintLayoutNoNetwork;
     private ImageView imageSettings;
     private ShimmerFrameLayout mShimmerViewContainer;
     private SwipeRefreshLayout swipeContainer;
@@ -108,8 +110,8 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
         }
         imageSettings = view.findViewById(R.id.circle_button_person);
         imageSettings.setOnClickListener(this);
-        textNoNetwork = view.findViewById(R.id.text_no_network);
-        textNoNetwork.setVisibility(View.GONE);
+        constraintLayoutNoNetwork = view.findViewById(R.id.constraint_state_wifi_off_frg_home);
+        constraintLayoutNoNetwork.setVisibility(View.GONE);
         swipeContainer = view.findViewById(R.id.swipe_container_frg_home);
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -250,12 +252,12 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
             //Có mạng
             //Bật hết các View lên
             recyclerViewHotNews.setVisibility(View.VISIBLE);
-            textNoNetwork.setVisibility(View.GONE);
+            constraintLayoutNoNetwork.setVisibility(View.GONE);
         } else {
             //Mất mạng
             //Bật hết các View lên
             recyclerViewHotNews.setVisibility(View.GONE);
-            textNoNetwork.setVisibility(View.VISIBLE);
+            constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
         }
     }
 

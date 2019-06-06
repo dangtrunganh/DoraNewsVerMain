@@ -21,4 +21,5 @@
 
     <color name="colorSearchView">#93666262</color>
     <color name="colorNoTransparent">#666262</color>
+    <color name="lightGreen">#0eb914</color>
 </resources>

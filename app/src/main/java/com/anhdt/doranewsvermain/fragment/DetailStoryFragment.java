@@ -29,6 +29,7 @@ import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,7 +50,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     private StoryItemAdapter storyItemAdapter;
     private AddFragmentCallback addFragmentCallback;
     private AlertDialog alertDialog;
-//    private int typeTabHomeOrLatest;
+    //    private int typeTabHomeOrLatest;
     //    private boolean isFollowed = false;
     private int stateFollow = -1;
 
@@ -238,44 +239,56 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
         alertDialog = new AlertDialog.Builder(getContext()).create();
         alertDialog.setTitle("");
         alertDialog.setMessage("Bỏ theo dõi?");
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Tớ đồng ý", (dialogg, which) -> {
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", (dialogg, which) -> {
             //Noi dung xu ly khi click vao button, mac dinh dialog se close sau khi click vao
-            dialog.show();
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+            //Kiểm tra state mạng========
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+                ///====
+                dialog.show();
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
 
 
-            final ServerAPI apiService = retrofit.create(ServerAPI.class);
+                final ServerAPI apiService = retrofit.create(ServerAPI.class);
 
-            Call<Stories> call = apiService.followStory(uId, idStory, RootAPIUrlConst.UN_FOLLOW);
+                Call<Stories> call = apiService.followStory(uId, idStory, RootAPIUrlConst.UN_FOLLOW);
 
-            call.enqueue(new Callback<Stories>() {
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
-                    Stories stories = response.body();
-                    if (stories == null) {
-                        Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                call.enqueue(new Callback<Stories>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
+                        Stories stories = response.body();
+                        if (stories == null) {
+                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            return;
+                        }
+                        stateFollow = stories.getFollow();
+                        if (stateFollow == RootAPIUrlConst.UN_FOLLOW_INTEGER) {
+                            //success, bỏ follow thành công
+                            //Thông báo cho MainActivity thay đổi UI button
+                            addFragmentCallback.updateListEventFollowInAddFrag(false, idStory, stories);
+                        }
                         dialog.dismiss();
-                        return;
                     }
-                    stateFollow = stories.getFollow();
-                    if (stateFollow == RootAPIUrlConst.UN_FOLLOW_INTEGER) {
-                        //success, bỏ follow thành công
-                        //Thông báo cho MainActivity thay đổi UI button
-                        addFragmentCallback.updateListEventFollowInAddFrag(false, idStory, stories);
-                    }
-                    dialog.dismiss();
-                }
 
-                @Override
-                public void onFailure(Call<Stories> call, Throwable t) {
-                    Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Stories> call, Throwable t) {
+                        Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, whichNew) -> dialog.dismiss());
+                alertDialog.show();
+            }
+            //Kiểm tra state mạng========
         });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> {
             //Noi dung xu ly khi click vao button, mac dinh dialog se close sau khi click vao
@@ -295,42 +308,52 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
             //Trạng thái hiện tại đang là UnFollow, click vào sẽ là Follow
             //Trạng thái hiện tại đang là Follow
             //Khi Click vào sẽ follow - Chú ý là FOLLOW!!!
-            dialog.show();
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+                dialog.show();
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
 
+                final ServerAPI apiService = retrofit.create(ServerAPI.class);
 
-            final ServerAPI apiService = retrofit.create(ServerAPI.class);
+                Call<Stories> call = apiService.followStory(uId, idStory, RootAPIUrlConst.FOLLOW);
 
-            Call<Stories> call = apiService.followStory(uId, idStory, RootAPIUrlConst.FOLLOW);
-
-            call.enqueue(new Callback<Stories>() {
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
-                    Stories stories = response.body();
-                    if (stories == null) {
-                        Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                call.enqueue(new Callback<Stories>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
+                        Stories stories = response.body();
+                        if (stories == null) {
+                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            return;
+                        }
+                        stateFollow = stories.getFollow();
+                        if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
+                            //success, follow thành công
+                            //Thông báo cho MainActivity thay đổi UI button
+                            addFragmentCallback.updateListEventFollowInAddFrag(true, idStory, stories);
+                        }
                         dialog.dismiss();
-                        return;
                     }
-                    stateFollow = stories.getFollow();
-                    if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
-                        //success, follow thành công
-                        //Thông báo cho MainActivity thay đổi UI button
-                        addFragmentCallback.updateListEventFollowInAddFrag(true, idStory, stories);
-                    }
-                    dialog.dismiss();
-                }
 
-                @Override
-                public void onFailure(Call<Stories> call, Throwable t) {
-                    Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Stories> call, Throwable t) {
+                        Toast.makeText(getContext(), "Theo dõi thất bại!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
+
+            //=========
         } else {
             Toast.makeText(getContext(), "State is undefined!", Toast.LENGTH_SHORT).show();
         }

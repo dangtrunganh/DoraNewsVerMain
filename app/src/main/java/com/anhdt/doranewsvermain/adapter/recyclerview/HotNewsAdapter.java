@@ -2,9 +2,11 @@ package com.anhdt.doranewsvermain.adapter.recyclerview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
+import com.anhdt.doranewsvermain.activity.PickNewsSourceActivity;
 import com.anhdt.doranewsvermain.adapter.autoviewpager.StoryAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
@@ -25,6 +28,7 @@ import com.anhdt.doranewsvermain.constant.TypeNewsConst;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.DetailStoryFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
@@ -48,8 +52,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UpdateUIFollowBookmarkChild {
     private ArrayList<Datum> arrayDatums;
     private ILoadMore loadMore;
     private LayoutInflater mLayoutInflater;
@@ -108,9 +113,9 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
 
                 int positionFirstVisible = linearLayoutManager.findFirstVisibleItemPosition();
-                Log.e("ff-first", String.valueOf(positionFirstVisible));
+//                Log.e("ff-first", String.valueOf(positionFirstVisible));
                 int positionLastVisible = linearLayoutManager.findLastVisibleItemPosition();
-                Log.e("ff-last", String.valueOf(positionLastVisible));
+//                Log.e("ff-last", String.valueOf(positionLastVisible));
                 int size = positionLastVisible - positionFirstVisible;
 
 
@@ -120,13 +125,13 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 float yBottomRecyclerView = yTopRecyclerView + height;
 
-                Log.e("mm-yTop", String.valueOf(yTopRecyclerView));
-                Log.e("mm-yTop-new", String.valueOf(newTopRecyclerView));
-                Log.e("mm-height", String.valueOf(height));
+//                Log.e("mm-yTop", String.valueOf(yTopRecyclerView));
+//                Log.e("mm-yTop-new", String.valueOf(newTopRecyclerView));
+//                Log.e("mm-height", String.valueOf(height));
 
                 for (int i = 0; i <= size; i++) {
                     int position = positionFirstVisible + i;
-                    Log.e("11-main-posi=", String.valueOf(position));
+//                    Log.e("11-main-posi=", String.valueOf(position));
                     View view = linearLayoutManager.findViewByPosition(position);
                     float yTopView = view.getY();
                     float yBottomView = yTopView + heightStoryView;
@@ -141,10 +146,10 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         RecyclerView.ViewHolder viewHolderStory = recyclerView.findViewHolderForAdapterPosition(position);
                         if (viewHolderStory instanceof HotNewsAdapter.StoryViewHolder) {
                             HotNewsAdapter.StoryViewHolder storyViewHolder = (StoryViewHolder) viewHolderStory;
-                            Log.e("11-enter-yTop", "Position: " + String.valueOf(position) + " - " + String.valueOf(yTopView));
-                            Log.e("11-enter-yTopParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(newTopRecyclerView));
-                            Log.e("11-enter-yBottom", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomView));
-                            Log.e("11-enter-yBottomParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomRecyclerView));
+//                            Log.e("11-enter-yTop", "Position: " + String.valueOf(position) + " - " + String.valueOf(yTopView));
+//                            Log.e("11-enter-yTopParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(newTopRecyclerView));
+//                            Log.e("11-enter-yBottom", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomView));
+//                            Log.e("11-enter-yBottomParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomRecyclerView));
                             if (GeneralTool.checkIfChildOutIParent(yTopView, yBottomView, newTopRecyclerView, yBottomRecyclerView)) {
                                 //Thỏa mãn nằm ngoài
                                 //Chạy animation
@@ -193,17 +198,11 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //Thằng cuối cùng, kiểm tra trước xem có phải thằng Loading ko?
             return VIEW_TYPE_LOADING;
         }
-
         //Ko phải Loading, xem có phải Footer ko?
         if (arrayDatums.get(position).isFooter()) {
             return VIEW_TYPE_FOOTER;
         }
-
         Datum datum = arrayDatums.get(position);
-//        if (datum == null) {
-//        Log.e("ppl-", position + "");
-//        Log.e("ppl-", arrayDatums.toString());
-//        }
         int typeItem = datum.getType();
         switch (typeItem) {
             case TypeNewsConst.ARTICLE:
@@ -291,6 +290,52 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof FooterViewHolder) {
             //FooterView
         }
+    }
+
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
+
+    }
+
+    @Override
+    public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+        //do nothing, cần làm lại adapter này cho riêng màn NewsInCategoryFragment
+//        for (int i = 0; i < arrayDatums.size(); i++) {
+//            boolean k = false;
+//            Datum datum = arrayDatums.get(i);
+//            if (datum == null) {
+//                continue;
+//            }
+//            if (datum.getType() == null) {
+//                continue;
+//            }
+//            if (datum.getType() == TypeNewsConst.ARTICLE) {
+//                ArrayList<Article> tempArticles = (ArrayList<Article>) datum.getArticles();
+//                if (tempArticles == null) {
+//                    continue;
+//                }
+//                if (tempArticles.size() == 0) {
+//                    continue;
+//                }
+//                Log.e("pkll-", tempArticles.toString());
+//                Log.e("pkll-idmain", idArticle + "");
+//                for (int j = 0; j < tempArticles.size(); j++) {
+//                    //quét cả list articles này
+//                    int i1 = tempArticles.get(i).getId();
+//                    int i2 = article.getId();
+//                    if (i1 == i2) {
+//                        tempArticles.get(i).setBookmarked(isBookmarked);
+//                        notifyDataSetChanged();
+//                        Log.e("pkll-xx", "done");
+//                        k = true;
+//                        break;
+//                    }
+//                }
+//            }
+//            if (k) {
+//                break;
+//            }
+//        }
     }
 
     public class FooterViewHolder extends RecyclerView.ViewHolder {
@@ -395,9 +440,18 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            String titleEvent = event.getTitle();
 
             //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là DEFAULT
-            DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY);
-            detailEventFragment.setAddFragmentCallback(addFragmentCallback);
-            addFragmentCallback.addFrgCallback(detailEventFragment);
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                detailEventFragment.setAddFragmentCallback(addFragmentCallback);
+                addFragmentCallback.addFrgCallback(detailEventFragment);
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
         }
     }
 
@@ -517,9 +571,19 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
 //                loadDetailStory(idStory, GeneralTool.getDeviceId(mContext));
 //                Log.e("pipi-", idStory);
-                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabContent*//*, jsonListEvents*//*,*/ idStory);
-                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
-                addFragmentCallback.addFrgCallback(detailStoryFragment);
+                if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
+                    DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabContent*//*, jsonListEvents*//*,*/ idStory);
+                    detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+                    addFragmentCallback.addFrgCallback(detailStoryFragment);
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                    alertDialog.setTitle("Thông báo");
+                    alertDialog.setMessage("Không có kết nối mạng");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            (dialog, which) -> dialog.dismiss());
+                    alertDialog.show();
+                }
+
 //                Gson gson = new Gson();
 //                String jsonListEvents = gson.toJson(arrayListEvents);
 //                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent, jsonListEvents, idStory);
@@ -597,6 +661,17 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         //======
 
         arrayDatums.addAll(0, listDatums);
+        notifyDataSetChanged();
+        this.setLoaded();
+    }
+
+    public void clearList() {
+        arrayDatums.clear();
+
+        //===Tạo footer===
+        Datum datumFooter = new Datum();
+        datumFooter.setFooter(true);
+        this.arrayDatums.add(datumFooter);
         notifyDataSetChanged();
         this.setLoaded();
     }

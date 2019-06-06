@@ -4,4 +4,6 @@ import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 
 public interface UpdateListNotification {
     void addNotification(NotificationResult notificationResult);
+
+    void removeNotification(String idNotification);
 }

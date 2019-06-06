@@ -17,7 +17,10 @@ import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
+import com.anhdt.doranewsvermain.model.newsresult.Datum;
+import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
 import com.bumptech.glide.Glide;
@@ -25,8 +28,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.ArticleItemViewHolder> {
+public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.ArticleItemViewHolder> implements UpdateUIFollowBookmarkChild {
     public static final int LOAD_MORE_DETAIL_EVENT = 0;
     public static final int IN_HOME = 1;
 
@@ -89,6 +93,24 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
         return mCurrentArrayArticles.size();
     }
 
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
+        //do nothing
+    }
+
+    @Override
+    public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+        //update lại list
+        //true - lưu lại, false - bỏ lưu
+        for (Article articleTmp : mArrayArticles) {
+            if (articleTmp.getId().equals(article.getId())) {
+                articleTmp.setBookmarked(isBookmarked);
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
     public class ArticleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mImageCoverArticle;
         private TextView mTextSource;
@@ -120,7 +142,12 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
             mTextSource.setText(article.getSource().getName());
             mTextTitle.setText(article.getTitle());
             mTextTimeReadable.setText(article.getReadableTime());
-            mTextSummary.setText(GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM));
+
+            String mediumSummary = GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM);
+            String upperString = mediumSummary.substring(0, 1).toUpperCase() + mediumSummary.substring(1);
+            mTextSummary.setText(upperString);
+
+//            mTextSummary.setText(GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM));
             if (article.getImage() != null) {
                 if (!article.getImage().equals("")) {
                     Glide.with(itemView.getContext()).load(article.getImage()).
@@ -274,5 +301,20 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
                 break;
             }
         }
+    }
+
+    public void clearAndReloadInSearching(List<Article> articles) {
+        mCurrentArrayArticles.clear();
+        mCurrentArrayArticles.addAll(0, articles);
+        notifyDataSetChanged();
+    }
+
+    public void clearList() {
+        mCurrentArrayArticles.clear();
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<Article> getmCurrentArrayArticles() {
+        return mCurrentArrayArticles;
     }
 }

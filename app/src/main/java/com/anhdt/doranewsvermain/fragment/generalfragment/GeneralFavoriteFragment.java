@@ -25,6 +25,8 @@ public class GeneralFavoriteFragment extends BaseFragment implements AddFragment
 
     private UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain; //Interface truyền Main vào, để gọi hàm của Main
 
+    private ArrayList<Article> articlesPlayedOnTopEachFragment = new ArrayList<>();
+
     public void setUpdateUIFollowBookmarkChildFromMain(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain) {
         this.updateUIFollowBookmarkChildFromMain = updateUIFollowBookmarkChildFromMain;
     }
@@ -146,5 +148,20 @@ public class GeneralFavoriteFragment extends BaseFragment implements AddFragment
     @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_general_favorite;
+    }
+
+    @Override
+    public ArrayList<Article> getListArticlesPlayedOnTopEachFragment() {
+        return articlesPlayedOnTopEachFragment;
+    }
+
+    @Override
+    public void setListArticlesPlayedOnTopEachFragment(ArrayList<Article> articles) {
+        articlesPlayedOnTopEachFragment = articles;
+    }
+
+    @Override
+    public void clearListArticlesPlayedOnTopEachFragment() {
+        articlesPlayedOnTopEachFragment = new ArrayList<>();
     }
 }

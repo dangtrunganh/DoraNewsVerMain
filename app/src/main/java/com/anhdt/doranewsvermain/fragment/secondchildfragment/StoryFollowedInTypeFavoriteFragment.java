@@ -2,13 +2,17 @@ package com.anhdt.doranewsvermain.fragment.secondchildfragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,13 +51,16 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateU
     private Context mContext;
 
     private RecyclerView recyclerViewStoriesFollowed;
+    private ImageView imageWifiOff;
+    private TextView textNoNetwork, textTryRefresh;
     private StoryFollowedAdapter storyFollowedAdapter;
 
     private String uId;
 
     private String oldStateNetWork = DISCONNECTED; //ban đầu sẽ là mất mạng
     private ShimmerFrameLayout mShimmerViewContainer;
-    private TextView textNoNetwork;
+    private ConstraintLayout constraintLayoutNoNetwork;
+    //    private TextView textNoNetwork;
     private SwipeRefreshLayout swipeContainer;
 
     //============
@@ -104,8 +111,13 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateU
             return;
         }
         mShimmerViewContainer = view.findViewById(R.id.shimmer_view_container_frg_story_followed);
+        constraintLayoutNoNetwork = view.findViewById(R.id.constraint_state_wifi_off_frg_story_followed);
+        constraintLayoutNoNetwork.setVisibility(View.GONE);
+
+        imageWifiOff = view.findViewById(R.id.image_wifi_off_frg_story_followed);
         textNoNetwork = view.findViewById(R.id.text_no_network_frg_story_followed);
-        textNoNetwork.setVisibility(View.GONE);
+        textTryRefresh = view.findViewById(R.id.text_try_refresh_network_story_followed);
+
         swipeContainer = view.findViewById(R.id.swipe_container_frg_story_followed);
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -153,13 +165,40 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateU
                     News news = response.body();
                     if (news == null) {
 //                        Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                        //Chưa theo dõi sự kiện nào
                         mShimmerViewContainer.stopShimmerAnimation();
                         mShimmerViewContainer.setVisibility(View.GONE);
                         swipeContainer.setRefreshing(false);
+
+                        //Tạm thời, cần yêu cầu server trả về mảng rỗng
+                        if (storyFollowedAdapter.getArrayStories().size() == 1) {
+                            //Hiển thị màn hình chưa có sự kiện nào được theo dõi
+                            //Luôn luôn tồn tại một phần tử null làm footer
+                            imageWifiOff.setImageResource(R.drawable.ic_no_event_followed);
+                            textNoNetwork.setText("Bạn chưa theo dõi sự kiện nào");
+                            textTryRefresh.setText("Theo dõi các sự kiện/dòng sự kiện để không bỏ lỡ thông tin quan trọng nào");
+                            constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
+                            recyclerViewStoriesFollowed.setVisibility(View.GONE);
+                        } else {
+                            constraintLayoutNoNetwork.setVisibility(View.GONE);
+                            recyclerViewStoriesFollowed.setVisibility(View.VISIBLE);
+                        }
                         return;
                     }
                     storyFollowedAdapter.updateListNews(news.getData());
-
+                    Log.e("plo-", storyFollowedAdapter.getArrayStories().size() + "");
+                    if (storyFollowedAdapter.getArrayStories().size() == 1) {
+                        //Hiển thị màn hình chưa có sự kiện nào được theo dõi
+                        //Luôn luôn tồn tại một phần tử null làm footer
+                        imageWifiOff.setImageResource(R.drawable.ic_no_event_followed);
+                        textNoNetwork.setText("Bạn chưa theo dõi sự kiện nào");
+                        textTryRefresh.setText("Theo dõi các sự kiện/dòng sự kiện để không bỏ lỡ thông tin quan trọng nào");
+                        constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
+                        recyclerViewStoriesFollowed.setVisibility(View.GONE);
+                    } else {
+                        constraintLayoutNoNetwork.setVisibility(View.GONE);
+                        recyclerViewStoriesFollowed.setVisibility(View.VISIBLE);
+                    }
                     mShimmerViewContainer.stopShimmerAnimation();
                     mShimmerViewContainer.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
@@ -187,13 +226,16 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateU
         if (state) {
             //Có mạng
             //Bật hết các View lên
+            constraintLayoutNoNetwork.setVisibility(View.GONE);
             recyclerViewStoriesFollowed.setVisibility(View.VISIBLE);
-            textNoNetwork.setVisibility(View.GONE);
         } else {
             //Mất mạng
             //Bật hết các View lên
+            imageWifiOff.setImageResource(R.drawable.ic_wifi_yellow);
+            textNoNetwork.setText("Không có kết nối mạng");
+            textTryRefresh.setText("Hãy kết nối mạng và vuốt xuống để thử lại");
+            constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
             recyclerViewStoriesFollowed.setVisibility(View.GONE);
-            textNoNetwork.setVisibility(View.VISIBLE);
         }
     }
 
@@ -211,12 +253,27 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateU
     @Override
     public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
         //true - theo dõi
-        if (isFollowed) {
-            //Theo dõi - thêm một story mới vào list theo dõi
-            storyFollowedAdapter.addNewStoryFollowed(stories);
-        } else {
-            //Hủy theo dõi, bỏ ra khỏi list
-            storyFollowedAdapter.removeStoryFollowed(idStory);
+        if (storyFollowedAdapter != null) {
+            if (isFollowed) {
+                //Theo dõi - thêm một story mới vào list theo dõi
+                storyFollowedAdapter.addNewStoryFollowed(stories);
+            } else {
+                //Hủy theo dõi, bỏ ra khỏi list
+                storyFollowedAdapter.removeStoryFollowed(idStory);
+            }
+
+            if (storyFollowedAdapter.getArrayStories().size() == 1) {
+                //Hiển thị màn hình chưa có sự kiện nào được theo dõi
+                //Luôn luôn tồn tại một phần tử null làm footer
+                imageWifiOff.setImageResource(R.drawable.ic_no_event_followed);
+                textNoNetwork.setText("Bạn chưa theo dõi sự kiện nào");
+                textTryRefresh.setText("Theo dõi các sự kiện/dòng sự kiện để không bỏ lỡ thông tin quan trọng nào");
+                constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
+                recyclerViewStoriesFollowed.setVisibility(View.GONE);
+            } else {
+                constraintLayoutNoNetwork.setVisibility(View.GONE);
+                recyclerViewStoriesFollowed.setVisibility(View.VISIBLE);
+            }
         }
     }
 

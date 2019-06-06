@@ -3,6 +3,7 @@ package com.anhdt.doranewsvermain.adapter.recyclerview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class StoryFollowedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
@@ -144,16 +146,24 @@ public class StoryFollowedAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         public void onClick(View v) {
-//            switch (v.getId()) {
-//
-//            }
             //Hiện chỉ bắt sự kiện click vào cả item to, mở ra màn chi tiết event tương ứng?
             if (idStory == null) {
                 return;
             }
-            DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(idStory);
-            detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
-            addFragmentCallback.addFrgCallback(detailStoryFragment);
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
+                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(idStory);
+                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
+                addFragmentCallback.addFrgCallback(detailStoryFragment);
+            } else {
+                //Mất mạng
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                alertDialog.setTitle("Thông báo");
+                alertDialog.setMessage("Không có kết nối mạng");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
+
         }
     }
 
@@ -189,5 +199,9 @@ public class StoryFollowedAdapter extends RecyclerView.Adapter<RecyclerView.View
                 break;
             }
         }
+    }
+
+    public ArrayList<Datum> getArrayStories() {
+        return arrayStories;
     }
 }

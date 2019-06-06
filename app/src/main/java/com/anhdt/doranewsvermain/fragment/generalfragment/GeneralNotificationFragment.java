@@ -26,6 +26,8 @@ public class GeneralNotificationFragment extends BaseFragment implements AddFrag
 
     private UpdateListNotification updateListNotificationOfChild; //Gọi đến Fragment con để update list notification
 
+    private ArrayList<Article> articlesPlayedOnTopEachFragment = new ArrayList<>();
+
     public void setUpdateUIFollowBookmarkChildFromMain(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChildFromMain) {
         this.updateUIFollowBookmarkChildFromMain = updateUIFollowBookmarkChildFromMain;
     }
@@ -138,5 +140,25 @@ public class GeneralNotificationFragment extends BaseFragment implements AddFrag
     @Override
     public void addNotification(NotificationResult notificationResult) {
         updateListNotificationOfChild.addNotification(notificationResult);
+    }
+
+    @Override
+    public void removeNotification(String idNotification) {
+
+    }
+
+    @Override
+    public ArrayList<Article> getListArticlesPlayedOnTopEachFragment() {
+        return articlesPlayedOnTopEachFragment;
+    }
+
+    @Override
+    public void setListArticlesPlayedOnTopEachFragment(ArrayList<Article> articles) {
+        articlesPlayedOnTopEachFragment = articles;
+    }
+
+    @Override
+    public void clearListArticlesPlayedOnTopEachFragment() {
+        articlesPlayedOnTopEachFragment = new ArrayList<>();
     }
 }

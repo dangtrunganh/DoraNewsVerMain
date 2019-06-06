@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,9 +24,12 @@ import com.anhdt.doranewsvermain.constant.LoadPageConst;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
+import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.News;
+import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
@@ -42,7 +46,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class NewsInCategoryFragment extends BaseNormalFragment {
+public class NewsInCategoryFragment extends BaseNormalFragment implements UpdateUIFollowBookmarkChild {
     //    private ControlVoice controlVoice;
     public static final String PARAM_CATEGORY_NEWS_IN_CATEGORY_FRG = "PARAM_CATEGORY_NEWS_IN_CATEGORY_FRG";
     public static final String PARAM_U_ID_NEWS_IN_CATEGORY_FRG = "PARAM_U_ID_NEWS_IN_CATEGORY_FRG";
@@ -52,7 +56,8 @@ public class NewsInCategoryFragment extends BaseNormalFragment {
 
     private RecyclerView recyclerViewListNewsInCategory;
     private SwipeRefreshLayout swipeContainer;
-    private TextView textNoNetwork;
+//    private TextView textNoNetwork;
+    private ConstraintLayout constraintLayoutNoNetwork;
     private Category currentCategory;
     private HotNewsAdapter hotNewsAdapter;
     private FragmentManager fragmentManager;
@@ -116,8 +121,8 @@ public class NewsInCategoryFragment extends BaseNormalFragment {
         if (view == null) {
             return;
         }
-        textNoNetwork = view.findViewById(R.id.text_no_network_news_in_category);
-        textNoNetwork.setVisibility(View.GONE);
+        constraintLayoutNoNetwork = view.findViewById(R.id.constraint_state_wifi_off_news_in_category);
+        constraintLayoutNoNetwork.setVisibility(View.GONE);
         swipeContainer = view.findViewById(R.id.swipe_container_news_in_category);
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -257,12 +262,12 @@ public class NewsInCategoryFragment extends BaseNormalFragment {
             //Có mạng
             //Bật hết các View lên
             recyclerViewListNewsInCategory.setVisibility(View.VISIBLE);
-            textNoNetwork.setVisibility(View.GONE);
+            constraintLayoutNoNetwork.setVisibility(View.GONE);
         } else {
             //Mất mạng
             //Bật hết các View lên
             recyclerViewListNewsInCategory.setVisibility(View.GONE);
-            textNoNetwork.setVisibility(View.VISIBLE);
+            constraintLayoutNoNetwork.setVisibility(View.VISIBLE);
         }
     }
 
@@ -288,5 +293,20 @@ public class NewsInCategoryFragment extends BaseNormalFragment {
     @Override
     protected void initProgressbar() {
 
+    }
+
+    @Override
+    public void updateUIFollow(boolean isFollowed, String idStory, Stories stories) {
+
+    }
+
+    @Override
+    public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
+        //Khi có sự kiện yêu cầu updateUIBookmark được truyền tới
+        //Update lại cả list
+        //true - lưu lại
+        if (hotNewsAdapter != null) {
+            hotNewsAdapter.updateUIBookmark(isBookmarked, idArticle, article);
+        }
     }
 }

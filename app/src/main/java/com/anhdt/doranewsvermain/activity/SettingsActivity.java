@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.anhdt.doranewsvermain.R;
+import com.anhdt.doranewsvermain.util.GeneralTool;
 
 import java.util.Objects;
 
@@ -78,15 +79,42 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
+        boolean isNetworkAvailable = false;
+        if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(this))) {
+
+        }
         switch (v.getId()) {
             case R.id.lnl_category_news_settings:
                 //Màn pick category
-                Intent intent = new Intent(this, PickCategoryActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter, R.anim.exit);
+                if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(this))) {
+                    Intent intent = new Intent(this, PickCategoryActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                    alertDialog.setTitle("Thông báo");
+                    alertDialog.setMessage("Không có kết nối mạng");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            (dialog, which) -> dialog.dismiss());
+                    alertDialog.show();
+                }
                 break;
             case R.id.lnl_pick_source_settings:
+                if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(this))) {
+                    Intent intentSource = new Intent(this, PickNewsSourceActivity.class);
+                    intentSource.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intentSource);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                    alertDialog.setTitle("Thông báo");
+                    alertDialog.setMessage("Không có kết nối mạng");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            (dialog, which) -> dialog.dismiss());
+                    alertDialog.show();
+                }
+                break;
             case R.id.lnl_pick_language_settings:
             case R.id.lnl_size_display_settings:
             case R.id.lnl_theme_settings:

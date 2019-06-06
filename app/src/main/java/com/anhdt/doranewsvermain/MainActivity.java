@@ -52,6 +52,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -222,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        observers.remove(observers.size() - 1);
 //    }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.clear();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("main-", "onCreate()");
@@ -304,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!mIsConnect) {
             unbindService(mConnection);
             listCurrentOnServiceArticles = new ArrayList<>();
+            activeAddFragmentCallback.clearListArticlesPlayedOnTopEachFragment();
         }
         super.onDestroy();
     }
@@ -521,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         int position = mPlayerService.getIndexCurrentArticle();
         //Chuyển sang màn hình Chi tiết các bài báo
-        if (VoiceTool.checkIfTwoListEqual(listCurrentOnTopArticles, listCurrentOnServiceArticles)) {
+        if (VoiceTool.checkIfTwoListEqual(activeAddFragmentCallback.getListArticlesPlayedOnTopEachFragment(), listCurrentOnServiceArticles)) {
             return;
         }
         Gson gson = new Gson();
@@ -529,8 +538,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position);
         detailNewsFragment.setAddFragmentCallback(activeAddFragmentCallback);
 
-        //===
         activeAddFragmentCallback.addFrgCallback(detailNewsFragment);
+
+        ArrayList<Article> copyList = new ArrayList<>(listCurrentOnServiceArticles);
+
+//        Collections.copy(copyList, listCurrentOnServiceArticles);
+
+        activeAddFragmentCallback.setListArticlesPlayedOnTopEachFragment(copyList);
 
 //        if (activeFragment == generalHomeFragment) {
 ////            detailNewsFragment.setFragmentManager(GeneralHomeFragment.fragmentManagerHome);
@@ -587,6 +601,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (articles != null) {
             mPlayerService.setArticleList(articles);
             listCurrentOnServiceArticles = articles;
+
+            activeAddFragmentCallback.setListArticlesPlayedOnTopEachFragment(articles);
         } else {
             return;
         }
@@ -608,6 +624,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void deleteCurrentListVoiceOnTopStack() {
         this.listCurrentOnTopArticles = new ArrayList<>();
+        activeAddFragmentCallback.clearListArticlesPlayedOnTopEachFragment();
     }
 
     @Override
