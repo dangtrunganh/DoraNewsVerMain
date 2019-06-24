@@ -56,7 +56,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
 
     private RecyclerView recyclerViewListNewsInCategory;
     private SwipeRefreshLayout swipeContainer;
-//    private TextView textNoNetwork;
+    //    private TextView textNoNetwork;
     private ConstraintLayout constraintLayoutNoNetwork;
     private Category currentCategory;
     private HotNewsAdapter hotNewsAdapter;
@@ -88,6 +88,37 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
         mContext = getContext();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        // when fragment visible to user and view is not null then enter here.
+        if (isVisibleToUser && getView() != null) {
+            onResume();
+        }
+    }
+
+    private void sendRequest() {
+        //load data đồng thời đổ dữ liệu lên RecyclerView
+        loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
+
+        //setUpLoadMore()
+        setUpLoadMore(currentCategory.getId());
+        swipeContainer.setOnRefreshListener(() -> {
+            loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
+        });
+    }
+
     public static NewsInCategoryFragment newInstance(String jsonCategory, String uId) {
         NewsInCategoryFragment newsInCategoryFrament = new NewsInCategoryFragment();
         Bundle args = new Bundle();
@@ -106,6 +137,10 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
     @Override
     public void onResume() {
         super.onResume();
+        if (!getUserVisibleHint()) {
+            return;
+        }
+        sendRequest();
     }
 
     @Override
@@ -130,6 +165,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
                 android.R.color.holo_red_light);
 
         mShimmerViewContainer = view.findViewById(R.id.shimmer_view_container_news_in_category);
+//        mShimmerViewContainer.setVisibility(View.VISIBLE);
 
         currentCategory = getCurrentCategoryFromBundle();
         if (currentCategory == null) {
@@ -150,21 +186,18 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
         hotNewsAdapter = new HotNewsAdapter(new ArrayList<>(), mContext, recyclerViewListNewsInCategory, addFragmentCallback);
         recyclerViewListNewsInCategory.setAdapter(hotNewsAdapter);
 
-        //load data đồng thời đổ dữ liệu lên RecyclerView
-        loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
-
-        //setUpLoadMore()
-        setUpLoadMore(currentCategory.getId());
-        swipeContainer.setOnRefreshListener(() -> {
-            loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
-        });
+//        sendRequest();
+//        //load data đồng thời đổ dữ liệu lên RecyclerView
+//        loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
+//
+//        //setUpLoadMore()
+//        setUpLoadMore(currentCategory.getId());
+//        swipeContainer.setOnRefreshListener(() -> {
+//            loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
+//        });
     }
 
     private void setUpLoadMore(String idCategory) {
-//        if (hotNewsAdapter.isFlagFinishLoadData()) {
-//            return;
-//        }
-        //Sự kiện loadMore()
         hotNewsAdapter.setLoadMore(() -> {
             hotNewsAdapter.addItemLoading();
             new Handler().postDelayed(() -> {

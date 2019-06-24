@@ -133,7 +133,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
             @Override
             public void run() {
                 try {
-                    sleep(3000);
+                    sleep(2000);
                     //Đọc data ra
                     setUpUserId(); //- Chỉ thực hiện khi đọc list category chưa có, vì nếu không, mỗi lần splash chạy là lại phải đọc uId lên?
                     //Hay là đọc uId ở đây để MainAct đỡ phải gọi?
@@ -165,6 +165,11 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
             String mToken = instanceIdResult.getToken();
             sendInfoToServer(mToken);
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
     }
 
     private void sendInfoToServer(String mToken) {

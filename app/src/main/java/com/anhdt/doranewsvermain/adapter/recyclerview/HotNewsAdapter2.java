@@ -2,7 +2,6 @@ package com.anhdt.doranewsvermain.adapter.recyclerview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -10,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
-import com.anhdt.doranewsvermain.activity.PickNewsSourceActivity;
 import com.anhdt.doranewsvermain.adapter.autoviewpager.StoryAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
@@ -35,6 +32,15 @@ import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadCacheTool;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 import me.relex.circleindicator.CircleIndicator;
@@ -44,23 +50,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import com.anhdt.doranewsvermain.util.ReadCacheTool;
-import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UpdateUIFollowBookmarkChild {
+public class HotNewsAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UpdateUIFollowBookmarkChild {
     private ArrayList<Datum> arrayDatums;
     private ILoadMore loadMore;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-
     //    private boolean flagFinishLoadData = false; //true, false ám chỉ lần load này đã phải cuối chưa? true tức là cuối rồi
     private boolean isLoading; //Load xong thì tắt ProgressBar đi
     //true là đang load
@@ -70,17 +64,9 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private final int VIEW_TYPE_ARTICLE = 1, VIEW_TYPE_EVENT = 2, VIEW_TYPE_STORY = 3, ERROR_VIEW = 4, VIEW_TYPE_LOADING = 5, VIEW_TYPE_FOOTER = 6;
 
-//    public static final int VISIBLE_THRESHOLD = 6;
-
-//    private boolean isAnimatingStory = false;
-
-//    private FragmentManager fragmentManager;
-
-//    private int typeTabContent; // 1 or 2 - tab home hay tab latest
-
     private AddFragmentCallback addFragmentCallback;
 
-    public HotNewsAdapter(ArrayList<Datum> mArrayDatums, Context mContext, RecyclerView recyclerView, /*FragmentManager fragmentManager, int typeTabContent,*/ AddFragmentCallback addFragmentCallback) {
+    public HotNewsAdapter2(ArrayList<Datum> mArrayDatums, Context mContext, RecyclerView recyclerView, /*FragmentManager fragmentManager, int typeTabContent,*/ AddFragmentCallback addFragmentCallback) {
         //===Tạo footer===
         this.arrayDatums = new ArrayList<>();
         Datum datumFooter = new Datum();
@@ -145,8 +131,8 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (datum.getType() == TypeNewsConst.STORY) {
                         RecyclerView.ViewHolder viewHolderStory = recyclerView.findViewHolderForAdapterPosition(position);
-                        if (viewHolderStory instanceof HotNewsAdapter.StoryViewHolder) {
-                            HotNewsAdapter.StoryViewHolder storyViewHolder = (StoryViewHolder) viewHolderStory;
+                        if (viewHolderStory instanceof HotNewsAdapter2.StoryViewHolder) {
+                            HotNewsAdapter2.StoryViewHolder storyViewHolder = (StoryViewHolder) viewHolderStory;
 //                            Log.e("11-enter-yTop", "Position: " + String.valueOf(position) + " - " + String.valueOf(yTopView));
 //                            Log.e("11-enter-yTopParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(newTopRecyclerView));
 //                            Log.e("11-enter-yBottom", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomView));
@@ -226,19 +212,19 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch (viewType) {
             case VIEW_TYPE_ARTICLE:
                 View viewArticle = mLayoutInflater.inflate(R.layout.item_article_hot_news, viewGroup, false);
-                return new HotNewsAdapter.ArticleViewHolder(viewArticle);
+                return new HotNewsAdapter2.ArticleViewHolder(viewArticle);
             case VIEW_TYPE_EVENT:
                 View viewEvent = mLayoutInflater.inflate(R.layout.item_event_hot_news, viewGroup, false);
-                return new HotNewsAdapter.EventViewHolder(viewEvent);
+                return new HotNewsAdapter2.EventViewHolder(viewEvent);
             case VIEW_TYPE_STORY:
                 View viewStory = mLayoutInflater.inflate(R.layout.item_stories_hot_news, viewGroup, false);
-                return new HotNewsAdapter.StoryViewHolder(viewStory);
+                return new HotNewsAdapter2.StoryViewHolder(viewStory);
             case VIEW_TYPE_LOADING:
                 View viewLoading = mLayoutInflater.inflate(R.layout.item_loading, viewGroup, false);
-                return new HotNewsAdapter.LoadingViewHolder(viewLoading);
+                return new HotNewsAdapter2.LoadingViewHolder(viewLoading);
             case VIEW_TYPE_FOOTER:
                 View viewFooter = mLayoutInflater.inflate(R.layout.item_footer_recycler_view, viewGroup, false);
-                return new HotNewsAdapter.FooterViewHolder(viewFooter);
+                return new HotNewsAdapter2.FooterViewHolder(viewFooter);
         }
         return null; //Với ERROR_VIEW
     }
@@ -501,7 +487,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    public class StoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class StoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
         private AutoScrollViewPager autoScrollViewPagerStories;
         private CircleIndicator indicator;
         private TextView textViewStory;
@@ -545,12 +531,14 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             //Nếu cần tắt animation đi
 //            autoScrollViewPagerStories.stopAutoScroll();
-//            autoScrollViewPagerStories.setScrollDurationFactor(4);
+            autoScrollViewPagerStories.setScrollDurationFactor(4);
             autoScrollViewPagerStories.setInterval(5000);
+            autoScrollViewPagerStories.setOnTouchListener(this);
         }
 
         public void stopAnimation() {
             autoScrollViewPagerStories.stopAutoScroll();
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
 
         public void startAnimation() {
@@ -591,6 +579,16 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
 //                addFragmentCallback.addFrgCallback(detailStoryFragment);
             }
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_BUTTON_RELEASE) {
+                Toast.makeText(mContext, "release!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext, "press!", Toast.LENGTH_SHORT).show();
+            }
+            return true;
         }
     }
 

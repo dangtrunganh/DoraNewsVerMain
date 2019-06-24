@@ -22,4 +22,14 @@
     <color name="colorSearchView">#93666262</color>
     <color name="colorNoTransparent">#666262</color>
     <color name="lightGreen">#0eb914</color>
+
+    <color name="colorSlider_1">#009688</color>
+    <color name="colorSlider_2">#795548</color>
+    <color name="colorSlider_3">#8bc34a</color>
+    <color name="colorSlider_4">#3f51b5</color>
+
+    <color name="activeDots">#fffafa</color>
+    <color name="inactiveDots">#83878b</color>
+
+
 </resources>
