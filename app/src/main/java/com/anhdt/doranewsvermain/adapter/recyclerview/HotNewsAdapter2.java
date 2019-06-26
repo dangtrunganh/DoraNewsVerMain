@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +23,11 @@ import android.widget.Toast;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.autoviewpager.StoryAdapter;
 import com.anhdt.doranewsvermain.api.ServerAPI;
+import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.constant.TypeNewsConst;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
+import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
 import com.anhdt.doranewsvermain.fragment.DetailStoryFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
@@ -211,7 +215,7 @@ public class HotNewsAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         switch (viewType) {
             case VIEW_TYPE_ARTICLE:
-                View viewArticle = mLayoutInflater.inflate(R.layout.item_article_hot_news, viewGroup, false);
+                View viewArticle = mLayoutInflater.inflate(R.layout.item_article_hot_news_in_recycler_view, viewGroup, false);
                 return new HotNewsAdapter2.ArticleViewHolder(viewArticle);
             case VIEW_TYPE_EVENT:
                 View viewEvent = mLayoutInflater.inflate(R.layout.item_event_hot_news, viewGroup, false);
@@ -235,12 +239,16 @@ public class HotNewsAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (viewHolder instanceof ArticleViewHolder && datum.getType() == TypeNewsConst.ARTICLE) {
             //Liệu type có đúng?
             //Lấy ra list các articles
-            ArrayList<Article> articleArrayList = (ArrayList<Article>) datum.getArticles();
-            if (articleArrayList == null) {
+            Article article = datum.getArticle();
+            if (article == null) {
                 return;
             }
+//            ArrayList<Article> articleArrayList = (ArrayList<Article>) datum.getArticles();
+//            if (articleArrayList == null) {
+//                return;
+//            }
             ArticleViewHolder articleViewHolder = (ArticleViewHolder) viewHolder;
-            articleViewHolder.bindData(articleArrayList);
+            articleViewHolder.bindData(article);
         } else if (viewHolder instanceof EventViewHolder && datum.getType() == TypeNewsConst.EVENT) {
             Event event_ = datum.getEvent();
             if (event_ == null) {
@@ -325,6 +333,11 @@ public class HotNewsAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //        }
     }
 
+    @Override
+    public void addNotificationFragment() {
+
+    }
+
     public class FooterViewHolder extends RecyclerView.ViewHolder {
 
         public FooterViewHolder(@NonNull View itemView) {
@@ -346,34 +359,137 @@ public class HotNewsAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public class ArticleViewHolder extends RecyclerView.ViewHolder {
-        private RecyclerView recyclerArticle;
+    public class ArticleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+//        private RecyclerView recyclerArticle;
+        private ImageView mImageCoverArticle;
+        private TextView mTextSource;
+        private TextView mTextTitle;
+        private TextView mTextTimeReadable;
+        private TextView mTextSummary;
+        private ImageView mImageCoverSource;
+        private ImageView mImageMore;
 
         public ArticleViewHolder(@NonNull View itemView) {
             super(itemView);
-            recyclerArticle = itemView.findViewById(R.id.recycler_articles_hot_news);
+//            recyclerArticle = itemView.findViewById(R.id.recycler_articles_hot_news);
+            mTextTitle = itemView.findViewById(R.id.text_title_articles_item_article);
+            mImageCoverArticle = itemView.findViewById(R.id.image_cover_item_article);
+            mTextSummary = itemView.findViewById(R.id.text_summary_item_article);
+            mTextSource = itemView.findViewById(R.id.text_source_item_article);
+            mTextTimeReadable = itemView.findViewById(R.id.text_time_item_article);
+            mImageCoverSource = itemView.findViewById(R.id.image_cover_source_item_article);
+            mImageMore = itemView.findViewById(R.id.image_more_item_article);
+
+            itemView.setOnClickListener(this);
+            mImageMore.setOnClickListener(this);
         }
 
-        public void bindData(ArrayList<Article> articleArrayList) {
+        public void bindData(Article article) {
             //=====set up bookmark=====
-            //Không biết như này có được không?
-            ReadRealmToolForBookmarkArticle.setListBookmark(mContext, articleArrayList);
-            //=========================
-            ArticleItemAdapter articleItemAdapter = new ArticleItemAdapter(mContext,
-                    articleArrayList, addFragmentCallback,
-                    null, ArticleItemAdapter.IN_HOME);
-            recyclerArticle.setHasFixedSize(true);
-            recyclerArticle.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-            recyclerArticle.setAdapter(articleItemAdapter);
-            recyclerArticle.setNestedScrollingEnabled(false);
+            if (article == null) {
+                return;
+            }
+            ReadRealmToolForBookmarkArticle.setArticleBookmarked(mContext, article);
+            mTextSource.setText(article.getSource().getName());
+            mTextTitle.setText(article.getTitle());
+            mTextTimeReadable.setText(article.getReadableTime());
+
+            String mediumSummary = GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM);
+            String upperString = mediumSummary.substring(0, 1).toUpperCase() + mediumSummary.substring(1);
+            mTextSummary.setText(upperString);
+
+//            mTextSummary.setText(GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM));
+            if (article.getImage() != null) {
+                if (!article.getImage().equals("")) {
+                    Glide.with(itemView.getContext()).load(article.getImage()).
+                            apply(new RequestOptions().override(400, 0).
+                                    placeholder(R.drawable.image_default).error(R.drawable.image_default))
+                            .into(mImageCoverArticle);
+                }
+            }
+            if (article.getSource() != null) {
+                if (article.getSource().getIcon() != null) {
+                    if (!article.getSource().getIcon().equals("")) {
+                        Glide.with(itemView.getContext()).load("https://" + article.getSource().getIcon()).
+                                apply(new RequestOptions().override(400, 0).
+                                        placeholder(R.drawable.image_default).error(R.drawable.image_default))
+                                .into(mImageCoverSource);
+                    }
+                }
+            }
+//            //=========================
+//            ArticleItemAdapter articleItemAdapter = new ArticleItemAdapter(mContext,
+//                    articleArrayList, addFragmentCallback,
+//                    null, ArticleItemAdapter.IN_HOME);
+//            recyclerArticle.setHasFixedSize(true);
+//            recyclerArticle.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+//            recyclerArticle.setAdapter(articleItemAdapter);
+//            recyclerArticle.setNestedScrollingEnabled(false);
         }
 
-//        @Override
-//        public void onClick(View v) {
-//            int position = getAdapterPosition();
-//            //Làm gì đó khi click vào article - bài báo thường, tuy nhiên cái này nằm trong adapter con
-//            //...
-//        }
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            Datum datum = arrayDatums.get(position);
+            Article article = datum.getArticle();
+            if (article == null) {
+                return;
+            }
+            if (v.getId() == R.id.image_more_item_article) {
+                //click more button
+                BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(mContext);
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View sheetView = inflater.inflate(R.layout.fragment_bottom_sheet_book_mark_article, null);
+                LinearLayout bookmark = sheetView.findViewById(R.id.layout_bookmark_menu_bottom);
+                LinearLayout cancel = sheetView.findViewById(R.id.layout_cancel_menu_bottom);
+                TextView textBookmark = sheetView.findViewById(R.id.text_bookmark_menu_bottom);
+                mBottomSheetDialog.setContentView(sheetView);
+                if (article.isBookmarked()) {
+                    //Đã lưu thì "bỏ lưu"
+                    textBookmark.setText("Bỏ lưu");
+                } else {
+                    //Chưa lưu thì "Lưu lại"
+                    textBookmark.setText("Lưu lại");
+                }
+                mBottomSheetDialog.show();
+                bookmark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBottomSheetDialog.dismiss();
+                        if (article.isBookmarked()) {
+                            //Bỏ lưu
+                            article.setBookmarked(false);
+                            ReadRealmToolForBookmarkArticle.deleteArticleBookmark(mContext, article);
+                            addFragmentCallback.updateListArticleBookmarkInAddFrag(false, article.getId(), article);
+                            Toast.makeText(mContext, "Bỏ lưu!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            //Lưu lại
+                            article.setBookmarked(true);
+                            ReadRealmToolForBookmarkArticle.addArticleToRealm(mContext, article);
+                            addFragmentCallback.updateListArticleBookmarkInAddFrag(true, article.getId(), article);
+                            Toast.makeText(mContext, "Đã lưu!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBottomSheetDialog.dismiss();
+                    }
+                });
+            } else {
+                //Sự kiện khi kích vào một bài báo thường
+                //Chuyển sang màn hình Chi tiết các bài báo
+                Gson gson = new Gson();
+                ArrayList<Article> articleArrayList = new ArrayList<>();
+                articleArrayList.add(article);
+                String jsonListArticles = gson.toJson(articleArrayList);
+                DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position);
+                detailNewsFragment.setAddFragmentCallback(addFragmentCallback);
+
+                addFragmentCallback.addFrgCallback(detailNewsFragment);
+            }
+        }
     }
 
     public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -36,7 +36,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             loadHomeActivity();
         }
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        setContentView(R.layout.activity_welcome);
+        setContentView(R.layout.activity_welcome_2);
 
         mPager = findViewById(R.id.view_pager_welcome_activity);
         welcomePagerAdapter = new WelcomePagerAdapter(layouts, this);

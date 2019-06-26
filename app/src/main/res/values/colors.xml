@@ -30,6 +30,7 @@
 
     <color name="activeDots">#fffafa</color>
     <color name="inactiveDots">#83878b</color>
-
+    <color name="red">#D50000</color>
+    <color name="my_status_bar_color">#c33764</color>
 
 </resources>

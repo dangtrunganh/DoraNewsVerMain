@@ -36,7 +36,7 @@ public class ReadRealmToolForBookmarkArticle {
                 articleRealm.where(Article.class).findAll();
 
         ArrayList<Article> arrayListResult = new ArrayList<>(listArticles.size());
-        for (Article article: listArticles) {
+        for (Article article : listArticles) {
             arrayListResult.add(articleRealm.copyFromRealm(article));
         }
         return arrayListResult;
@@ -58,6 +58,20 @@ public class ReadRealmToolForBookmarkArticle {
         }
 
         //Cách 2 - query
+    }
+
+    public static void setArticleBookmarked(Context mContext, Article article) {
+        ArrayList<Article> listBookmarkArticles = ReadRealmToolForBookmarkArticle.getListArticleInLocal(mContext);
+        if (listBookmarkArticles.size() == 0) {
+            return;
+        }
+
+        //Cách 1 - bubble toàn tập=
+        for (int j = 0; j < listBookmarkArticles.size(); j++) {
+            if (article.getId().equals(listBookmarkArticles.get(j).getId())) {
+                article.setBookmarked(true);
+            }
+        }
     }
 
     public static void deleteArticleBookmark(Context mContext, Article article) {

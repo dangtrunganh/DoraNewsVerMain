@@ -51,6 +51,7 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
     private static final String DISCONNECTED = "DISCONNECTED";
 
     private RecyclerView recyclerViewHotNews;
+    private ImageView imageNotifications;
     private Toolbar toolbar;
 //    private TextView textNoNetwork;
     private ConstraintLayout constraintLayoutNoNetwork;
@@ -109,7 +110,10 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
             return;
         }
         imageSettings = view.findViewById(R.id.circle_button_person);
+        imageNotifications = view.findViewById(R.id.iv_search);
         imageSettings.setOnClickListener(this);
+        imageNotifications.setOnClickListener(this);
+
         constraintLayoutNoNetwork = view.findViewById(R.id.constraint_state_wifi_off_frg_home);
         constraintLayoutNoNetwork.setVisibility(View.GONE);
         swipeContainer = view.findViewById(R.id.swipe_container_frg_home);
@@ -291,12 +295,20 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
     }
 
     @Override
+    public void addNotificationFragment() {
+
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.circle_button_person:
                 //Mở màn settings
                 startActivity(new Intent(getContext(), SettingsActivity.class));
                 Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+                break;
+            case R.id.iv_search:
+                addFragmentCallback.addNotificationFragment();
                 break;
             default:
                 break;

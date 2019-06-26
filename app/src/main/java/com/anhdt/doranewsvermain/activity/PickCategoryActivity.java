@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,11 +63,26 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pick_category);
+        setContentView(R.layout.activity_pick_category_2);
+
+        changeStatusBarColor();
 
         getUIdFromIntent();
 
         initViews();
+    }
+
+    private void changeStatusBarColor() {
+        Window window = this.getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        // finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.my_status_bar_color));
     }
 
     private void getUIdFromIntent() {
@@ -77,7 +95,7 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initViews() {
-        btnPick = findViewById(R.id.btn_pick_done);
+        btnPick = findViewById(R.id.button_pick_done_pick_category);
         txtPickDone = findViewById(R.id.text_pick_done);
         mRecyclerPick = findViewById(R.id.recycler_pick_category);
         constraintLayoutNoNetwork = findViewById(R.id.constraint_state_wifi_off_pick_category);
@@ -202,7 +220,7 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_pick_done:
+            case R.id.button_pick_done_pick_category:
                 //Lấy ra list các category đã chọn từ adapter
                 List<Category> categoriesChosen = mCategoryAdapter.getListCategoryChosen();
                 if (categoriesChosen == null) {

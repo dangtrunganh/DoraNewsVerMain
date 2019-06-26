@@ -8,4 +8,6 @@ public interface UpdateUIFollowBookmarkChild {
     void updateUIFollow(boolean isFollowed, String idStory, Stories stories);
 
     void updateUIBookmark(boolean isBookmarked, int idArticle, Article article);
+
+    void addNotificationFragment();
 }

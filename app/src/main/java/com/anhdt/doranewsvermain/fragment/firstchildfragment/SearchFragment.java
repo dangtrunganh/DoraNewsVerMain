@@ -273,6 +273,11 @@ public class SearchFragment extends BaseFragmentNeedUpdateUI implements SearchVi
     }
 
     @Override
+    public void addNotificationFragment() {
+
+    }
+
+    @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_search;
     }

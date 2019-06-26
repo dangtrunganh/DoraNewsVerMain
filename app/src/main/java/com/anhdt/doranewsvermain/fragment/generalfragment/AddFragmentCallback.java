@@ -22,4 +22,6 @@ public interface AddFragmentCallback {
     void setListArticlesPlayedOnTopEachFragment(ArrayList<Article> articles);
 
     void clearListArticlesPlayedOnTopEachFragment();
+
+    void addNotificationFragment();
 }

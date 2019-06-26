@@ -26,6 +26,7 @@ public class FavoriteFragment extends BaseFragmentNeedUpdateUI implements View.O
     private TabLayout tabLayoutTwoTypeTab;
     private Toolbar toolbar;
     private ImageView imageSettings;
+    private ImageView imageNotifications;
 
     private FavoriteViewPagerAdapter favoriteViewPagerAdapter;
 
@@ -63,12 +64,14 @@ public class FavoriteFragment extends BaseFragmentNeedUpdateUI implements View.O
         if (view == null) {
             return;
         }
+        imageNotifications = view.findViewById(R.id.iv_search_favorite_frg);
         imageSettings = view.findViewById(R.id.circle_button_person_favorite_frg);
         viewPagerTwoTypeTab = view.findViewById(R.id.view_pager_type_favorite);
         viewPagerTwoTypeTab.setOffscreenPageLimit(1);
         tabLayoutTwoTypeTab = view.findViewById(R.id.tab_layout_type_favorite);
         toolbar = view.findViewById(R.id.actionbar_favorite);
         imageSettings.setOnClickListener(this);
+        imageNotifications.setOnClickListener(this);
 
         setUpViewPager(viewPagerTwoTypeTab);
         tabLayoutTwoTypeTab.setupWithViewPager(viewPagerTwoTypeTab);
@@ -114,12 +117,20 @@ public class FavoriteFragment extends BaseFragmentNeedUpdateUI implements View.O
     }
 
     @Override
+    public void addNotificationFragment() {
+        //do nothing
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.circle_button_person_favorite_frg:
                 //Mở màn settings
                 startActivity(new Intent(getContext(), SettingsActivity.class));
                 Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+                break;
+            case R.id.iv_search_favorite_frg:
+                addFragmentCallback.addNotificationFragment();
                 break;
             default:
                 break;

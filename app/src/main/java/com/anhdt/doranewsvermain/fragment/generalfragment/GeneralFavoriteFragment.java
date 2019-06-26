@@ -164,4 +164,10 @@ public class GeneralFavoriteFragment extends BaseFragment implements AddFragment
     public void clearListArticlesPlayedOnTopEachFragment() {
         articlesPlayedOnTopEachFragment = new ArrayList<>();
     }
+
+    @Override
+    public void addNotificationFragment() {
+        //do nothing
+        updateUIFollowBookmarkChildFromMain.addNotificationFragment();
+    }
 }

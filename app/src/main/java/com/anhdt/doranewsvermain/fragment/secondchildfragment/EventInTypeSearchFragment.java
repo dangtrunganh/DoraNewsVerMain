@@ -159,4 +159,9 @@ public class EventInTypeSearchFragment extends BaseFragmentNeedUpdateUI implemen
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
 
     }
+
+    @Override
+    public void addNotificationFragment() {
+
+    }
 }

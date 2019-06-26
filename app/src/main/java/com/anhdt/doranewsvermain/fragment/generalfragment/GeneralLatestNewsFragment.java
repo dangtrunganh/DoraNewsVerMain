@@ -183,4 +183,10 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
     public void clearListArticlesPlayedOnTopEachFragment() {
         articlesPlayedOnTopEachFragment = new ArrayList<>();
     }
+
+    @Override
+    public void addNotificationFragment() {
+        //do nothing
+        updateUIFollowBookmarkChildFromMain.addNotificationFragment();
+    }
 }

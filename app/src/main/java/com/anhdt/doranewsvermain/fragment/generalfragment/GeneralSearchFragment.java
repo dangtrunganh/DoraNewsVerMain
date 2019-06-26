@@ -152,4 +152,10 @@ public class GeneralSearchFragment extends BaseFragment implements AddFragmentCa
     public void clearListArticlesPlayedOnTopEachFragment() {
         articlesPlayedOnTopEachFragment = new ArrayList<>();
     }
+
+    @Override
+    public void addNotificationFragment() {
+        //do nothing
+        updateUIFollowBookmarkChildFromMain.addNotificationFragment();
+    }
 }

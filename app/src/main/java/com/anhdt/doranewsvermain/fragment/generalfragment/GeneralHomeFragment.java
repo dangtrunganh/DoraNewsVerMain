@@ -197,6 +197,12 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
     }
 
     @Override
+    public void addNotificationFragment() {
+        //do nothing
+        updateUIFollowBookmarkChildFromMain.addNotificationFragment();
+    }
+
+    @Override
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
         for (UpdateUIFollowBookmarkChild observer : observers) {
             observer.updateUIBookmark(isBookmarked, idArticle, article);

@@ -281,4 +281,9 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateU
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
         //do nothing
     }
+
+    @Override
+    public void addNotificationFragment() {
+
+    }
 }

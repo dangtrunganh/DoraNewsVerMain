@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.anhdt.doranewsvermain.R;
@@ -21,6 +20,8 @@ import com.bumptech.glide.request.RequestOptions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private List<Category> mListCategories;
@@ -45,7 +46,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         if (mLayoutInflater == null) {
             mLayoutInflater = LayoutInflater.from(parent.getContext());
         }
-        View view = mLayoutInflater.inflate(R.layout.item_category, parent, false);
+        View view = mLayoutInflater.inflate(R.layout.item_category_2, parent, false);
         return new CategoryAdapter.ViewHolder(view);
     }
 
@@ -63,13 +64,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private RelativeLayout mRelativeInvisible;
-        private ImageView mImageCoverCategory;
+//        private RelativeLayout mImageInvisible;
+        private ImageView mImageInvisible;
+        private CircleImageView mImageCoverCategory;
         private TextView mTextTitleCategory;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mRelativeInvisible = itemView.findViewById(R.id.relative_invisible_item_category);
+            mImageInvisible = itemView.findViewById(R.id.relative_invisible_item_category);
             mImageCoverCategory = itemView.findViewById(R.id.image_cover_item_category);
             mTextTitleCategory = itemView.findViewById(R.id.text_title_item_category);
 
@@ -89,9 +91,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             }
             mTextTitleCategory.setText(category.getName());
             if (category.isSelected()) {
-                mRelativeInvisible.setVisibility(View.VISIBLE);
+                mImageInvisible.setVisibility(View.VISIBLE);
             } else {
-                mRelativeInvisible.setVisibility(View.INVISIBLE);
+                mImageInvisible.setVisibility(View.INVISIBLE);
             }
         }
 
@@ -102,21 +104,23 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 //            mContext.startActivity(new Intent(mContext, DetailEventActivity.class));
             Category category = mListCategories.get(position);
             if (!category.isSelected()) {
-                mRelativeInvisible.setVisibility(View.VISIBLE);
+                mImageInvisible.setVisibility(View.VISIBLE);
                 category.setSelected(true);
                 mListCategoryChosen.add(category);
                 textQuantityChosen.setText("(Đã chọn " + mListCategoryChosen.size() + "/" + mListCategories.size() + ")");
-                if (mListCategoryChosen.size() > 0) {
-                    btnChoose.setEnabled(true);
-                    btnChoose.setText("OK");
-                    btnChoose.setBackgroundColor(0xff64DD17);
+                if (mListCategoryChosen.size() >= 3) {
+                    btnChoose.setVisibility(View.VISIBLE);
+//                    btnChoose.setEnabled(true);
+//                    btnChoose.setText("OK");
+//                    btnChoose.setBackgroundColor(0xff64DD17);
                 } else {
-                    btnChoose.setEnabled(false);
-                    btnChoose.setText("CHỌN CHỦ ĐỀ BẠN QUAN TÂM");
-                    btnChoose.setBackgroundColor(0x66282525);
+                    btnChoose.setVisibility(View.GONE);
+//                    btnChoose.setEnabled(false);
+//                    btnChoose.setText("CHỌN CHỦ ĐỀ BẠN QUAN TÂM");
+//                    btnChoose.setBackgroundColor(0x66282525);
                 }
             } else {
-                mRelativeInvisible.setVisibility(View.INVISIBLE);
+                mImageInvisible.setVisibility(View.INVISIBLE);
                 category.setSelected(false);
                 Log.e("BEFORE", mListCategoryChosen.size() + " " + mListCategoryChosen.toString());
 //                for (Category category1 : mListCategoryChosen) {
@@ -133,16 +137,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 //                mListCategoryChosen.remove(category);
                 Log.e("AFTER", mListCategoryChosen.size() + " " + mListCategoryChosen.toString());
                 textQuantityChosen.setText("(Đã chọn " + mListCategoryChosen.size() + "/" + mListCategories.size() + ")");
-                if (mListCategoryChosen.size() > 0) {
-                    btnChoose.setEnabled(true);
-                    btnChoose.setText("OK");
-                    btnChoose.setBackgroundColor(0xff64DD17);
-//                    Log.e("oooo", "true");
+                if (mListCategoryChosen.size() >= 3) {
+                    btnChoose.setVisibility(View.VISIBLE);
+//                    btnChoose.setEnabled(true);
+//                    btnChoose.setText("OK");
+//                    btnChoose.setBackgroundColor(0xff64DD17);
                 } else {
-                    btnChoose.setEnabled(false);
-                    btnChoose.setText("CHỌN CHỦ ĐỀ BẠN QUAN TÂM");
-                    btnChoose.setBackgroundColor(0x66282525);
-//                    Log.e("oooo", "false");
+                    btnChoose.setVisibility(View.GONE);
+//                    btnChoose.setEnabled(false);
+//                    btnChoose.setText("CHỌN CHỦ ĐỀ BẠN QUAN TÂM");
+//                    btnChoose.setBackgroundColor(0x66282525);
                 }
             }
         }

@@ -2,6 +2,7 @@
 package com.anhdt.doranewsvermain.model.newsresult;
 
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -18,9 +19,22 @@ public class Datum {
     @SerializedName("event")
     @Expose
     private Event event;
+    @SerializedName("article")
+    @Expose
+    private Article article;
+
+
     @SerializedName("articles")
     @Expose
     private List<Article> articles = null;
+
+    public List<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
+    }
 
     private boolean isFooter = false;
 
@@ -64,12 +78,12 @@ public class Datum {
         this.event = event;
     }
 
-    public List<Article> getArticles() {
-        return articles;
+    public Article getArticle() {
+        return article;
     }
 
-    public void setArticles(List<Article> articles) {
-        this.articles = articles;
+    public void setArticle(Article article) {
+        this.article = article;
     }
 
     @Override
@@ -79,7 +93,8 @@ public class Datum {
                 ", type=" + type +
                 ", stories=" + stories +
                 ", event=" + event +
-                ", articles=" + articles +
+                ", article=" + article +
+                ", isFooter=" + isFooter +
                 '}';
     }
 }

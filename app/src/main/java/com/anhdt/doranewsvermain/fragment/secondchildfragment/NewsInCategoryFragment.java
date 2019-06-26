@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.recyclerview.HotNewsAdapter;
+import com.anhdt.doranewsvermain.adapter.recyclerview.HotNewsAdapter3;
 import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.constant.ConstGeneralTypeTab;
 import com.anhdt.doranewsvermain.constant.LoadPageConst;
@@ -59,7 +60,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
     //    private TextView textNoNetwork;
     private ConstraintLayout constraintLayoutNoNetwork;
     private Category currentCategory;
-    private HotNewsAdapter hotNewsAdapter;
+    private HotNewsAdapter3 hotNewsAdapter;
     private FragmentManager fragmentManager;
     private ArrayList<Datum> arrayListDatum = new ArrayList<>();
     private String uId;
@@ -183,7 +184,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
 //        linearLayoutManager.setAutoMeasureEnabled(true);
         recyclerViewListNewsInCategory.setLayoutManager(linearLayoutManager);
 
-        hotNewsAdapter = new HotNewsAdapter(new ArrayList<>(), mContext, recyclerViewListNewsInCategory, addFragmentCallback);
+        hotNewsAdapter = new HotNewsAdapter3(new ArrayList<>(), mContext, recyclerViewListNewsInCategory, addFragmentCallback);
         recyclerViewListNewsInCategory.setAdapter(hotNewsAdapter);
 
 //        sendRequest();
@@ -341,5 +342,10 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
         if (hotNewsAdapter != null) {
             hotNewsAdapter.updateUIBookmark(isBookmarked, idArticle, article);
         }
+    }
+
+    @Override
+    public void addNotificationFragment() {
+
     }
 }

@@ -129,4 +129,9 @@ public class ArticleBookmarkInTypeFavoriteFragment extends BaseFragmentNeedUpdat
             }
         }
     }
+
+    @Override
+    public void addNotificationFragment() {
+
+    }
 }
