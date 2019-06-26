@@ -12,7 +12,6 @@ import android.widget.ImageView;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.activity.SettingsActivity;
-import com.anhdt.doranewsvermain.adapter.recyclerview.HotNewsAdapter;
 import com.anhdt.doranewsvermain.adapter.recyclerview.NotificationAdapter;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
@@ -104,6 +103,11 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
     @Override
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
         //Không có gì để update
+    }
+
+    @Override
+    public void addNotificationFragment() {
+
     }
 
     @Override

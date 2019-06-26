@@ -8,44 +8,44 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3">
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="3">-->
 
-        <ImageView
-            android:id="@+id/image_cover_item_category"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+        <!--<ImageView-->
+            <!--android:id="@+id/image_cover_item_category"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:scaleType="centerCrop" />-->
 
-        <RelativeLayout
-            android:id="@+id/relative_invisible_item_category"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#66000000"
-            android:visibility="gone">
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/relative_invisible_item_category"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="#66000000"-->
+            <!--android:visibility="gone">-->
 
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/ic_check_circle"
-                tools:ignore="VectorDrawableCompat" />
+            <!--<ImageView-->
+                <!--android:layout_width="60dp"-->
+                <!--android:layout_height="60dp"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:scaleType="centerCrop"-->
+                <!--app:srcCompat="@drawable/ic_check_circle"-->
+                <!--tools:ignore="VectorDrawableCompat" />-->
 
-        </RelativeLayout>
-    </RelativeLayout>
+        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
 
-    <TextView
-        android:id="@+id/text_title_item_category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:text="Giáo dục"
-        android:textColor="@android:color/white"
-        android:textSize="16sp" />
+    <!--<TextView-->
+        <!--android:id="@+id/text_title_item_category"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:paddingTop="8dp"-->
+        <!--android:paddingBottom="8dp"-->
+        <!--android:text="Giáo dục"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="16sp" />-->
 </LinearLayout>

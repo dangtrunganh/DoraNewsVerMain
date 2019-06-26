@@ -32,12 +32,14 @@ import com.anhdt.doranewsvermain.constant.ConstServiceFirebase;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
+import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralFavoriteFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralNotificationFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralHomeFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralLatestNewsFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralSearchFragment;
+import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralVideoFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final GeneralLatestNewsFragment generalLatestNewsFragment = GeneralLatestNewsFragment.newInstance();
     private final GeneralSearchFragment generalSearchFragment = GeneralSearchFragment.newInstance();
     private final GeneralNotificationFragment generalNotificationFragment = GeneralNotificationFragment.newInstance();
+    private final GeneralVideoFragment generalVideoFragment = GeneralVideoFragment.newInstance();
     private final GeneralFavoriteFragment generalFavoriteFragment = GeneralFavoriteFragment.newInstance();
 
     private final FragmentManager fm = getSupportFragmentManager();
@@ -192,13 +195,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 activeAddFragmentCallback = generalSearchFragment;
                 return true;
             case R.id.navigation_notification:
-                if (activeFragment == generalNotificationFragment) {
-                    generalNotificationFragment.popAllBackStack();
+                if (activeFragment == generalVideoFragment) {
+                    generalVideoFragment.popAllBackStack();
                     return true;
                 }
-                fm.beginTransaction().hide(activeFragment).show(generalNotificationFragment).commit();
-                activeFragment = generalNotificationFragment;
-                activeAddFragmentCallback = generalNotificationFragment;
+                fm.beginTransaction().hide(activeFragment).show(generalVideoFragment).commit();
+                activeFragment = generalVideoFragment;
+                activeAddFragmentCallback = generalVideoFragment;
+                //===
+//                if (activeFragment == generalNotificationFragment) {
+//                    generalNotificationFragment.popAllBackStack();
+//                    return true;
+//                }
+//                fm.beginTransaction().hide(activeFragment).show(generalNotificationFragment).commit();
+//                activeFragment = generalNotificationFragment;
+//                activeAddFragmentCallback = generalNotificationFragment;
                 return true;
             case R.id.navigation_favorite:
                 if (activeFragment == generalFavoriteFragment) {
@@ -316,8 +327,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         super.onDestroy();
     }
+
     public void hideSoftKeyboard() {
-        if(getCurrentFocus()!=null) {
+        if (getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
@@ -357,6 +369,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Chỉ return về listCategories string, vì 2 thông số idEvent và idLongEvent chỉ để truyển cho DetailEventAct
         Intent result = getIntent();
         if (result == null) {
+            Log.e("abc-1", "abc");
             return;
         }
         String idEvent = result.getStringExtra(ConstParamTransfer.TRANSFER_EVENT_ID_FR_SPLASH_TO_MAIN);
@@ -366,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String uId = result.getStringExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN);
 
         if (jsonCategories == null) {
+            Log.e("abc-2", "abc");
             return;
         }
 
@@ -415,8 +429,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         generalSearchFragment.setUpdateUIFollowBookmarkChildFromMain(this);
         attach(generalSearchFragment);
 
+        generalVideoFragment.setUpdateUIFollowBookmarkChildFromMain(this);
+        attach(generalVideoFragment);
+
         fm.beginTransaction().add(R.id.container, generalSearchFragment, NAME_SEARCH_FRAGMENT).hide(generalSearchFragment).commit();
         fm.beginTransaction().add(R.id.container, generalNotificationFragment, NAME_NOTIFICATION_FRAGMENT).hide(generalNotificationFragment).commit();
+        fm.beginTransaction().add(R.id.container, generalVideoFragment, NAME_NOTIFICATION_FRAGMENT).hide(generalVideoFragment).commit();
         fm.beginTransaction().add(R.id.container, generalFavoriteFragment, NAME_FAVORITE_FRAGMENT).hide(generalFavoriteFragment).commit();
         fm.beginTransaction().add(R.id.container, generalLatestNewsFragment, NAME_LATEST_NEWS_FRAGMENT).hide(generalLatestNewsFragment).commit();
         fm.beginTransaction().add(R.id.container, generalHomeFragment, NAME_HOME_FRAGMENT).commit();
@@ -640,5 +658,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (UpdateUIFollowBookmarkChild observer : observers) {
             observer.updateUIBookmark(isBookmarked, idArticle, article);
         }
+    }
+
+    @Override
+    public void addNotificationFragment() {
+        if (activeFragment == generalNotificationFragment) {
+            generalNotificationFragment.popAllBackStack();
+        }
+        fm.beginTransaction().hide(activeFragment).show(generalNotificationFragment).commit();
+        activeFragment = generalNotificationFragment;
+        activeAddFragmentCallback = generalNotificationFragment;
     }
 }

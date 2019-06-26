@@ -374,6 +374,11 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     }
 
     @Override
+    public void addNotificationFragment() {
+
+    }
+
+    @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_detail_story;
     }

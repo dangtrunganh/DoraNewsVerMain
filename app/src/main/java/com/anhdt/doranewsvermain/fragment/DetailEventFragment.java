@@ -204,9 +204,9 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
         if (view == null) {
             return;
         }
-        Log.e("x1-mToken", ReadCacheTool.getMToken(getContext()));
-        Log.e("x1-deviceId", ReadCacheTool.getDeviceId(getContext()));
-        Log.e("x1-uuid", ReadCacheTool.getUId(getContext()));
+//        Log.e("x1-mToken", ReadCacheTool.getMToken(getContext()));
+//        Log.e("x1-deviceId", ReadCacheTool.getDeviceId(getContext()));
+//        Log.e("x1-uuid", ReadCacheTool.getUId(getContext()));
         dialog = new ProgressDialog(getContext());
         dialog.setMessage("Loading...");
         dialog.setCancelable(false);
@@ -673,5 +673,10 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
         //Kiểm tra xem list article có thằng nào trong list bookmark ko thì update ở đây
         articleItemAdapter.updateUIBookmark(isBookmarked, idArticle, article);
+    }
+
+    @Override
+    public void addNotificationFragment() {
+
     }
 }

@@ -34,6 +34,7 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
     private ViewPager viewPagerCategories;
     private TabLayout tabLayoutCategories;
     private ImageView imageSettings;
+    private ImageView imageNotifications;
     private Toolbar toolbar;
 
     private CategoryViewPagerAdapter categoryViewPagerAdapter;
@@ -77,6 +78,8 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
         }
         imageSettings = view.findViewById(R.id.circle_button_person_latest_frg);
         imageSettings.setOnClickListener(this);
+        imageNotifications = view.findViewById(R.id.iv_search_latest_frg);
+        imageNotifications.setOnClickListener(this);
         viewPagerCategories = view.findViewById(R.id.view_pager_category);
         viewPagerCategories.setOffscreenPageLimit(1);
         tabLayoutCategories = view.findViewById(R.id.tab_layout_category);
@@ -163,12 +166,20 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
     }
 
     @Override
+    public void addNotificationFragment() {
+
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.circle_button_person_latest_frg:
                 //Mở màn settings
                 startActivity(new Intent(getContext(), SettingsActivity.class));
                 Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
+                break;
+            case R.id.iv_search_latest_frg:
+                addFragmentCallback.addNotificationFragment();
                 break;
             default:
                 break;

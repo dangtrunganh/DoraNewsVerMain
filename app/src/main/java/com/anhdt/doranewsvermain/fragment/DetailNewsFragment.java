@@ -151,4 +151,9 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
     public void updateUIBookmark(boolean isBookmarked, int idArticle, Article article) {
         //update nếu có thằng bị bookmark tại đây
     }
+
+    @Override
+    public void addNotificationFragment() {
+
+    }
 }

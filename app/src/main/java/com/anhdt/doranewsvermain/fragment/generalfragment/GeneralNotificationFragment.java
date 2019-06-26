@@ -161,4 +161,9 @@ public class GeneralNotificationFragment extends BaseFragment implements AddFrag
     public void clearListArticlesPlayedOnTopEachFragment() {
         articlesPlayedOnTopEachFragment = new ArrayList<>();
     }
+
+    @Override
+    public void addNotificationFragment() {
+        //do nothing
+    }
 }

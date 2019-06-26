@@ -111,6 +111,11 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
         }
     }
 
+    @Override
+    public void addNotificationFragment() {
+
+    }
+
     public class ArticleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mImageCoverArticle;
         private TextView mTextSource;
