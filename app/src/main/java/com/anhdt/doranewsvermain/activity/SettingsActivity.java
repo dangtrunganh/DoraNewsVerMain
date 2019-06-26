@@ -10,9 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadCacheTool;
 
 import java.util.Objects;
 
@@ -22,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             lnlChooseSize, lnlTheme, lnlShare, lnlRate, lnlContact, lnlhelp,
             lnlPolicy, lnlSecurity, lnlIntroduction, lnlUpdate, lnlDeleteCache, lnlLogOut;
     private AlertDialog alertDialog;
+    private TextView textInfoUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         lnlDeleteCache = findViewById(R.id.lnl_delete_cache_settings);
         lnlLogOut = findViewById(R.id.lnl_log_out_settings);
 
+        textInfoUser = findViewById(R.id.text_info_user);
+
+        String info = "+deviceId: " + ReadCacheTool.getDeviceId(this) + "\n" +
+                "+uId: " + ReadCacheTool.getUId(this) + "\n" +
+                "+mToken: " + ReadCacheTool.getMToken(this) + "\n";
+        textInfoUser.setText(info);
 
         //OnClickListener
         lnlPickCategory.setOnClickListener(this);
@@ -127,6 +137,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.lnl_about_settings:
             case R.id.lnl_update_settings:
             case R.id.lnl_delete_cache_settings:
+                ReadCacheTool.clearPreference(this);
+                Toast.makeText(this, "Đã xóa dữ liệu màn Welcome!", Toast.LENGTH_SHORT).show();
+                break;
             case R.id.lnl_log_out_settings:
                 alertDialog.show();
                 break;

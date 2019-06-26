@@ -92,7 +92,8 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
         TextView txtSourceSummary = view.findViewById(R.id.text_source_summary);
 
         String uId = ReadCacheTool.getUId(Objects.requireNonNull(getContext()));
-        if (uId.equals("e062813b-5c42-419e-a6fe-023dfebe005d")) {
+        String deviceId = ReadCacheTool.getDeviceId(getContext());
+        if (uId.equals("d9f926ae-c5b8-4b33-a34e-561a154d93e6") || deviceId.equals("28ae1337433f9d72")) {
             txtSourceSummary.setText("(Tóm tắt bởi DTA - AI)");
         } else {
             txtSourceSummary.setText("(Tóm tắt bởi Dora - AI)");

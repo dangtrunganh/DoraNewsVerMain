@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
+import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.ConstLocalCaching;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
@@ -226,4 +227,35 @@ public class ReadCacheTool {
 
     //=============Convert==============
     //===Convert jsonString to List Category======
+
+
+    //3 ============= WELCOME ACTIVITY ==========
+    public static void storeWelcomeScreen(Context mContext) {
+        //Bước 2: Lưu vào trong share preference
+        SharedPreferences pre = mContext.getSharedPreferences(
+                mContext.getString(R.string.preference_welcome_activity),
+                MODE_PRIVATE);
+        SharedPreferences.Editor editor = pre.edit();
+        editor.putString(mContext.getString(R.string.key_welcome_activity), "INIT_OK");
+        //chấp nhận lưu xuống file
+        editor.apply();
+    }
+
+    public static boolean checkPreferenceWelcomeActivity(Context mContext) {
+        SharedPreferences pre = mContext.getSharedPreferences(mContext.getString(R.string.preference_welcome_activity), MODE_PRIVATE);
+        String pref = pre.getString(mContext.getString(R.string.key_welcome_activity), "");
+        if (pref == null) {
+            return false;
+        } else {
+            return pref.equals("INIT_OK");
+        }
+    }
+
+    public static void clearPreference(Context mContext) {
+        SharedPreferences pre = mContext.
+                getSharedPreferences(mContext.getString(R.string.preference_welcome_activity), MODE_PRIVATE);
+        SharedPreferences.Editor editor = pre.edit();
+        editor.clear();
+        editor.apply();
+    }
 }

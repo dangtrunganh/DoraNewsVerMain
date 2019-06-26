@@ -53,6 +53,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:ellipsize="end"
+                        android:visibility="visible"
                         android:fontFamily="sans-serif"
                         android:lineSpacingExtra="5dp"
                         android:maxLines="4"

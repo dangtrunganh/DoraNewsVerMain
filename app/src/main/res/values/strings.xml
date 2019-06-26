@@ -7,4 +7,7 @@
     <string name="title_notification">Thông báo</string>
     <dimen name="design_bottom_navigation_text_size" tools:override="true">12sp</dimen>
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">12sp</dimen>
+    
+    <string name="preference_welcome_activity">"data_pref_welcome_activity"</string>
+    <string name="key_welcome_activity">"key_pref_welcome_activity"</string>
 </resources>
