@@ -48,7 +48,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/text_pick_all_source_act" />
 
-    <android.support.v7.widget.RecyclerView
+    <in.myinnos.alphabetsindexfastscrollrecycler.IndexFastScrollRecyclerView
         android:id="@+id/recycler_source_act"
         android:layout_width="0dp"
         android:layout_height="0dp"

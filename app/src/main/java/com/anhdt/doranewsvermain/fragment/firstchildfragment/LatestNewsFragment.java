@@ -171,6 +171,13 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
     }
 
     @Override
+    public void scrollToTop() {
+        //do nothing
+        int position = viewPagerCategories.getCurrentItem();
+        observers.get(position).scrollToTop();
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.circle_button_person_latest_frg:

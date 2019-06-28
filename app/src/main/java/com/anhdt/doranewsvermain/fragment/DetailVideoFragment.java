@@ -200,4 +200,9 @@ public class DetailVideoFragment extends BaseFragmentNeedUpdateUI implements Vie
     public void addNotificationFragment() {
 
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
 }

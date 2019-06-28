@@ -245,6 +245,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 //            Toast.makeText(this, "Nothing in pref - category - null", Toast.LENGTH_SHORT).show();
             Intent intentPick = new Intent(SplashActivity.this, PickCategoryActivity.class);
             intentPick.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_PICK_CATEGORY, uId);
+            intentPick.putExtra(PickCategoryActivity.ARGS_TYPE_PICK_CATEGORY, PickCategoryActivity.TYPE_NO_CANCEL);
             startActivity(intentPick);
             finish();
         } else if (categoryArrayList.size() == 0) {
@@ -252,6 +253,7 @@ public class SplashActivity extends AppCompatActivity implements Animation.Anima
 //            Toast.makeText(this, "Nothing in pref - category - 0", Toast.LENGTH_SHORT).show();
             Intent intentPick = new Intent(SplashActivity.this, PickCategoryActivity.class);
             intentPick.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_PICK_CATEGORY, uId);
+            intentPick.putExtra(PickCategoryActivity.ARGS_TYPE_PICK_CATEGORY, PickCategoryActivity.TYPE_NO_CANCEL);
             startActivity(intentPick);
             finish();
         } else {

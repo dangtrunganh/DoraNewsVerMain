@@ -45,7 +45,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PickCategoryActivity extends AppCompatActivity implements View.OnClickListener {
     private Button btnPick;
-    private TextView txtPickDone;
+    private TextView txtPickDone, txtCancel;
     private RecyclerView mRecyclerPick;
     private ConstraintLayout constraintLayoutNoNetwork;
     private Button btnTryReconnect;
@@ -59,6 +59,12 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
 
     private String uId;
     private boolean isExistListCategoriesInLocal;
+
+    public static String ARGS_TYPE_PICK_CATEGORY = "ARGS_TYPE_PICK_CATEGORY";
+    public static int TYPE_NO_CANCEL = 0;
+    public static int TYPE_HAVE_CANCEL = 1;
+
+    private int type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,12 +97,20 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
             uId = ReadCacheTool.getUId(this);
         } else {
             uId = intent.getStringExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_PICK_CATEGORY);
+            type = intent.getIntExtra(ARGS_TYPE_PICK_CATEGORY, TYPE_NO_CANCEL);
         }
     }
 
     private void initViews() {
         btnPick = findViewById(R.id.button_pick_done_pick_category);
         txtPickDone = findViewById(R.id.text_pick_done);
+        txtCancel = findViewById(R.id.btn_cancel_pick_category);
+        txtCancel.setOnClickListener(this);
+        if (type == TYPE_HAVE_CANCEL) {
+            txtCancel.setVisibility(View.VISIBLE);
+        } else {
+            txtCancel.setVisibility(View.GONE);
+        }
         mRecyclerPick = findViewById(R.id.recycler_pick_category);
         constraintLayoutNoNetwork = findViewById(R.id.constraint_state_wifi_off_pick_category);
         btnTryReconnect = findViewById(R.id.button_try_refresh_network_pick_category);
@@ -187,13 +201,15 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
                     }
                     mCategoryAdapter.getListCategoryChosen().clear();
                     mCategoryAdapter.setListCategoryChosen(mCategoryListInLocal);
-                    btnPick.setEnabled(true);
-                    btnPick.setText("OK");
+                    btnPick.setVisibility(View.VISIBLE);
+//                    btnPick.setEnabled(true);
+//                    btnPick.setText("OK");
 
                     //Set màu khi đã chọn đủ, cho phép user ấn "OK"
-                    btnPick.setBackgroundColor(0xff64DD17);
+//                    btnPick.setBackgroundColor(0xff64DD17);
                     txtPickDone.setText("(Đã chọn " + mCategoryListInLocal.size() + "/" + mCategoryListTest.size() + ")");
                 } else {
+                    btnPick.setVisibility(View.GONE);
                     txtPickDone.setText("(Đã chọn 0" + "/" + mCategoryListTest.size() + ")");
                 }
 
@@ -240,13 +256,17 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
                 String json = gson.toJson(categoriesChosen);
                 intentResult.putExtra(ConstParamTransfer.TRANSFER_LIST_CATEGORY_FR_SPLASH_TO_MAIN, json);
                 intentResult.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN, uId);
-
+                intentResult.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intentResult);
                 finish();
                 break;
             case R.id.button_try_refresh_network_pick_category:
                 //try to reconnect network
                 getDataFromServer();
+                break;
+            case R.id.btn_cancel_pick_category:
+                //cancel pick category
+                finish();
                 break;
             default:
                 break;

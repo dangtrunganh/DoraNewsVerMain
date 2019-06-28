@@ -122,6 +122,11 @@ public class FavoriteFragment extends BaseFragmentNeedUpdateUI implements View.O
     }
 
     @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.circle_button_person_favorite_frg:

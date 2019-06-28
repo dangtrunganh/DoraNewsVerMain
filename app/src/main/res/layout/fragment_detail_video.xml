@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--android.support.design.widget.CoordinatorLayout-->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:paddingBottom="10dp">
+    android:background="@color/white">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_detail_video"
@@ -12,7 +11,10 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:orientation="vertical"
-        app:elevation="0dp">
+        app:elevation="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_detail_video"
@@ -20,8 +22,8 @@
             android:layout_height="?attr/actionBarSize"
             app:contentInsetEnd="0dp"
             app:contentInsetStart="0dp"
-            app:contentInsetStartWithNavigation="0dp"
-            app:layout_scrollFlags="scroll|enterAlways|snap">
+            app:contentInsetStartWithNavigation="0dp">
+            <!--app:layout_scrollFlags="scroll|enterAlways|snap"-->
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -42,12 +44,25 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
+    <fragment
+        android:id="@+id/image_cover_detail_video"
+        android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+        android:layout_width="match_parent"
+        android:layout_height="190dp"
+        android:background="@color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_detail_video" />
+
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/nested_detail_video"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image_cover_detail_video">
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -59,15 +74,15 @@
                 android:layout_height="wrap_content"
                 android:visibility="visible">
 
-                <fragment
-                    android:id="@+id/image_cover_detail_video"
-                    android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="190dp"
-                    android:background="@color/white"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                <!--<fragment-->
+                <!--android:id="@+id/image_cover_detail_video"-->
+                <!--android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="190dp"-->
+                <!--android:background="@color/white"-->
+                <!--app:layout_constraintLeft_toLeftOf="parent"-->
+                <!--app:layout_constraintRight_toRightOf="parent"-->
+                <!--app:layout_constraintTop_toTopOf="parent" />-->
 
                 <TextView
                     android:id="@+id/text_title_video_detail_video"
@@ -82,17 +97,20 @@
                     android:textStyle="bold"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@id/image_up_down_description_detail_video"
-                    app:layout_constraintTop_toBottomOf="@id/image_cover_detail_video" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/image_up_down_description_detail_video"
                     android:layout_width="40dp"
-                    android:layout_height="20dp"
+                    android:layout_height="0dp"
+                    android:padding="6dp"
                     android:layout_marginRight="5dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_down"
+                    app:layout_constraintBottom_toBottomOf="@id/text_title_video_detail_video"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/text_title_video_detail_video" />
+                    app:layout_constraintTop_toTopOf="parent" />
+
 
                 <TextView
                     android:id="@+id/text_number_views_detail_video"
@@ -296,4 +314,4 @@ Bản tin ngày 25/06/2019 với chủ đề Đi tìm nguyên nhân khiến SKT 
 
     </android.support.v4.widget.NestedScrollView>
 
-</android.support.design.widget.CoordinatorLayout>
+</android.support.constraint.ConstraintLayout>

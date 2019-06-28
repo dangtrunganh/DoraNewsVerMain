@@ -6,4 +6,5 @@ public class ConstServiceFirebase {
     public static final String PARAM_URL_IMAGE = "PARAM_URL_IMAGE";
     public static final String PARAM_TITLE_HOT = "PARAM_TITLE_HOT";
     public static final String PARAM_CONTENT_NOTICE = "PARAM_CONTENT_NOTICE";
+    public static final String PARAM_ID_NOTIFICATION = "PARAM_ID_NOTIFICATION";
 }

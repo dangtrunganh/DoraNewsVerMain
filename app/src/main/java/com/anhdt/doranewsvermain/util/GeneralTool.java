@@ -16,6 +16,7 @@ import com.anhdt.doranewsvermain.model.ItemDetailStory;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
+import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.text.DateFormat;
@@ -23,6 +24,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -40,6 +43,17 @@ public class GeneralTool {
         return false;
     }
 
+    public static boolean checkIfEventExistInLocal(String idNotification, ArrayList<NotificationResult> notificationResults) {
+        for (NotificationResult notificationResult : notificationResults) {
+            if (idNotification.equals(notificationResult.getIdNotification())) {
+                Log.e("kkpp-checkIn", "idInList:" + notificationResult.toString());
+                Log.e("kkpp-checkIn", "idNotice:" + idNotification);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean checkIfParentHasChild(ArrayList<Datum> parents, ArrayList<Datum> childs) {
         String idParent = "";
         String idChild = "";
@@ -50,7 +64,7 @@ public class GeneralTool {
             idParent += parents.get(i).getId();
         }
         for (int i = 0; i < childs.size(); i++) {
-            if(childs.get(i) == null) {
+            if (childs.get(i) == null) {
                 continue;
             }
             idChild += childs.get(i).getId();
@@ -145,6 +159,36 @@ public class GeneralTool {
         }
     }
 
+    public static long compareDay(String startDay, String endDay) {
+        //return true nếu như startDay ở trước endDay
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
+//        DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+//        String inputString1 = "23 01 1997";
+//        String inputString2 = "27 04 1997";
+        try {
+            Date date1 = myFormat.parse(startDay);
+            Date date2 = myFormat.parse(endDay);
+            return date2.getTime() - date1.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public static long getLongTimeEvent(Event event) {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat myFormat = new SimpleDateFormat("dd MM yyyy");
+        String startDayFormatted = GeneralTool.convertUTCTimeToLocalTime(event.getTime());
+        try {
+            long dateLong = myFormat.parse(startDayFormatted).getTime();
+            Log.e("time-long", dateLong + "");
+            return dateLong;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.e("time-long-error", "mpi");
+            return 0;
+        }
+    }
+
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -166,6 +210,19 @@ public class GeneralTool {
             }
         }
         return "\n\n\n\n";
+    }
+
+    public static void sortListEventByTime(ArrayList<Event> arrayListEvents) {
+        Collections.sort(arrayListEvents,
+                (o1, o2) -> {
+                    if (getLongTimeEvent(o1) == getLongTimeEvent(o2)) {
+                        return 0;
+                    } else if (getLongTimeEvent(o1) <
+                            getLongTimeEvent(o2)) {
+                        return 1;
+                    }
+                    return -1;
+                });
     }
 
     public static ArrayList<ItemDetailStory> convertToListDatumStory(ArrayList<Event> listEventToConvert) {

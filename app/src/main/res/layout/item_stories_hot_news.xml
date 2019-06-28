@@ -38,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:gravity="center"
-        android:text="Xem thông tin toàn cảnh"
+        android:text="Xem toàn dòng sự kiện"
         android:textColor="@color/cyanBlue"
         android:textSize="18sp"
         android:textStyle="bold"

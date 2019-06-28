@@ -148,9 +148,7 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
         loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, deviceId);
         //setUpLoadMore()
         setUpLoadMore(deviceId);
-        swipeContainer.setOnRefreshListener(() -> {
-            loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, deviceId);
-        });
+        swipeContainer.setOnRefreshListener(() -> loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, deviceId));
     }
 
     private void setUpLoadMore(String deviceID) {
@@ -297,6 +295,13 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
     @Override
     public void addNotificationFragment() {
 
+    }
+
+    @Override
+    public void scrollToTop() {
+        if (recyclerViewHotNews != null) {
+            recyclerViewHotNews.smoothScrollToPosition(0);
+        }
     }
 
     @Override

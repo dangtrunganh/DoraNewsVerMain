@@ -90,6 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_dot_horizontal"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/text_time_item_child_event_deh"
             app:layout_constraintRight_toRightOf="@id/card_view_deh"
             app:layout_constraintTop_toTopOf="@id/text_time_item_child_event_deh" />

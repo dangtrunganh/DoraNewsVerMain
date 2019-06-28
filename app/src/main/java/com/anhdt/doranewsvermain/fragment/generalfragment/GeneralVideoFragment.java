@@ -2,6 +2,7 @@ package com.anhdt.doranewsvermain.fragment.generalfragment;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
@@ -77,6 +78,7 @@ public class GeneralVideoFragment extends BaseFragment implements AddFragmentCal
     @Override
     public void popBackStack() {
         FragmentManager fragmentManager = getChildFragmentManager();
+//        Log.e("hjhj", fragmentManager.getBackStackEntryCount() + "");
         fragmentManager.popBackStack();
 //        detach();
     }
@@ -163,5 +165,16 @@ public class GeneralVideoFragment extends BaseFragment implements AddFragmentCal
     public void addNotificationFragment() {
         //do nothing
         updateUIFollowBookmarkChildFromMain.addNotificationFragment();
+    }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
+    @Override
+    public int getSizeOfObservers() {
+        FragmentManager fragmentManager = getChildFragmentManager();
+        return fragmentManager.getBackStackEntryCount();
     }
 }

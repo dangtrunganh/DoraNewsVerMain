@@ -98,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 //Màn pick category
                 if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(this))) {
                     Intent intent = new Intent(this, PickCategoryActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra(PickCategoryActivity.ARGS_TYPE_PICK_CATEGORY, PickCategoryActivity.TYPE_HAVE_CANCEL);
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
                 } else {

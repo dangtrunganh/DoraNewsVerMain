@@ -286,4 +286,9 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateU
     public void addNotificationFragment() {
 
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
 }

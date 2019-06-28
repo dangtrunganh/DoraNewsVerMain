@@ -164,4 +164,9 @@ public class EventInTypeSearchFragment extends BaseFragmentNeedUpdateUI implemen
     public void addNotificationFragment() {
 
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
 }

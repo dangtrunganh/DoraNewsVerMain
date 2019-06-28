@@ -8,6 +8,7 @@ import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.constant.ConstLocalCaching;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
+import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -256,6 +257,53 @@ public class ReadCacheTool {
                 getSharedPreferences(mContext.getString(R.string.preference_welcome_activity), MODE_PRIVATE);
         SharedPreferences.Editor editor = pre.edit();
         editor.clear();
+        editor.apply();
+    }
+
+
+    //==============Notification===============
+    public static String getListNotificationInCache(Context mContext) {
+        SharedPreferences pre = mContext.getSharedPreferences
+                (ConstLocalCaching.FILE_NAME_PREF_CACHE_NOTIFICATIONS, MODE_PRIVATE);
+        return pre.getString(ConstLocalCaching.KEY_PREF_CACHE_NOTIFICATIONS,
+                ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_NOTIFICATIONS);
+    }
+
+    public static ArrayList<NotificationResult> getRealListNotificationInLocal(Context mContext) {
+        SharedPreferences pre = mContext.getSharedPreferences
+                (ConstLocalCaching.FILE_NAME_PREF_CACHE_NOTIFICATIONS, MODE_PRIVATE);
+        String json = pre.getString(ConstLocalCaching.KEY_PREF_CACHE_NOTIFICATIONS,
+                ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_NOTIFICATIONS);
+        if (json == null) {
+            return new ArrayList<>();
+        } else if (json.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_NOTIFICATIONS)) {
+            return new ArrayList<>();
+        } else {
+            //json khác rỗng và null
+            Gson gson = new Gson();
+            ArrayList<NotificationResult> arrayList = gson.fromJson(json, new TypeToken<ArrayList<NotificationResult>>() {
+            }.getType());
+            if (arrayList == null) {
+                return new ArrayList<>();
+            } else if (arrayList.size() == 0) {
+                return new ArrayList<>();
+            }
+            return arrayList;
+        }
+    }
+
+    public static void storeNotification(Context mContext, List<NotificationResult> mArrayNotifications) {
+        SharedPreferences pre = mContext.getSharedPreferences(ConstLocalCaching.FILE_NAME_PREF_CACHE_NOTIFICATIONS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pre.edit();
+        editor.clear();
+        editor.apply();
+
+        //Chuyển list về dạng json để lưu xuống
+        Gson gson = new Gson();
+        String json = gson.toJson(mArrayNotifications);
+        editor.putString(ConstLocalCaching.KEY_PREF_CACHE_NOTIFICATIONS, json);
+
+        editor.commit();
         editor.apply();
     }
 }

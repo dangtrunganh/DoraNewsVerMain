@@ -166,4 +166,18 @@ public class GeneralNotificationFragment extends BaseFragment implements AddFrag
     public void addNotificationFragment() {
         //do nothing
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
+    @Override
+    public int getSizeOfObservers() {
+        if (observers == null) {
+            return 0;
+        } else {
+            return observers.size();
+        }
+    }
 }

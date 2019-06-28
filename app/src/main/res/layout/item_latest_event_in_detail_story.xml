@@ -116,6 +116,7 @@
         android:layout_marginStart="5dp"
         android:lineSpacingExtra="5dp"
         android:src="@drawable/ic_dot_horizontal"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/text_time_name_event_latest_event_item_story"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/text_time_name_event_latest_event_item_story" />

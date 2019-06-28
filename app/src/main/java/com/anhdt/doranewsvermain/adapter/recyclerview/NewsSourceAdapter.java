@@ -9,6 +9,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.anhdt.doranewsvermain.R;
@@ -21,13 +22,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class NewsSourceAdapter extends RecyclerView.Adapter<NewsSourceAdapter.ViewHolder> implements View.OnClickListener {
+public class NewsSourceAdapter extends RecyclerView.Adapter<NewsSourceAdapter.ViewHolder> implements View.OnClickListener, SectionIndexer {
     private List<NewsSource> mListSource;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private TextView textPickDone, textPickAll;
     private List<NewsSource> mListSourceChosen;
     private boolean isPickAllMode;
+    private ArrayList<Integer> mSectionPositions;
 
     public NewsSourceAdapter(List<NewsSource> mListSource, Context mContext,
                              TextView textPickDone, TextView textPickAll) {
@@ -88,6 +90,30 @@ public class NewsSourceAdapter extends RecyclerView.Adapter<NewsSourceAdapter.Vi
             default:
                 break;
         }
+    }
+
+    @Override
+    public Object[] getSections() {
+        List<String> sections = new ArrayList<>(26);
+        mSectionPositions = new ArrayList<>(26);
+        for (int i = 0, size = mListSource.size(); i < size; i++) {
+            String section = String.valueOf(mListSource.get(i).getId().charAt(0)).toUpperCase();
+            if (!sections.contains(section)) {
+                sections.add(section);
+                mSectionPositions.add(i);
+            }
+        }
+        return sections.toArray(new String[0]);
+    }
+
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        return mSectionPositions.get(sectionIndex);
+    }
+
+    @Override
+    public int getSectionForPosition(int position) {
+        return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

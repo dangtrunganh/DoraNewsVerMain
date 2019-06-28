@@ -7,14 +7,17 @@ import com.anhdt.doranewsvermain.model.newsresult.Article;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class ReadRealmToolForBookmarkArticle {
     private static final String FILE_NAME_DB_LIST_ARTICLES = "ListArticles.realm";
-
     public static void addArticleToRealm(Context mContext, Article article) {
         Realm.init(mContext);
-        Realm articleRealm = Realm.getDefaultInstance();
+        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("articles.realm").schemaVersion(1).build();
+        Realm.setDefaultConfiguration(configuration);
+//        Realm articleRealm = Realm.getDefaultInstance();
+        Realm articleRealm = Realm.getInstance(configuration);
 //        Realm articleRealm =
 //                Realm.getInstance(
 //                        new RealmConfiguration.Builder(mContext)
@@ -25,13 +28,17 @@ public class ReadRealmToolForBookmarkArticle {
         articleRealm.beginTransaction();
         Article copyArticle = articleRealm.copyToRealm(article);
         articleRealm.commitTransaction();
+        articleRealm.close();
     }
 
     public static ArrayList<Article> getListArticleInLocal(Context mContext) {
         //Trả về size 0 hoặc kết quả - cả list đầu ra
         // Initialize Realm (just once per application)
         Realm.init(mContext);
-        Realm articleRealm = Realm.getDefaultInstance();
+        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("articles.realm").schemaVersion(1).build();
+        Realm.setDefaultConfiguration(configuration);
+//        Realm articleRealm = Realm.getDefaultInstance();
+        Realm articleRealm = Realm.getInstance(configuration);
         RealmResults<Article> listArticles =
                 articleRealm.where(Article.class).findAll();
 
@@ -39,6 +46,7 @@ public class ReadRealmToolForBookmarkArticle {
         for (Article article : listArticles) {
             arrayListResult.add(articleRealm.copyFromRealm(article));
         }
+        articleRealm.close();
         return arrayListResult;
     }
 
@@ -76,7 +84,10 @@ public class ReadRealmToolForBookmarkArticle {
 
     public static void deleteArticleBookmark(Context mContext, Article article) {
         Realm.init(mContext);
-        Realm articleRealm = Realm.getDefaultInstance();
+        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("articles.realm").schemaVersion(1).build();
+        Realm.setDefaultConfiguration(configuration);
+//        Realm articleRealm = Realm.getDefaultInstance();
+        Realm articleRealm = Realm.getInstance(configuration);
 
         articleRealm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -85,7 +96,7 @@ public class ReadRealmToolForBookmarkArticle {
                 rows.deleteAllFromRealm();
             }
         });
+        articleRealm.close();
     }
-
 //    public void updateArticleBookmark
 }

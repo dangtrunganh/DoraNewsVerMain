@@ -348,4 +348,12 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
     public void addNotificationFragment() {
 
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+        if (recyclerViewListNewsInCategory != null) {
+            recyclerViewListNewsInCategory.smoothScrollToPosition(0);
+        }
+    }
 }

@@ -117,6 +117,11 @@ public class ArticleInTypeSearchFragment extends BaseFragmentNeedUpdateUI implem
     }
 
     @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
+    @Override
     public void displayArticleResults(String keywords, ProgressDialog dialog) {
         //search articles by keywords
         //Gửi thông tin lên server
@@ -158,11 +163,11 @@ public class ArticleInTypeSearchFragment extends BaseFragmentNeedUpdateUI implem
                 Log.e("hhi-", results.toString());
                 //XXX-Tạm thời chỗ này nhé
                 List<Article> articles = new ArrayList<>();
-//                for (Datum datum : results) {
-//                    if (datum.getType() == TypeNewsConst.ARTICLE) {
-//                        articles.addAll(datum.getArticles());
-//                    }
-//                }
+                for (Datum datum : results) {
+                    if (datum.getType() == TypeNewsConst.ARTICLE) {
+                        articles.add(datum.getArticle());
+                    }
+                }
                 articleItemAdapter.clearAndReloadInSearching(articles);
                 dialog.dismiss();
             }

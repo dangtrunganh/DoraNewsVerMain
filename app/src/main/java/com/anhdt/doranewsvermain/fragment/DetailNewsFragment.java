@@ -156,4 +156,9 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
     public void addNotificationFragment() {
 
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
 }
