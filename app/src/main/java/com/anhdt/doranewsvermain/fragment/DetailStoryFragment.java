@@ -1,7 +1,9 @@
 package com.anhdt.doranewsvermain.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -53,12 +55,13 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     //    private int typeTabHomeOrLatest;
     //    private boolean isFollowed = false;
     private int stateFollow = -1;
+    private Context mContext;
 
 
     //    private boolean isBlueButton = false; //Biến này chỉ để updateUI thôi, ko được dùng
     //Nếu Đã theo dõi -> Chuyển thành true, trước đó là false
     //Nếu bỏ theo dõi -> Chuyển thành false, trước đó là true
-    private String idStory;
+    private String idStory = "S7za7TJEib"; //Default id
     private ArrayList<ItemDetailStory> arrayItemDetailStories;
 
     public void setAddFragmentCallback(AddFragmentCallback addFragmentCallback) {
@@ -103,7 +106,9 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
         //===GetData====
         Bundle bundle = getArguments();
 //        typeTabHomeOrLatest = bundle.getInt(ARG_TYPE_TAB);
-        this.idStory = bundle.getString(ARG_ID_STORY);
+        if (bundle != null) {
+            this.idStory = bundle.getString(ARG_ID_STORY);
+        }
 
 
 //        Log.e("pipi-receiver", this.idStory);
@@ -114,7 +119,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
 //        if (!idStory.equals("")) {
 //            return;
 //        }
-        String uId = ReadCacheTool.getUId(getContext());
+        String uId = ReadCacheTool.getUId(mContext);
         loadData(this.idStory, uId);
 //        String jsonListEvent = bundle.getString(ARG_LIST_EVENT);
 
@@ -144,6 +149,12 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     @Override
     protected void initProgressbar() {
 
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = getContext();
     }
 
     private void loadData(String idStory, String uId) {
@@ -180,6 +191,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                     return;
                 }
                 //load data to recyclerView
+                GeneralTool.sortListEventByTime(mArrayEvents);
                 arrayItemDetailStories = GeneralTool.convertToListDatumStory(mArrayEvents);
                 btnFollow.setOnClickListener(DetailStoryFragment.this);
                 //===Adapter===
@@ -208,9 +220,9 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
             final int sdk = android.os.Build.VERSION.SDK_INT;
             stateFollow = RootAPIUrlConst.FOLLOW_INTEGER;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
+                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.border_un_follow_button));
             } else {
-                btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
+                btnFollow.setBackground(ContextCompat.getDrawable(mContext, R.drawable.border_un_follow_button));
             }
             btnFollow.setText("Bỏ theo dõi");
         } else {
@@ -218,9 +230,9 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
             final int sdk = android.os.Build.VERSION.SDK_INT;
             stateFollow = RootAPIUrlConst.UN_FOLLOW_INTEGER;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
+                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.border_follow_button));
             } else {
-                btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
+                btnFollow.setBackground(ContextCompat.getDrawable(mContext, R.drawable.border_follow_button));
             }
             btnFollow.setText("Theo dõi");
         }
@@ -236,7 +248,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     }
 
     private void initDialog(String uId) {
-        alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog = new AlertDialog.Builder(mContext).create();
         alertDialog.setTitle("");
         alertDialog.setMessage("Bỏ theo dõi?");
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", (dialogg, which) -> {
@@ -298,7 +310,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     }
 
     private void followEvent() {
-        String uId = ReadCacheTool.getUId(getContext());
+        String uId = ReadCacheTool.getUId(mContext);
         if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
             //Trạng thái hiện tại đang là Follow
             //Khi Click vào sẽ Unfollow - Chú ý là UNFOLLOW!!!
@@ -376,6 +388,11 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
     @Override
     public void addNotificationFragment() {
 
+    }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
     }
 
     @Override

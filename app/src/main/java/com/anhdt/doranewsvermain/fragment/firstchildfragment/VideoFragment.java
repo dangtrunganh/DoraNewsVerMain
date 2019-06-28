@@ -119,6 +119,11 @@ public class VideoFragment extends BaseFragmentNeedUpdateUI implements UpdateLis
     }
 
     @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
+    @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_video;
     }

@@ -1,7 +1,6 @@
 package com.anhdt.doranewsvermain.activity;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -12,7 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.anhdt.doranewsvermain.R;
-import com.anhdt.doranewsvermain.adapter.viewpager_welcome.WelcomePagerAdapter;
+import com.anhdt.doranewsvermain.adapter.viewpagerwelcome.WelcomePagerAdapter;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;

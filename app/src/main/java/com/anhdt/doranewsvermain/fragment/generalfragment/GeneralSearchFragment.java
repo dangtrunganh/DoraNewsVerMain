@@ -158,4 +158,18 @@ public class GeneralSearchFragment extends BaseFragment implements AddFragmentCa
         //do nothing
         updateUIFollowBookmarkChildFromMain.addNotificationFragment();
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
+    @Override
+    public int getSizeOfObservers() {
+        if (observers == null) {
+            return 0;
+        } else {
+            return observers.size();
+        }
+    }
 }

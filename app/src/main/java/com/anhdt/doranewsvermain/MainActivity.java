@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.broadcastreceiver.NetworkChangeReceiver;
+import com.anhdt.doranewsvermain.constant.ConstLocalCaching;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.constant.ConstServiceFirebase;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
@@ -47,11 +48,13 @@ import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 import com.anhdt.doranewsvermain.service.voice.VoicePlayerService;
 import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.anhdt.doranewsvermain.util.ReadRealmToolForNotification;
 import com.anhdt.doranewsvermain.util.VoiceTool;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String idEventFromBroadcast;
     private String idStoryFromBroadcast;
     private String urlImageFromBroadcast;
+    private String idNotification;
 
     private String contentNotice;
     private String titleHot;
@@ -135,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             urlImageFromBroadcast = intent.getExtras().getString(ConstServiceFirebase.PARAM_URL_IMAGE);
             titleHot = intent.getExtras().getString(ConstServiceFirebase.PARAM_TITLE_HOT);
             contentNotice = intent.getExtras().getString(ConstServiceFirebase.PARAM_CONTENT_NOTICE);
+            idNotification = intent.getExtras().getString(ConstServiceFirebase.PARAM_ID_NOTIFICATION);
             loadDataToNotice();
         }
     };
@@ -142,13 +147,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void loadDataToNotice() {
         //Lưu xuống db
         NotificationResult notificationResult = new NotificationResult(titleHot, contentNotice, urlImageFromBroadcast,
-                idEventFromBroadcast, idStoryFromBroadcast);
+                idEventFromBroadcast, idStoryFromBroadcast, idNotification);
 
-        boolean x = ReadRealmToolForNotification.addNotificationToRealm(MainActivity.this, notificationResult);
-        if (x) {
-            //Gọi update bên Notification Fragment
-            generalNotificationFragment.addNotification(notificationResult);
+        String listJsonNotificationsFromLocal = ReadCacheTool.getListNotificationInCache(this);
+        if (!listJsonNotificationsFromLocal.equals(ConstLocalCaching.DEFAULT_VALUE_PREF_CACHE_NOTIFICATIONS)) {
+            //đọc ra string ok, thực hiện chuyển sang list
+            Gson gson = new Gson();
+            ArrayList<NotificationResult> mArrayNotificationsInLocal = gson.fromJson(listJsonNotificationsFromLocal, new TypeToken<ArrayList<NotificationResult>>() {
+            }.getType());
+            if (mArrayNotificationsInLocal == null) {
+                Log.e("kkpp-", "NULLL");
+            }
+            if (mArrayNotificationsInLocal != null) {
+                if (mArrayNotificationsInLocal.size() > 0) {
+                    Log.e("kkpp-", mArrayNotificationsInLocal.toString());
+                    if (!GeneralTool.checkIfEventExistInLocal(notificationResult.getIdNotification(), mArrayNotificationsInLocal)) {
+                        //Không tồn tại trong Local
+                        Log.e("kkpp-111", "Exist");
+                        generalNotificationFragment.addNotification(notificationResult);
+
+                        //Thực hiện lưu list mới chứa phần tử mới xuống Local
+                        mArrayNotificationsInLocal.add(notificationResult);
+                        ReadCacheTool.storeNotification(this, mArrayNotificationsInLocal);
+                    } else {
+                        Log.e("kkpp-111", "Not Exist");
+                    }
+                }
+            }
         }
+//        boolean x = ReadRealmToolForNotification.addNotificationToRealm(MainActivity.this, notificationResult);
+//        if (x) {
+//            //Gọi update bên Notification Fragment
+//            generalNotificationFragment.addNotification(notificationResult);
+//        }
 
         if (activeFragment != generalNotificationFragment) {
             constraintLayoutViewNotice.setVisibility(View.VISIBLE);
@@ -169,7 +200,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.navigation_hot:
                 if (activeFragment == generalHomeFragment) {
-                    generalHomeFragment.popAllBackStack();
+                    if (generalHomeFragment.getSizeOfObservers() >= 2) {
+                        generalHomeFragment.popAllBackStack();
+                    } else {
+                        generalHomeFragment.scrollToTop();
+                    }
                     return true;
                 }
                 fm.beginTransaction().hide(activeFragment).show(generalHomeFragment).commit();
@@ -178,7 +213,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             case R.id.navigation_latest_news:
                 if (activeFragment == generalLatestNewsFragment) {
-                    generalLatestNewsFragment.popAllBackStack();
+                    if (generalLatestNewsFragment.getSizeOfObservers() >= 2) {
+                        generalLatestNewsFragment.popAllBackStack();
+                    } else {
+                        generalLatestNewsFragment.scrollToTop();
+                    }
                     return true;
                 }
                 fm.beginTransaction().hide(activeFragment).show(generalLatestNewsFragment).commit();
@@ -412,7 +451,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         //=======
 
-
         generalHomeFragment.setControlVoice(this);
         generalLatestNewsFragment.setControlVoice(this);
         generalFavoriteFragment.setControlVoice(this);
@@ -446,6 +484,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
+        if (activeAddFragmentCallback.getSizeOfObservers() >= 2) {
+            activeAddFragmentCallback.popBackStack();
+            return;
+        }
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
             return;
@@ -668,5 +710,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fm.beginTransaction().hide(activeFragment).show(generalNotificationFragment).commit();
         activeFragment = generalNotificationFragment;
         activeAddFragmentCallback = generalNotificationFragment;
+    }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
     }
 }

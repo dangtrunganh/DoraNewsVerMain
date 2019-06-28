@@ -24,4 +24,8 @@ public interface AddFragmentCallback {
     void clearListArticlesPlayedOnTopEachFragment();
 
     void addNotificationFragment();
+
+    int getSizeOfObservers();
+
+    void scrollToTop();
 }

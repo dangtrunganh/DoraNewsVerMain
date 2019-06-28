@@ -10,4 +10,6 @@ public interface UpdateUIFollowBookmarkChild {
     void updateUIBookmark(boolean isBookmarked, int idArticle, Article article);
 
     void addNotificationFragment();
+
+    void scrollToTop();
 }

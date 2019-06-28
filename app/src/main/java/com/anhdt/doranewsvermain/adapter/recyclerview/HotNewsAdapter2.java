@@ -338,6 +338,11 @@ public class HotNewsAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
     public class FooterViewHolder extends RecyclerView.ViewHolder {
 
         public FooterViewHolder(@NonNull View itemView) {

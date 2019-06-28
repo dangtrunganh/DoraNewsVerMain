@@ -189,4 +189,20 @@ public class GeneralLatestNewsFragment extends BaseFragment implements AddFragme
         //do nothing
         updateUIFollowBookmarkChildFromMain.addNotificationFragment();
     }
+
+    @Override
+    public void scrollToTop() {
+        if (observers.size() == 1) {
+            observers.get(0).scrollToTop();
+        }
+    }
+
+    @Override
+    public int getSizeOfObservers() {
+        if (observers == null) {
+            return 0;
+        } else {
+            return observers.size();
+        }
+    }
 }

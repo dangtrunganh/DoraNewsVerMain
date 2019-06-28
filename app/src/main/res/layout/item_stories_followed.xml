@@ -42,7 +42,7 @@
         android:layout_height="100dp"
         android:layout_marginRight="10dp"
         android:elevation="0dp"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="5dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/text_category_item_stories_followed">
 
@@ -58,7 +58,7 @@
         android:id="@+id/text_number_events_item_stories_followed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="12dp"
         android:maxLines="1"
         android:text="1 sự kiện"
@@ -73,6 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_dot_horizontal"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/text_number_events_item_stories_followed"
         app:layout_constraintRight_toRightOf="@id/card_image_cover_item_stories_followed"
         app:layout_constraintTop_toTopOf="@id/text_number_events_item_stories_followed" />

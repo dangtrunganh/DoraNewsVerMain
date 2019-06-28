@@ -3,6 +3,7 @@ package com.anhdt.doranewsvermain.fragment.generalfragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.anhdt.doranewsvermain.MainActivity;
 import com.anhdt.doranewsvermain.R;
@@ -142,6 +143,7 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 
     public void attach(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChild) {
         observers.add(updateUIFollowBookmarkChild);
+//        Log.e("pii-", observers.size() + "");
     }
 
     public void detach() {
@@ -200,6 +202,22 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
     public void addNotificationFragment() {
         //do nothing
         updateUIFollowBookmarkChildFromMain.addNotificationFragment();
+    }
+
+    @Override
+    public int getSizeOfObservers() {
+        if (observers == null) {
+            return 0;
+        } else {
+            return observers.size();
+        }
+    }
+
+    @Override
+    public void scrollToTop() {
+        if (observers.size() == 1) {
+            observers.get(0).scrollToTop();
+        }
     }
 
     @Override

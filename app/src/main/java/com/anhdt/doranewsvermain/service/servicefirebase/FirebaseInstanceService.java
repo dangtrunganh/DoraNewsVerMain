@@ -73,17 +73,17 @@ public class FirebaseInstanceService extends FirebaseMessagingService {
         String id = data.get("event_id");
         String idLongEvent = data.get("long_event_id");
         String urlImage = data.get("url_image");
+        String idNotification = data.get("id");
 
         String title = dataNoticeTitleBody.getTitle();
         String body = dataNoticeTitleBody.getBody();
 
 
-        if (id == null || idLongEvent == null || urlImage == null || title == null || body == null) {
+        if (id == null || idLongEvent == null || urlImage == null || title == null || body == null || idNotification == null) {
             return;
         }
-        if (id.equals("") || idLongEvent.equals("") || urlImage.equals("") || title.equals("") || body.equals("")) {
+        if (id.equals("") || idLongEvent.equals("") || urlImage.equals("") || title.equals("") || body.equals("") || idNotification.equals("")) {
             return;
-
         }
         // Bật act đó lên
         // Create an Intent for the activity you want to start
@@ -103,6 +103,7 @@ public class FirebaseInstanceService extends FirebaseMessagingService {
 
         intent.putExtra(ConstServiceFirebase.PARAM_TITLE_HOT, title);
         intent.putExtra(ConstServiceFirebase.PARAM_CONTENT_NOTICE, body);
+        intent.putExtra(ConstServiceFirebase.PARAM_ID_NOTIFICATION, idNotification);
 
 //        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 //        notification.contentIntent = pendingIntent;

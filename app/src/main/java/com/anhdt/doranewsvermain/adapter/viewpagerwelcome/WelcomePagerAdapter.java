@@ -1,4 +1,4 @@
-package com.anhdt.doranewsvermain.adapter.viewpager_welcome;
+package com.anhdt.doranewsvermain.adapter.viewpagerwelcome;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

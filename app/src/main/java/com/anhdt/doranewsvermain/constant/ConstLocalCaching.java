@@ -46,4 +46,13 @@ public class ConstLocalCaching {
 
     //Giá trị mặc định trả về khi get theo DEFAULT_VALUE_PREF_CACHE_HOT_ARTICLE
     public static final String DEFAULT_VALUE_PREF_CACHE_NEWS_BY_CATEGORY= "";
+
+
+    //========Cache-Notification===========
+    //Tên file
+    public static final String FILE_NAME_PREF_CACHE_NOTIFICATIONS = "cache_notifications";
+    //Key lưu list notification
+    public static final String KEY_PREF_CACHE_NOTIFICATIONS = "key_notifications";
+    //Giá trị mặc định trả về khi get theo KEY_PREF_CACHE_NOTIFICATIONS
+    public static final String DEFAULT_VALUE_PREF_CACHE_NOTIFICATIONS = "";
 }

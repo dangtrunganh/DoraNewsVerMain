@@ -70,7 +70,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         switch (viewType) {
             case VIEW_TYPE_NOTIFICATION:
-                View viewArticle = mLayoutInflater.inflate(R.layout.item_notification_in_recycler_view, viewGroup, false);
+                View viewArticle = mLayoutInflater.inflate(R.layout.item_notification_in_recycler_view_2, viewGroup, false);
                 return new NotificationViewHolder(viewArticle);
             case VIEW_TYPE_FOOTER:
                 View viewFooter = mLayoutInflater.inflate(R.layout.item_footer_recycler_view_stories_followed, viewGroup, false);

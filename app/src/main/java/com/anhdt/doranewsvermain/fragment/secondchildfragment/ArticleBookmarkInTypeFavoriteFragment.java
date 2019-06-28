@@ -134,4 +134,9 @@ public class ArticleBookmarkInTypeFavoriteFragment extends BaseFragmentNeedUpdat
     public void addNotificationFragment() {
 
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
 }

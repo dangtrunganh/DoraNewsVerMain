@@ -116,6 +116,11 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
 
     }
 
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
     public class ArticleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mImageCoverArticle;
         private TextView mTextSource;
@@ -204,7 +209,7 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
                             article.setBookmarked(false);
                             ReadRealmToolForBookmarkArticle.deleteArticleBookmark(mContext, article);
                             addFragmentCallback.updateListArticleBookmarkInAddFrag(false, article.getId(), article);
-                            Toast.makeText(mContext, "Bỏ lưu!", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(mContext, "Bỏ lưu!", Toast.LENGTH_SHORT).show();
                         } else {
                             //Lưu lại
                             article.setBookmarked(true);

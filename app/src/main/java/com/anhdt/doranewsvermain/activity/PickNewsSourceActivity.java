@@ -30,9 +30,12 @@ import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import in.myinnos.alphabetsindexfastscrollrecycler.IndexFastScrollRecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,7 +44,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PickNewsSourceActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView textPickDone, textPickAll;
-    private RecyclerView mRecyclerPick;
+    private IndexFastScrollRecyclerView mRecyclerPick;
     private ProgressDialog dialog;
     private NewsSourceAdapter mNewsSourceAdapter;
     private GeneralDataNewsSource mGeneralDataNewsSource;
@@ -141,6 +144,9 @@ public class PickNewsSourceActivity extends AppCompatActivity implements View.On
                 if (mListAllNewsSource == null) {
                     Toast.makeText(getApplicationContext(), "Failed to load mListAllNewsSource - null", Toast.LENGTH_SHORT).show();
                     return;
+                }
+                if (mListAllNewsSource.size() > 0) {
+                    Collections.sort(mListAllNewsSource, (object1, object2) -> object1.getId().compareTo(object2.getId()));
                 }
                 mNewsSourceAdapter.updateListSources(mListAllNewsSource);
                 textPickAll.setVisibility(View.VISIBLE);

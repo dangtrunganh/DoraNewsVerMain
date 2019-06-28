@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.activity.ReadOriginalArticleActivity;
+import com.anhdt.doranewsvermain.config.ConfigSettings;
 import com.anhdt.doranewsvermain.constant.ConstParam;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseNormalFragment;
@@ -162,8 +163,13 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
 
         });
         btnPlay = view.findViewById(R.id.image_play_fr_detail_news);
+        if (ConfigSettings.isPlayedVoice) {
+            btnPlay.setVisibility(View.VISIBLE);
+            btnPlay.setOnClickListener(this);
+        } else {
+            btnPlay.setVisibility(View.GONE);
+        }
 //        boundService();
-        btnPlay.setOnClickListener(this);
     }
 
 //    private void boundService() {

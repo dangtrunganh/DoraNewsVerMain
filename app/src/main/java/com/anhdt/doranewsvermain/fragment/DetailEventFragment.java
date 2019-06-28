@@ -679,4 +679,9 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
     public void addNotificationFragment() {
 
     }
+
+    @Override
+    public void scrollToTop() {
+        //do nothing
+    }
 }

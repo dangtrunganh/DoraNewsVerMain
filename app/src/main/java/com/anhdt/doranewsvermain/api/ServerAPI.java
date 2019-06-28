@@ -6,6 +6,7 @@ import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.model.newssourceresult.GeneralDataNewsSource;
+import com.anhdt.doranewsvermain.model.notificationresult.DataNotification;
 import com.anhdt.doranewsvermain.model.searchresult.DatumSearchResult;
 import com.anhdt.doranewsvermain.model.userresult.UserResult;
 
@@ -38,6 +39,8 @@ public interface ServerAPI {
     Call<CategoryResult> sendCategoriesPicked(@Query("uid") String uid,
                                               @Query("picklist") String pickList);
 
+    @GET("my-notify")
+    Call<DataNotification> getListNotifications(@Query("uid") String uid);
 
     //=====POST=====
     @POST("active")

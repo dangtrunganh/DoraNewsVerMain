@@ -278,6 +278,11 @@ public class SearchFragment extends BaseFragmentNeedUpdateUI implements SearchVi
     }
 
     @Override
+    public void scrollToTop() {
+        //do nothing
+    }
+
+    @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_search;
     }
