@@ -252,7 +252,7 @@ public class ReadCacheTool {
         }
     }
 
-    public static void clearPreference(Context mContext) {
+    public static void clearPreferenceWelcome(Context mContext) {
         SharedPreferences pre = mContext.
                 getSharedPreferences(mContext.getString(R.string.preference_welcome_activity), MODE_PRIVATE);
         SharedPreferences.Editor editor = pre.edit();
@@ -305,5 +305,22 @@ public class ReadCacheTool {
 
         editor.commit();
         editor.apply();
+    }
+
+
+    //=======Test-Detail-Article========
+    public static void storeDetailArticleTest(Context mContext, boolean isTested) {
+        SharedPreferences pre = mContext.getSharedPreferences("cache_detail_article_test", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pre.edit();
+        editor.clear();
+        editor.apply();
+        editor.putBoolean("key_test", isTested);
+        editor.commit();
+        editor.apply();
+    }
+
+    public static boolean getDetailArticleTest(Context mContext) {
+        SharedPreferences pre = mContext.getSharedPreferences("cache_detail_article_test", MODE_PRIVATE);
+        return pre.getBoolean("key_test", false);
     }
 }

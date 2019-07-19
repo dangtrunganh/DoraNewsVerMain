@@ -135,7 +135,7 @@ public class NewsSourceAdapter extends RecyclerView.Adapter<NewsSourceAdapter.Vi
             String iconUrl = newsSource.getIcon();
             if (iconUrl != null) {
                 if (!iconUrl.equals("")) {
-                    Glide.with(itemView.getContext()).load("https://" + iconUrl).
+                    Glide.with(itemView.getContext()).load(/*"https://" + */iconUrl).
                             apply(new RequestOptions().override(400, 0).
                                     placeholder(R.drawable.image_default).error(R.drawable.image_default))
                             .into(mImageCoverSource);

@@ -7,7 +7,10 @@
 
     <color name="cyanBlue">#007aff</color>
     <color name="backgroundRecyclerView">#efeff4</color>
+    <color name="backgroundRecyclerViewInVideoItem">#eae9ee</color>
+    <color name="backgroundVideoTitle">#f4f4f4</color>
     <color name="lightGrey">#9a9a9a</color>
+    <color name="lightGreyDivider">#c9c9c9</color>
     <color name="lightGreySmallControl">#dad9d9</color>
     <color name="lightGreyBold">#7e7c7c</color>
     <color name="colorBlackHaze">#8cf6f7f7</color>
@@ -31,6 +34,7 @@
     <color name="activeDots">#fffafa</color>
     <color name="inactiveDots">#83878b</color>
     <color name="red">#D50000</color>
-    <color name="my_status_bar_color">#c33764</color>
+    <!--<color name="my_status_bar_color">#c33764</color>-->
+    <color name="my_status_bar_color">#1aa6c6</color>
 
 </resources>

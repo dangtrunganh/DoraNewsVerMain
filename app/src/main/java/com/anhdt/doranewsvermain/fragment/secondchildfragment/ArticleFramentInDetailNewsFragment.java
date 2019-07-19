@@ -1,10 +1,14 @@
 package com.anhdt.doranewsvermain.fragment.secondchildfragment;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +37,11 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
     public static final String PARAM_DETAIL_NEWS = "param_news";
     public static final String PARAM_LIST_NEWS = "param_list_news";
     public static final String PARAM_POSITION = "param_position";
-    private ImageView btnPlay;
+
+    private ImageView btnPlay, imageCoverNews;
+    private TextView txtTitleNews, textCategory, txtContentNews, textSource;
+    private Button btnReadMore;
+    private View viewCoverage;
 
     //Bài báo ứng với Fragment này
     private Article currentArticles;
@@ -52,16 +60,20 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
 
     private ArrayList<Article> listTotalArticles;
 
-    //    private VoicePlayerService mPlayerService;
-//    private ServiceConnection mConnection;
-//    private boolean mIsConnect;
     private int position;
+    private Context mContext;
 
     public ArrayList<Article> getListTotalArticles() {
         return listTotalArticles;
     }
 
     public ArticleFramentInDetailNewsFragment() {
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = getContext();
     }
 
     @Override
@@ -80,29 +92,29 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
         return articleFramentInDetailNewsFragment;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void initializeComponents() {
         View view = getView();
         if (view == null) {
             return;
         }
-        ImageView imageCoverNews = view.findViewById(R.id.image_cover_fr_detail_news);
-        TextView txtTitleNews = view.findViewById(R.id.text_fr_title_detail_news);
-        TextView txtContentNews = view.findViewById(R.id.text_content_fr_detail_news);
-        Button btnReadMore = view.findViewById(R.id.btn_read_more_fr_detail_news);
-        TextView txtSourceSummary = view.findViewById(R.id.text_source_summary);
+        imageCoverNews = view.findViewById(R.id.image_cover_fr_detail_news);
+//        textFirstSummary = view.findViewById(R.id.text_content_first_fr_detail_news);
+        txtTitleNews = view.findViewById(R.id.text_fr_title_detail_news);
+        txtContentNews = view.findViewById(R.id.text_content_fr_detail_news);
+        btnReadMore = view.findViewById(R.id.btn_read_more_fr_detail_news);
+//        TextView txtSourceSummary = view.findViewById(R.id.text_source_summary);
+        viewCoverage = view.findViewById(R.id.view_coverage_fr_detail_news);
+        btnPlay = view.findViewById(R.id.image_play_fr_detail_news);
 
-        String uId = ReadCacheTool.getUId(Objects.requireNonNull(getContext()));
-        String deviceId = ReadCacheTool.getDeviceId(getContext());
-        if (uId.equals("d9f926ae-c5b8-4b33-a34e-561a154d93e6") || deviceId.equals("28ae1337433f9d72")) {
-            txtSourceSummary.setText("(Tóm tắt bởi DTA - AI)");
-        } else {
-            txtSourceSummary.setText("(Tóm tắt bởi Dora - AI)");
-        }
 
         //====
-        Typeface custom_font = Typeface.createFromAsset(Objects.requireNonNull(getActivity()).getAssets(), "fonts/calibril.ttf");
-        txtContentNews.setTypeface(custom_font);
+        Typeface customFontNormal = Typeface.createFromAsset(Objects.requireNonNull(getActivity()).getAssets(), "fonts/calibril.ttf");
+//        Typeface customFontItalic = Typeface.createFromAsset(Objects.requireNonNull(getActivity()).getAssets(), "fonts/calibriitalic.ttf");
+//        textSource.setTypeface(customFontItalic);
+        txtContentNews.setTypeface(customFontNormal);
+//        textFirstSummary.setTypeface(customFontNormal);
 
         //load view
         if (getArguments() == null
@@ -131,19 +143,31 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
             return;
         }
 
-        Glide.with(view.getContext()).load(currentArticles.getImage()).
+        loadData(view);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void loadData(View view) {
+        Glide.with(mContext).load(currentArticles.getImage()).
                 apply(new RequestOptions().override(400, 0).
                         placeholder(R.drawable.image_default).error(R.drawable.image_default))
                 .into(imageCoverNews);
-
-        //Title
         txtTitleNews.setText(currentArticles.getTitle());
-
         //Summary
         String mediumSummary = GeneralTool.getSummaryOfArticle(currentArticles, ConstParam.MEDIUM);
-        String upperString = mediumSummary.substring(0,1).toUpperCase() + mediumSummary.substring(1);
-        txtContentNews.setText(upperString);
-
+//        String upperString = mediumSummary.substring(0, 1).toUpperCase() + mediumSummary.substring(1);
+        //=======
+//        upperString = upperString.replaceAll("\\. ", "\\.");
+//        String[] arrayString = upperString.split("\n");
+//        if (arrayString.length == 1) {
+//            textFirstSummary.setText("");
+//            txtContentNews.setText(upperString);
+//        } else if (arrayString.length > 1) {
+//            textFirstSummary.setText(arrayString[0]);
+//            String x = upperString.replace(arrayString[0] + "\n", "");
+//            txtContentNews.setText(x);
+//        }
+        txtContentNews.setText(mediumSummary);
         btnReadMore.setOnClickListener(view1 -> {
             //Xử lý sự kiện khi click vào button xem chi tiết bài báo, mở ra 1 activity riêng, tạm thời show
             //cmn web view ra :v
@@ -162,44 +186,32 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
             }
 
         });
-        btnPlay = view.findViewById(R.id.image_play_fr_detail_news);
         if (ConfigSettings.isPlayedVoice) {
             btnPlay.setVisibility(View.VISIBLE);
+            viewCoverage.setVisibility(View.VISIBLE);
             btnPlay.setOnClickListener(this);
         } else {
             btnPlay.setVisibility(View.GONE);
+            viewCoverage.setVisibility(View.GONE);
         }
-//        boundService();
-    }
 
-//    private void boundService() {
-//        mConnection = new ServiceConnection() {
-//            @Override
-//            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-//                if (iBinder instanceof VoicePlayerService.ArticleBinder) {
-//                    mIsConnect = true;
-//                    mPlayerService = ((VoicePlayerService.ArticleBinder) iBinder).getService();
-//                    mPlayerService.setmListenerActivity(ArticleFramentInDetailNewsFragment.this);
-////                    updateUI();
-//                } else {
-//                    mIsConnect = false;
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onServiceDisconnected(ComponentName componentName) {
-//                mIsConnect = false;
-//            }
-//        };
-//
-//        Intent intent = new Intent(getContext(), VoicePlayerService.class);
-//        Objects.requireNonNull(getContext()).bindService(intent, mConnection, Service.BIND_AUTO_CREATE);
-//    }
+        if (ReadCacheTool.getDetailArticleTest(mContext)) {
+            textCategory = view.findViewById(R.id.text_category_fr_detail_news);
+            textSource = view.findViewById(R.id.text_source_fr_detail_news);
+            textSource.setText("Theo " + currentArticles.getSource().getName() + " - " + currentArticles.getReadableTime());
+            textCategory.setText(currentArticles.getCategory().getName());
+        }
+    }
 
     @Override
     protected int getFragmentLayout() {
-        return R.layout.fragment_article_in_frg_detail_news;
+//        boolean isTested = ReadCacheTool.getDetailArticleTest(mContext);
+        return R.layout.fragment_article_in_frg_detail_news_3;
+//        if (isTested) {
+//            return R.layout.fragment_article_in_frg_detail_news_3;
+//        } else {
+//            return R.layout.fragment_article_in_frg_detail_news;
+//        }
     }
 
     @Override
@@ -219,8 +231,6 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
                         btnPlay.setPressed(false);
                         mIsPlaying = true;
                     }
-//                Toast.makeText(getContext(), "Play!", Toast.LENGTH_SHORT).show();
-//                changeStateFromDetailArticle();
                     //handle khi click vào play voice
                     if (this.controlVoice != null) {
                         controlVoice.playVoiceAtPosition(listTotalArticles, position);
@@ -234,33 +244,9 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
                             (dialog, which) -> dialog.dismiss());
                     alertDialog.show();
                 }
-
-//                if (mIsPlaying) {
-////                    mMediaBrowserHelper.getTransportControls().pause();
-//                } else {
-////                    mMediaBrowserHelper.getTransportControls().playFromMediaId(String.valueOf(currentArticles.getId()), new Bundle());
-////                    mMediaBrowserHelper.getTransportControls().play();
-//                }
-//                changeStateFromDetailMusic();
                 break;
             default:
                 break;
         }
     }
-
-//    private void changeStateFromDetailArticle() {
-//        if (!mIsConnect) {
-//            return;
-//        }
-//        if (mPlayerService.getCurrentArticlesList() == null) {
-//            mPlayerService.setArticleList(listTotalArticles);
-//        }
-//        mPlayerService.setIndexCurrentArticle(position);
-//        mPlayerService.playArticle();
-////        if (mPlayerService.isOnlyPlaying()) {
-////            mImagePlay.setImageLevel(StateLevel.PAUSE);
-////            return;
-////        }
-////        mImagePlay.setImageLevel(StateLevel.PLAY);
-//    }
 }

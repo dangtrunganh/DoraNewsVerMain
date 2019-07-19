@@ -99,12 +99,12 @@ public class PickNewsSourceActivity extends AppCompatActivity implements View.On
             public void onResponse(Call<GeneralDataNewsSource> call, Response<GeneralDataNewsSource> response) {
                 GeneralDataNewsSource generalDataNewsSource = response.body();
                 if (generalDataNewsSource == null) {
-                    Toast.makeText(getApplicationContext(), "Failed to load data - null", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Failed to load data - null", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 mListPickedNewsSource = (ArrayList<NewsSource>) generalDataNewsSource.getData();
                 if (mListPickedNewsSource == null) {
-                    Toast.makeText(getApplicationContext(), "Failed to load mListPickedNewsSource - null", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Failed to load mListPickedNewsSource - null", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 mNewsSourceAdapter.setmListSourceChosen(mListPickedNewsSource);
@@ -112,7 +112,7 @@ public class PickNewsSourceActivity extends AppCompatActivity implements View.On
 
             @Override
             public void onFailure(Call<GeneralDataNewsSource> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Failed to load news sources picked - onFailure", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Failed to load news sources picked - onFailure", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -137,12 +137,12 @@ public class PickNewsSourceActivity extends AppCompatActivity implements View.On
             public void onResponse(Call<GeneralDataNewsSource> call, Response<GeneralDataNewsSource> response) {
                 mGeneralDataNewsSource = response.body();
                 if (mGeneralDataNewsSource == null) {
-                    Toast.makeText(getApplicationContext(), "Failed to load data - null", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Failed to load data - null", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 mListAllNewsSource = (ArrayList<NewsSource>) mGeneralDataNewsSource.getData();
                 if (mListAllNewsSource == null) {
-                    Toast.makeText(getApplicationContext(), "Failed to load mListAllNewsSource - null", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Failed to load mListAllNewsSource - null", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (mListAllNewsSource.size() > 0) {
@@ -155,7 +155,7 @@ public class PickNewsSourceActivity extends AppCompatActivity implements View.On
 
             @Override
             public void onFailure(Call<GeneralDataNewsSource> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Failed to load news sources - onFailure", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Failed to load news sources - onFailure", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -209,13 +209,13 @@ public class PickNewsSourceActivity extends AppCompatActivity implements View.On
             public void onResponse(Call<GeneralDataNewsSource> call, Response<GeneralDataNewsSource> response) {
                 GeneralDataNewsSource mGeneralSentSource = response.body();
                 if (mGeneralSentSource == null) {
-                    Toast.makeText(getApplicationContext(), "Failed to send data - null", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Failed to send data - null", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                     return;
                 }
                 ArrayList<NewsSource> mListSentSource = (ArrayList<NewsSource>) mGeneralSentSource.getData();
                 if (mListSentSource == null) {
-                    Toast.makeText(getApplicationContext(), "Failed to load mListSentSource - null", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Failed to load mListSentSource - null", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                     return;
                 }
@@ -225,7 +225,7 @@ public class PickNewsSourceActivity extends AppCompatActivity implements View.On
 
             @Override
             public void onFailure(Call<GeneralDataNewsSource> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Failed to send data - onFailure", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Failed to send data - onFailure", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });

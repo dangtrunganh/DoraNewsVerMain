@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import com.anhdt.doranewsvermain.model.notificationresult.DataNotification;
 import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.anhdt.doranewsvermain.util.ReadRealmToolForNotification;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -40,6 +42,7 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
     private RecyclerView recyclerViewNotification;
     private SwipeRefreshLayout swipeContainer;
     private ImageView imageSettings;
+    private ShimmerFrameLayout mShimmerViewContainer;
     private ConstraintLayout constraintLayoutNoNetwork;
     private ArrayList<NotificationResult> arrayListNotifications;
     private ArrayList<NotificationResult> arrayListNotificationsFromAPI;
@@ -75,11 +78,27 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mShimmerViewContainer.setVisibility(View.VISIBLE);
+        mShimmerViewContainer.startShimmerAnimation();
+    }
+
+    @Override
+    public void onPause() {
+        Log.d("main-ff", "onPause()");
+        super.onPause();
+        mShimmerViewContainer.stopShimmerAnimation();
+        mShimmerViewContainer.setVisibility(View.GONE);
+    }
+
+    @Override
     protected void initializeComponents() {
         View view = getView();
         if (view == null) {
             return;
         }
+        mShimmerViewContainer = view.findViewById(R.id.shimmer_view_container_frg_notification);
         constraintLayoutNoNetwork = view.findViewById(R.id.constraint_state_wifi_off_frg_notification);
 //        constraintLayoutNoNetwork.setVisibility(View.GONE);
         imageSettings = view.findViewById(R.id.circle_button_person_frg_notification);
@@ -136,6 +155,8 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
                 DataNotification dataNotification = response.body();
                 if (dataNotification == null) {
                     swipeContainer.setRefreshing(false);
+                    mShimmerViewContainer.stopShimmerAnimation();
+                    mShimmerViewContainer.setVisibility(View.GONE);
                     if (arrayListNotifications.size() == 0) {
                         showView(false);
                     } else {
@@ -153,6 +174,8 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
                         showView(false);
                     }
                     swipeContainer.setRefreshing(false);
+                    mShimmerViewContainer.stopShimmerAnimation();
+                    mShimmerViewContainer.setVisibility(View.GONE);
                     return;
                 }
                 if (arrayListNotificationsFromAPI.size() == 0) {
@@ -164,6 +187,8 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
                         showView(false);
                     }
                     swipeContainer.setRefreshing(false);
+                    mShimmerViewContainer.stopShimmerAnimation();
+                    mShimmerViewContainer.setVisibility(View.GONE);
                     return;
                 }
                 //Check trùng???
@@ -175,12 +200,16 @@ public class NotificationFragment extends BaseFragmentNeedUpdateUI implements Up
                 notificationAdapter = new NotificationAdapter(getContext(), arrayListNotificationsFromAPI, addFragmentCallback, NotificationFragment.this);
                 recyclerViewNotification.setAdapter(notificationAdapter);
                 swipeContainer.setRefreshing(false);
+                mShimmerViewContainer.stopShimmerAnimation();
+                mShimmerViewContainer.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<DataNotification> call, Throwable t) {
                 Log.e("Error", "When get data");
                 swipeContainer.setRefreshing(false);
+                mShimmerViewContainer.stopShimmerAnimation();
+                mShimmerViewContainer.setVisibility(View.GONE);
                 if (arrayListNotifications.size() == 0) {
                     showView(false);
                 } else {

@@ -46,7 +46,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         if (mLayoutInflater == null) {
             mLayoutInflater = LayoutInflater.from(parent.getContext());
         }
-        View view = mLayoutInflater.inflate(R.layout.item_category_2, parent, false);
+        View view = mLayoutInflater.inflate(R.layout.item_category_3, parent, false);
         return new CategoryAdapter.ViewHolder(view);
     }
 
@@ -66,7 +66,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 //        private RelativeLayout mImageInvisible;
         private ImageView mImageInvisible;
-        private CircleImageView mImageCoverCategory;
+        private ImageView mImageCoverCategory;
         private TextView mTextTitleCategory;
 
         public ViewHolder(View itemView) {

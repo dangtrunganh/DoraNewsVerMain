@@ -9,5 +9,7 @@ public class RootAPIUrlConst {
 
     public static final String URL_GET_ROOT_LOG_IN = "http://topica.ai:6968/api/v1/user/"; //Dùng cho follow
 
+    public static final String URL_GET_VIDEO = "http://topica.ai:6968/api/v1/news/channel/";
+
 //    public static final String URL_SEARCH_POST = "http://topica.ai:6996/";
 }

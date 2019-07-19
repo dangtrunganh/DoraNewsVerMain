@@ -2,6 +2,7 @@ package com.anhdt.doranewsvermain.fragment.secondchildfragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,13 +64,15 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
     private HotNewsAdapter3 hotNewsAdapter;
     private FragmentManager fragmentManager;
     private ArrayList<Datum> arrayListDatum = new ArrayList<>();
-    private String uId;
+    private String uId, deviceId;
     private String oldStateNetWork = DISCONNECTED; //ban đầu sẽ là mất mạng
     private ShimmerFrameLayout mShimmerViewContainer;
 
     private AddFragmentCallback addFragmentCallback;
 
     private Context mContext;
+
+//    private ProgressDialog dialog;
 
     public AddFragmentCallback getAddFragmentCallback() {
         return addFragmentCallback;
@@ -111,12 +114,23 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
 
     private void sendRequest() {
         //load data đồng thời đổ dữ liệu lên RecyclerView
-        loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
+        //===Demo=======
+//        loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId, deviceId);
+        arrayListDatum = ReadCacheTool.getListNewsByCategory(mContext, currentCategory.getId());
+        if (arrayListDatum.size() != 0) {
+            //Lấy list từ Local lên
+            //Nếu ko trùng thì xóa sạch list đi, apply list từ offline lên
+            oldStateNetWork = CONNECTED;
+            hotNewsAdapter.reloadInNormalState(arrayListDatum);
+        } else {
+            //Trong cache ko có gì, mà lại mất mạng, hix
+            actionDisableLoadBaseOnNetworkState(false);
+        }
 
         //setUpLoadMore()
         setUpLoadMore(currentCategory.getId());
         swipeContainer.setOnRefreshListener(() -> {
-            loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
+            loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId, deviceId);
         });
     }
 
@@ -133,6 +147,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mShimmerViewContainer.startShimmerAnimation();
+//        dialog.show();
     }
 
     @Override
@@ -149,6 +164,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
         super.onPause();
         mShimmerViewContainer.stopShimmerAnimation();
         mShimmerViewContainer.setVisibility(View.GONE);
+//        dialog.dismiss();
     }
 
     @Override
@@ -157,6 +173,9 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
         if (view == null) {
             return;
         }
+//        dialog = new ProgressDialog(mContext);
+//        dialog.setMessage("Loading...");
+//        dialog.setCancelable(false);
         constraintLayoutNoNetwork = view.findViewById(R.id.constraint_state_wifi_off_news_in_category);
         constraintLayoutNoNetwork.setVisibility(View.GONE);
         swipeContainer = view.findViewById(R.id.swipe_container_news_in_category);
@@ -166,6 +185,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
                 android.R.color.holo_red_light);
 
         mShimmerViewContainer = view.findViewById(R.id.shimmer_view_container_news_in_category);
+        mShimmerViewContainer.setVisibility(View.GONE);
 //        mShimmerViewContainer.setVisibility(View.VISIBLE);
 
         currentCategory = getCurrentCategoryFromBundle();
@@ -173,8 +193,10 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
             return;
         }
 
-        Bundle bundle = getArguments();
-        uId = bundle.getString(PARAM_U_ID_NEWS_IN_CATEGORY_FRG);
+//        Bundle bundle = getArguments();
+//        uId = bundle.getString(PARAM_U_ID_NEWS_IN_CATEGORY_FRG);
+        uId = ReadCacheTool.getUId(mContext);
+        deviceId = ReadCacheTool.getDeviceId(mContext);
 
         //=====Setup RecycleView - List news in each category=====
         recyclerViewListNewsInCategory = view.findViewById(R.id.recycler_news_in_category);
@@ -188,6 +210,8 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
         recyclerViewListNewsInCategory.setAdapter(hotNewsAdapter);
 
 //        sendRequest();
+
+
 //        //load data đồng thời đổ dữ liệu lên RecyclerView
 //        loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, currentCategory.getId(), uId);
 //
@@ -203,16 +227,17 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
             hotNewsAdapter.addItemLoading();
             new Handler().postDelayed(() -> {
                 hotNewsAdapter.removeItemLoading();
-                loadData(LoadPageConst.LOAD_MORE_PAGE, idCategory, uId);
+                loadData(LoadPageConst.LOAD_MORE_PAGE, idCategory, uId, deviceId);
             }, 2000); // Time out to load
         });
     }
 
-    private void loadData(int typeLoadData, String idCategory, String deviceId) {
+    private void loadData(int typeLoadData, String idCategory, String uId, String deviceId) {
         if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
             if (oldStateNetWork.equals(DISCONNECTED)) {
                 mShimmerViewContainer.setVisibility(View.VISIBLE);
                 mShimmerViewContainer.startShimmerAnimation();
+//                dialog.show();
                 oldStateNetWork = CONNECTED;
             }
             actionDisableLoadBaseOnNetworkState(true);
@@ -223,7 +248,8 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
 
             final ServerAPI apiService = retrofit.create(ServerAPI.class);
 
-            String uId = ReadCacheTool.getUId(mContext);
+//            String uId = ReadCacheTool.getUId(mContext);
+//            String deviceId = ReadCacheTool.getDeviceId(mContext);
             Call<News> call = apiService.getNewsInEachCategory(String.valueOf(typeLoadData),
                     deviceId,
                     idCategory,
@@ -240,6 +266,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
                         mShimmerViewContainer.stopShimmerAnimation();
                         mShimmerViewContainer.setVisibility(View.GONE);
                         swipeContainer.setRefreshing(false);
+//                        dialog.dismiss();
                         return;
                     }
                     //=========
@@ -260,6 +287,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
                     }
                     mShimmerViewContainer.stopShimmerAnimation();
                     mShimmerViewContainer.setVisibility(View.GONE);
+//                    dialog.dismiss();
                     swipeContainer.setRefreshing(false);
                     //=========
                     ReadCacheTool.storeNewsByCategory(mContext, currentCategory.getId(), arrayListDatum);
@@ -267,9 +295,10 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
 
                 @Override
                 public void onFailure(Call<News> call, Throwable t) {
-                    Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
                     mShimmerViewContainer.stopShimmerAnimation();
                     mShimmerViewContainer.setVisibility(View.GONE);
+//                    dialog.dismiss();
                     swipeContainer.setRefreshing(false);
                 }
             });
@@ -286,6 +315,7 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
             }
             mShimmerViewContainer.setVisibility(View.GONE);
             mShimmerViewContainer.stopShimmerAnimation();
+//            dialog.dismiss();
             oldStateNetWork = DISCONNECTED;
             swipeContainer.setRefreshing(false);
         }

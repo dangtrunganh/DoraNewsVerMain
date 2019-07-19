@@ -69,7 +69,7 @@ public class FirebaseInstanceService extends FirebaseMessagingService {
 
         //======INTENT========
         //Bật app lên, pending intent
-//        Log.d("X1X", data.toString());
+        Log.d("X1X-YY", data.toString());
         String id = data.get("event_id");
         String idLongEvent = data.get("long_event_id");
         String urlImage = data.get("url_image");

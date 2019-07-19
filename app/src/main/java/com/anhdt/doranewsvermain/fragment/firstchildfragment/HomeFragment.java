@@ -1,6 +1,8 @@
 package com.anhdt.doranewsvermain.fragment.firstchildfragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -66,6 +68,7 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
     private String oldStateNetWork = DISCONNECTED; //ban đầu sẽ là mất mạng
 
     private ArrayList<Datum> arrayListDatum = new ArrayList<>(); //Phải có list tổng này để lưu cache xuống local
+    private Context mContext;
 
     public AddFragmentCallback getAddFragmentCallback() {
         return addFragmentCallback;
@@ -84,6 +87,12 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
         args.putString(ARGS_U_ID_HOME_FRG, uId);
         homeFragment.setArguments(args);
         return homeFragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = getContext();
     }
 
     @Override
@@ -132,7 +141,7 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
         recyclerViewHotNews.setLayoutManager(linearLayoutManager);
 
         //====Adapter====
-        hotNewsAdapter = new HotNewsAdapter(new ArrayList<>(), getContext(), recyclerViewHotNews/*, getChildFragmentManager()*/,
+        hotNewsAdapter = new HotNewsAdapter(new ArrayList<>(), mContext, recyclerViewHotNews/*, getChildFragmentManager()*/,
                 /*ConstGeneralTypeTab.TYPE_TAB_HOME, */addFragmentCallback);
         recyclerViewHotNews.setAdapter(hotNewsAdapter);
 
@@ -144,7 +153,7 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
         //==============LOAD DATA================
         //load data đồng thời đổ dữ liệu lên RecyclerView
         //Có mạng
-        String deviceId = ReadCacheTool.getDeviceId(getContext());
+        String deviceId = ReadCacheTool.getDeviceId(mContext);
         loadData(LoadPageConst.RELOAD_INIT_CURRENT_PAGE, deviceId);
         //setUpLoadMore()
         setUpLoadMore(deviceId);
@@ -226,7 +235,7 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
 
                 @Override
                 public void onFailure(Call<News> call, Throwable t) {
-                    Toast.makeText(getContext(), "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
                     mShimmerViewContainer.stopShimmerAnimation();
                     mShimmerViewContainer.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
@@ -309,7 +318,7 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
         switch (v.getId()) {
             case R.id.circle_button_person:
                 //Mở màn settings
-                startActivity(new Intent(getContext(), SettingsActivity.class));
+                startActivity(new Intent(mContext, SettingsActivity.class));
                 Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
             case R.id.iv_search:

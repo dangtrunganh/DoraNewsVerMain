@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">DoraNewsVerMain</string>
+    <string name="app_name">Tin tức Dora</string>
     <string name="title_hot">Trang chủ</string>
     <string name="title_latest_news">Tin mới</string>
     <string name="title_search">Tìm kiếm</string>
@@ -8,7 +8,7 @@
     <string name="title_video">Video</string>
     <dimen name="design_bottom_navigation_text_size" tools:override="true">12sp</dimen>
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">12sp</dimen>
-    
+
     <string name="preference_welcome_activity">"data_pref_welcome_activity"</string>
     <string name="key_welcome_activity">"key_pref_welcome_activity"</string>
 </resources>

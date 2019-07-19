@@ -27,6 +27,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <View
+                android:id="@+id/view_coverage_fr_detail_news"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="#8C262626"

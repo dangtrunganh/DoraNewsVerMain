@@ -5,13 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.anhdt.doranewsvermain.MainActivity;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.viewpagerwelcome.WelcomePagerAdapter;
+import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
@@ -32,7 +35,21 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
 
         if (ReadCacheTool.checkPreferenceWelcomeActivity(this)) {
-            loadHomeActivity();
+            //data ở notification truyền về màn này đầu tiên
+            Intent intentResult = new Intent(WelcomeActivity.this, SplashActivity.class);
+            //===getIntentExtras====
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
+                String eventId = bundle.getString(ConstParamTransfer.KEY_EVENT_ID_NOTIFICATION);
+                String longEventId = bundle.getString(ConstParamTransfer.KEY_LONG_EVENT_ID_NOTIFICATION);
+//                Log.e("iii-event_id", eventId);
+//                Log.e("iii-story_id", longEventId);
+                intentResult.putExtra(ConstParamTransfer.TRANSFER_EVENT_ID_FR_SPLASH_TO_MAIN, eventId);
+                intentResult.putExtra(ConstParamTransfer.TRANSFER_LONG_EVENT_ID_FR_SPLASH_TO_MAIN, longEventId);
+            }
+            startActivity(intentResult);
+            finish();
+//            loadHomeActivity();
         }
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_welcome_2);
@@ -40,6 +57,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         mPager = findViewById(R.id.view_pager_welcome_activity);
         welcomePagerAdapter = new WelcomePagerAdapter(layouts, this);
         mPager.setAdapter(welcomePagerAdapter);
+        mPager.setOffscreenPageLimit(4);
 
         indicator = findViewById(R.id.indicator_welcome_activity);
         indicator.attachToPager(mPager);

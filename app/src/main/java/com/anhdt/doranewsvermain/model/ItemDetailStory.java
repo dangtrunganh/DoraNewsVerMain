@@ -13,6 +13,12 @@ public class ItemDetailStory {
     public static final String LAST_WEEK = "Tuần qua";
     public static final String OLDER = "Cũ hơn";
 
+    //========MORE-TEST=============
+    public static final String A_WEEK_AGO = "1 tuần trước";
+    public static final String TWO_WEEK_AGO = "2 tuần trước";
+    public static final String THREE_WEEK_LATER = "3 tuần trước";
+    public static final String A_MONTH_AGO = "1 tháng trước";
+
     public static final int TYPE_EVENT_TOPEST_SINGLE = 0; //Thằng trên cùng, event đơn
     public static final int TYPE_EVENT_TOP_WITH_TIME_LINE_LABEL = 1;
     public static final int TYPE_EVENT_NORMAL_HAVE_TO_DAY_LABEL = 2;
@@ -27,7 +33,6 @@ public class ItemDetailStory {
 //    private ArrayList<Event> listEventYesterday;
 //    private ArrayList<Event> listEventLastWeek;
 //    private ArrayList<Event> listEventOlder;
-
 
     public ItemDetailStory() {
 

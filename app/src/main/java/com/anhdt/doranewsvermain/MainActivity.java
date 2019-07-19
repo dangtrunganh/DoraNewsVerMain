@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         //Thực hiện lưu list mới chứa phần tử mới xuống Local
                         mArrayNotificationsInLocal.add(notificationResult);
-                        ReadCacheTool.storeNotification(this, mArrayNotificationsInLocal);
+//                        ReadCacheTool.storeNotification(this, mArrayNotificationsInLocal);
                     } else {
                         Log.e("kkpp-111", "Not Exist");
                     }
@@ -417,6 +417,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String jsonCategories = result.getStringExtra(ConstParamTransfer.TRANSFER_LIST_CATEGORY_FR_SPLASH_TO_MAIN);
         String uId = result.getStringExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN);
 
+        String jsonListNewsByCategory = result.getStringExtra(ConstParamTransfer.TRANSFER_LIST_NEWS_BY_CATEGORY_FR_SPLASH_TO_MAIN);
+
         if (jsonCategories == null) {
             Log.e("abc-2", "abc");
             return;
@@ -474,7 +476,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fm.beginTransaction().add(R.id.container, generalNotificationFragment, NAME_NOTIFICATION_FRAGMENT).hide(generalNotificationFragment).commit();
         fm.beginTransaction().add(R.id.container, generalVideoFragment, NAME_NOTIFICATION_FRAGMENT).hide(generalVideoFragment).commit();
         fm.beginTransaction().add(R.id.container, generalFavoriteFragment, NAME_FAVORITE_FRAGMENT).hide(generalFavoriteFragment).commit();
+
+
         fm.beginTransaction().add(R.id.container, generalLatestNewsFragment, NAME_LATEST_NEWS_FRAGMENT).hide(generalLatestNewsFragment).commit();
+
         fm.beginTransaction().add(R.id.container, generalHomeFragment, NAME_HOME_FRAGMENT).commit();
 
         //setOnClick all view
@@ -595,7 +600,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         Gson gson = new Gson();
         String jsonListArticles = gson.toJson(mPlayerService.getCurrentArticlesList());
-        DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position);
+        DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position, false);
         detailNewsFragment.setAddFragmentCallback(activeAddFragmentCallback);
 
         activeAddFragmentCallback.addFrgCallback(detailNewsFragment);

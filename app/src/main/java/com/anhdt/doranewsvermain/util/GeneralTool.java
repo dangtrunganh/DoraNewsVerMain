@@ -1,39 +1,43 @@
 package com.anhdt.doranewsvermain.util;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.anhdt.doranewsvermain.activity.SplashActivity;
+import com.anhdt.doranewsvermain.BuildConfig;
 import com.anhdt.doranewsvermain.constant.ConstParam;
-import com.anhdt.doranewsvermain.model.DatumStory;
 import com.anhdt.doranewsvermain.model.ItemDetailStory;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.anhdt.doranewsvermain.model.videoresult.VideoItem;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import static java.time.ZoneOffset.UTC;
-
 public class GeneralTool {
+    public static String getNameOfDevice() {
+        return Build.MANUFACTURER + Build.MODEL;
+    }
+    public static String getVersionApp() {
+        return BuildConfig.VERSION_NAME;
+    }
+
+    public static String getVersionAndroid() {
+        return Build.VERSION.RELEASE;
+    }
+
     public static boolean checkIfChildOutIParent(float yChildTop, float yChildBottom, float yParentTop, float yParentBottom) {
         if (yChildTop < yParentTop) {
             return true;
@@ -61,13 +65,49 @@ public class GeneralTool {
             if (parents.get(i) == null) {
                 continue;
             }
+            if (parents.get(i).getId() == null) {
+                continue;
+            }
             idParent += parents.get(i).getId();
         }
         for (int i = 0; i < childs.size(); i++) {
             if (childs.get(i) == null) {
                 continue;
             }
+            if (childs.get(i).getId() == null) {
+                continue;
+            }
             idChild += childs.get(i).getId();
+        }
+        return idParent.contains(idChild);
+    }
+
+    public static boolean checkIfVideoParentHasChild(ArrayList<VideoItem> parents, ArrayList<VideoItem> childs) {
+        String idParent = "";
+        String idChild = "";
+        for (int i = 0; i < parents.size(); i++) {
+            if (parents.get(i) == null) {
+                continue;
+            }
+            if (parents.get(i).getVideoId() == null) {
+                continue;
+            }
+//            if (parents.get(i).getId().getVideoId() == null) {
+//                continue;
+//            }
+            idParent += parents.get(i).getVideoId();
+        }
+        for (int i = 0; i < childs.size(); i++) {
+            if (childs.get(i) == null) {
+                continue;
+            }
+            if (childs.get(i).getVideoId() == null) {
+                continue;
+            }
+//            if (childs.get(i).getId().getVideoId() == null) {
+//                continue;
+//            }
+            idChild += childs.get(i).getVideoId();
         }
         return idParent.contains(idChild);
     }

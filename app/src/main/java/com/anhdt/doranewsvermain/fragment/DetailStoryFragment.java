@@ -29,6 +29,7 @@ import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
+import com.anhdt.doranewsvermain.util.ToolForStory;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -192,7 +193,12 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                 }
                 //load data to recyclerView
                 GeneralTool.sortListEventByTime(mArrayEvents);
-                arrayItemDetailStories = GeneralTool.convertToListDatumStory(mArrayEvents);
+
+
+//                arrayItemDetailStories = GeneralTool.convertToListDatumStory(mArrayEvents);
+                arrayItemDetailStories = ToolForStory.convertToListDatumStory(mArrayEvents);
+
+
                 btnFollow.setOnClickListener(DetailStoryFragment.this);
                 //===Adapter===
                 storyItemAdapter = new StoryItemAdapter(arrayItemDetailStories, getContext(),
@@ -209,7 +215,7 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
 
             @Override
             public void onFailure(Call<Stories> call, Throwable t) {
-                Toast.makeText(getContext(), "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
             }
         });
     }
