@@ -16,6 +16,8 @@ public class ConstParamTransfer {
     public static final String TRANSFER_LONG_EVENT_ID_FR_SPLASH_TO_MAIN = "TRANSFER_LONG_EVENT_ID_FR_SPLASH_TO_MAIN";
     public static final String TRANSFER_LIST_CATEGORY_FR_SPLASH_TO_MAIN = "TRANSFER_LIST_CATEGORY_FR_SPLASH_TO_MAIN";
     public static final String TRANSFER_U_ID_FR_SPLASH_TO_MAIN = "TRANSFER_U_ID_FR_SPLASH_TO_MAIN";
+    public static final String TRANSFER_LIST_NEWS_BY_CATEGORY_FR_SPLASH_TO_MAIN = "TRANSFER_LIST_NEWS_BY_CATEGORY_FR_SPLASH_TO_MAIN";
+    public static final String DEFAULT_TRANSFER_LIST_NEWS_BY_CATEGORY_FR_SPLASH_TO_MAIN = "null";
 
 
     //====Từ DetaillArticle sang ReadOriginalArticleActivity====

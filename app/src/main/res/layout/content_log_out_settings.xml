@@ -5,82 +5,81 @@
     android:orientation="vertical"
     android:paddingBottom="80dp">
 
-    <LinearLayout
-        android:id="@+id/lnl_delete_cache_settings"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:layout_marginTop="20dp"
-        android:background="#FFF"
-        android:gravity="center">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/lnl_delete_cache_settings"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="54dp"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:background="#FFF"-->
+        <!--android:gravity="center">-->
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp">
+        <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:paddingRight="15dp">-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="9"
-                android:gravity="left|center_vertical"
-                android:paddingLeft="10dp"
-                android:text="Xóa tất cả dữ liệu"
-                android:textColor="@android:color/holo_red_light"
-                android:textSize="16sp" />
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="9"-->
+                <!--android:gravity="left|center_vertical"-->
+                <!--android:paddingLeft="10dp"-->
+                <!--android:text="Xóa tất cả dữ liệu"-->
+                <!--android:textColor="@android:color/holo_red_light"-->
+                <!--android:textSize="16sp" />-->
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_chevron_right" />
-        </TableRow>
-    </LinearLayout>
+            <!--<ImageView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/ic_chevron_right" />-->
+        <!--</TableRow>-->
+    <!--</LinearLayout>-->
 
-    <LinearLayout
-        android:id="@+id/lnl_log_out_settings"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:background="#FFF"
-        android:gravity="center">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/lnl_log_out_settings"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="54dp"-->
+        <!--android:background="#FFF"-->
+        <!--android:gravity="center">-->
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp">
+        <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:paddingRight="15dp">-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="9"
-                android:gravity="left|center_vertical"
-                android:paddingLeft="10dp"
-                android:text="Đăng xuất"
-                android:textColor="@android:color/holo_red_light"
-                android:textSize="16sp" />
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="9"-->
+                <!--android:gravity="left|center_vertical"-->
+                <!--android:paddingLeft="10dp"-->
+                <!--android:text="Đăng xuất"-->
+                <!--android:textColor="@android:color/holo_red_light"-->
+                <!--android:textSize="16sp" />-->
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_chevron_right" />
-        </TableRow>
-    </LinearLayout>
+            <!--<ImageView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/ic_chevron_right" />-->
+        <!--</TableRow>-->
+    <!--</LinearLayout>-->
 
     <TextView
         android:id="@+id/text_info_user"
         android:layout_width="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="30dp"
         android:layout_height="match_parent"
         android:layout_weight="9"
         android:gravity="top|center_vertical"
-        android:paddingLeft="10dp"
-        android:text="Info"
+        android:text="Sứ mệnh của Dora là thu hoạch, chế biến và trình bày thông tin cho mọi người một cách toàn diện nhất để họ có thể hành động vì cuộc sống tốt đẹp hơn."
         android:lineSpacingExtra="10sp"
         android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:textSize="14sp" />
 
 </LinearLayout>

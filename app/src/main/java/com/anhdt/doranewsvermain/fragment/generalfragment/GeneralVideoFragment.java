@@ -10,7 +10,7 @@ import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.firstchildfragment.NotificationFragment;
 import com.anhdt.doranewsvermain.fragment.firstchildfragment.UpdateListNotification;
-import com.anhdt.doranewsvermain.fragment.firstchildfragment.VideoFragment;
+import com.anhdt.doranewsvermain.fragment.firstchildfragment.VideoFragment2;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
@@ -44,7 +44,7 @@ public class GeneralVideoFragment extends BaseFragment implements AddFragmentCal
     private void addFrg() {
         FragmentManager fragmentManagerVideo = getChildFragmentManager();
 
-        VideoFragment videoFragment = VideoFragment.newInstance();
+        VideoFragment2 videoFragment = VideoFragment2.newInstance();
         //Nếu chẳng may thằng Fragment này bị detach() thì MainAct gọi tới méo có gì, lỗi sure
 //        updateListNotificationOfChild = notificationFragment;
         videoFragment.setAddFragmentCallback(this);

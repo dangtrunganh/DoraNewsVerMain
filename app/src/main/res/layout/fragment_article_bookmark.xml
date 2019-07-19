@@ -8,11 +8,11 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_frg_article_bookmark"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:paddingBottom="20dp" />
+        android:paddingBottom="100dp" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint_state_wifi_off_frg_article_bookmark"

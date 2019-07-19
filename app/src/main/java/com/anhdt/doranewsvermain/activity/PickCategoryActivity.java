@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -28,6 +30,8 @@ import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.model.categoryresult.CategoryResult;
 import com.anhdt.doranewsvermain.model.newsresult.Category;
+import com.anhdt.doranewsvermain.model.newsresult.Datum;
+import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.util.GeneralTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.google.gson.Gson;
@@ -42,6 +46,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.anhdt.doranewsvermain.constant.LoadPageConst.RELOAD_INIT_CURRENT_PAGE;
 
 public class PickCategoryActivity extends AppCompatActivity implements View.OnClickListener {
     private Button btnPick;
@@ -183,7 +189,7 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
             public void onResponse(Call<CategoryResult> call, Response<CategoryResult> response) {
                 mCategoryResult = response.body();
                 if (mCategoryResult == null) {
-                    Toast.makeText(getApplicationContext(), "Failed to load data - null", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Failed to load data - null", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                     return;
                 }
@@ -219,7 +225,7 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onFailure(Call<CategoryResult> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Failed to load category - onFailure", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Failed to load category - onFailure", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
@@ -238,27 +244,8 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
         switch (view.getId()) {
             case R.id.button_pick_done_pick_category:
                 //Lấy ra list các category đã chọn từ adapter
-                List<Category> categoriesChosen = mCategoryAdapter.getListCategoryChosen();
-                if (categoriesChosen == null) {
-                    return;
-                }
-                if (categoriesChosen.size() == 0) {
-                    return;
-                }
-                //===Lưu xuống Local===
-                ReadCacheTool.storeCategory(PickCategoryActivity.this, categoriesChosen);
-
-                //1. Navigate tới màn hình MainActivity, trong MainActivity sẽ đọc trc tiên danh sách category này trong
-                //2. share preference để load lên.
-                Intent intentResult = new Intent(PickCategoryActivity.this, MainActivity.class);
-
-                Gson gson = new Gson();
-                String json = gson.toJson(categoriesChosen);
-                intentResult.putExtra(ConstParamTransfer.TRANSFER_LIST_CATEGORY_FR_SPLASH_TO_MAIN, json);
-                intentResult.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN, uId);
-                intentResult.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intentResult);
-                finish();
+//                storeAndTransferToMainActivity();
+                new PickCategoryActivity.PrefetchData().execute();
                 break;
             case R.id.button_try_refresh_network_pick_category:
                 //try to reconnect network
@@ -270,6 +257,113 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
                 break;
             default:
                 break;
+        }
+    }
+
+    private void storeAndTransferToMainActivity() {
+        List<Category> categoriesChosen = mCategoryAdapter.getListCategoryChosen();
+        if (categoriesChosen == null) {
+            return;
+        }
+        if (categoriesChosen.size() == 0) {
+            return;
+        }
+        //===Lưu xuống Local===
+        ReadCacheTool.storeCategory(PickCategoryActivity.this, categoriesChosen);
+
+        //1. Navigate tới màn hình MainActivity, trong MainActivity sẽ đọc trc tiên danh sách category này trong
+        //2. share preference để load lên.
+        Intent intentResult = new Intent(PickCategoryActivity.this, MainActivity.class);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(categoriesChosen);
+        intentResult.putExtra(ConstParamTransfer.TRANSFER_LIST_CATEGORY_FR_SPLASH_TO_MAIN, json);
+        intentResult.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN, uId);
+        intentResult.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        loadDataLatestNewsScreen((ArrayList<Category>) categoriesChosen, intentResult);
+//        startActivity(intentResult);
+//        finish();
+    }
+
+    /**
+     * Async Task to make http call
+     */
+    @SuppressLint("StaticFieldLeak")
+    class PrefetchData extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            storeAndTransferToMainActivity();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+    }
+
+    private void loadDataLatestNewsScreen(ArrayList<Category> categoryArrayList, Intent intentResult) {
+        //Không có mạng hoặc là onFailure thì ko lưu vào trong local --> get lên sẽ là null
+        //Không có mạng thì sẽ ko có intent bắn về
+        if (GeneralTool.isNetworkAvailable(this)) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(RootAPIUrlConst.ROOT_GET_NEWS)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            final ServerAPI apiService = retrofit.create(ServerAPI.class);
+            String uId = ReadCacheTool.getUId(this);
+            String deviceId = ReadCacheTool.getDeviceId(this);
+            for (int i = 0; i < categoryArrayList.size(); i++) {
+                //Load từng cái và lưu xuống db
+                Category category = categoryArrayList.get(i);
+                int currentIndex = i;
+                Call<News> call = apiService.getNewsInEachCategory(String.valueOf(RELOAD_INIT_CURRENT_PAGE),
+                        deviceId,
+                        category.getId(),
+                        uId
+                );
+                call.enqueue(new Callback<News>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(@NonNull Call<News> call, @NonNull Response<News> response) {
+                        News news = response.body();
+                        if (news == null) {
+                            if (currentIndex == categoryArrayList.size() - 1) {
+                                dialog.dismiss();
+                                startActivity(intentResult);
+                                finish();
+                            }
+                            return;
+                        }
+                        ReadCacheTool.storeNewsByCategory(PickCategoryActivity.this, category.getId(), (ArrayList<Datum>) news.getData());
+                        if (currentIndex == categoryArrayList.size() - 1) {
+                            dialog.dismiss();
+                            startActivity(intentResult);
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<News> call, Throwable t) {
+                        if (currentIndex == categoryArrayList.size() - 1) {
+                            dialog.dismiss();
+                            startActivity(intentResult);
+                            finish();
+                        }
+                    }
+                });
+            }
+        } else {
+            //bật màn MainActivity ngay lập tức khi ko có mạng, trong Local sẽ ko có gì cả
+            dialog.dismiss();
+            startActivity(intentResult);
+            finish();
         }
     }
 }

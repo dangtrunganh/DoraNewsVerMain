@@ -84,7 +84,7 @@
                 android:layout_weight="9"
                 android:gravity="left|center_vertical"
                 android:paddingLeft="10dp"
-                android:text="Liên hệ/phản hồi"
+                android:text="Gửi email góp ý"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
@@ -95,36 +95,36 @@
                 android:src="@drawable/ic_chevron_right" />
         </TableRow>
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/lnl_help_settings"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:background="#FFF"
-        android:gravity="center">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/lnl_help_settings"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="54dp"-->
+        <!--android:background="#FFF"-->
+        <!--android:gravity="center">-->
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp">
+        <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:paddingRight="15dp">-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="9"
-                android:gravity="left|center_vertical"
-                android:paddingLeft="10dp"
-                android:text="Trợ giúp"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="9"-->
+                <!--android:gravity="left|center_vertical"-->
+                <!--android:paddingLeft="10dp"-->
+                <!--android:text="Trợ giúp"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textSize="16sp" />-->
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_chevron_right" />
-        </TableRow>
-    </LinearLayout>
+            <!--<ImageView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/ic_chevron_right" />-->
+        <!--</TableRow>-->
+    <!--</LinearLayout>-->
     <LinearLayout
         android:id="@+id/lnl_policy_settings"
         android:layout_width="match_parent"
@@ -155,36 +155,36 @@
                 android:src="@drawable/ic_chevron_right" />
         </TableRow>
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/lnl_security_settings"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:background="#FFF"
-        android:gravity="center">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/lnl_security_settings"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="54dp"-->
+        <!--android:background="#FFF"-->
+        <!--android:gravity="center">-->
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp">
+        <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:paddingRight="15dp">-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="9"
-                android:gravity="left|center_vertical"
-                android:paddingLeft="10dp"
-                android:text="Chính sách bảo mật"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="9"-->
+                <!--android:gravity="left|center_vertical"-->
+                <!--android:paddingLeft="10dp"-->
+                <!--android:text="Chính sách bảo mật"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textSize="16sp" />-->
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_chevron_right" />
-        </TableRow>
-    </LinearLayout>
+            <!--<ImageView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/ic_chevron_right" />-->
+        <!--</TableRow>-->
+    <!--</LinearLayout>-->
     <LinearLayout
         android:id="@+id/lnl_about_settings"
         android:layout_width="match_parent"
@@ -204,46 +204,55 @@
                 android:layout_weight="9"
                 android:gravity="left|center_vertical"
                 android:paddingLeft="10dp"
-                android:text="Giới thiệu"
+                android:text="Phiên bản"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_chevron_right" />
-        </TableRow>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/lnl_update_settings"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:background="#FFF"
-        android:gravity="center">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="9"
-                android:gravity="left|center_vertical"
+                android:layout_marginRight="5dp"
+                android:gravity="right|center_vertical"
                 android:paddingLeft="10dp"
-                android:text="Cập nhật"
-                android:textColor="@android:color/black"
+                android:text="1.0"
                 android:textSize="16sp" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_chevron_right" />
+            <!--<ImageView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/ic_chevron_right" />-->
         </TableRow>
     </LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:id="@+id/lnl_update_settings"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="54dp"-->
+        <!--android:background="#FFF"-->
+        <!--android:gravity="center">-->
+
+        <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:paddingRight="15dp">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="9"-->
+                <!--android:gravity="left|center_vertical"-->
+                <!--android:paddingLeft="10dp"-->
+                <!--android:text="Cập nhật"-->
+                <!--android:textColor="@android:color/black"-->
+                <!--android:textSize="16sp" />-->
+
+            <!--<ImageView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/ic_chevron_right" />-->
+        <!--</TableRow>-->
+    <!--</LinearLayout>-->
 
 </LinearLayout>

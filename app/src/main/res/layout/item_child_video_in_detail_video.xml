@@ -79,4 +79,14 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_chanel_name_item_child_video_detail_video" />
 
+    <View
+        android:id="@+id/view_click_item_video_below"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintBottom_toBottomOf="@id/image_cover_item_child_video_detail_video"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/image_cover_item_child_video_detail_video" />
+
 </android.support.constraint.ConstraintLayout>

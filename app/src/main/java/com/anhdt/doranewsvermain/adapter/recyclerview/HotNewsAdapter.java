@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -160,6 +161,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                                    continue;
 //                                }
                                 storyViewHolder.stopAnimation();
+                                storyViewHolder.visibleIndicator(false);
 //                                isAnimatingStory = false;
                             } else {
                                 //Nằm trong, chạy animation thôi ^^, tại một thời điểm chỉ cho 1 cái chạy
@@ -168,6 +170,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                                    continue;
 //                                }
                                 storyViewHolder.startAnimation();
+                                storyViewHolder.visibleIndicator(true);
 //                                isAnimatingStory = true;
                             }
                         }
@@ -506,7 +509,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             @Override
             public void onFailure(Call<Stories> call, Throwable t) {
-                Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -518,28 +521,35 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private ArrayList<Event> arrayListEvents;
         private String idStory;
 
+        @SuppressLint("ClickableViewAccessibility")
         public StoryViewHolder(@NonNull View itemView) {
             super(itemView);
             autoScrollViewPagerStories = itemView.findViewById(R.id.viewpager_item_stories);
             textViewStory = itemView.findViewById(R.id.text_view_full_story_item_stories);
 
 
-//            ConstraintLayout constraintLayout = itemView.findViewById(R.id.constraint_layout_item_event_vpg);
-//        constraintLayout.getHeight() = constraintLayout.getWidth();
+//Bỏ            ConstraintLayout constraintLayout = itemView.findViewById(R.id.constraint_layout_item_event_vpg);
+//Bỏ        constraintLayout.getHeight() = constraintLayout.getWidth();
 
-            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-
-            int width = metrics.widthPixels;
-//            int height = metrics.heightPixels;
-//            Log.e("xxx-width", String.valueOf(width));
-//            Log.e("xxx-height", String.valueOf(height));
-//            autoScrollViewPagerStories.getLayoutParams().width = metrics.widthPixels;
-            ViewGroup.LayoutParams layoutParams = autoScrollViewPagerStories.getLayoutParams();
-            layoutParams.width = width;
-            layoutParams.height = (int) (width * 0.9);
-            autoScrollViewPagerStories.setLayoutParams(layoutParams);
+//            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+//
+//            int width = metrics.widthPixels;
+////            int height = metrics.heightPixels;
+////            Log.e("xxx-width", String.valueOf(width));
+////            Log.e("xxx-height", String.valueOf(height));
+////            autoScrollViewPagerStories.getLayoutParams().width = metrics.widthPixels;
+//
+//            ViewGroup.LayoutParams layoutParams = autoScrollViewPagerStories.getLayoutParams();
+//            layoutParams.width = width;
+//            layoutParams.height = (int) (width * 0.65);
+//            autoScrollViewPagerStories.setLayoutParams(layoutParams);
 
             indicator = itemView.findViewById(R.id.indicator_vp_item_stories);
+
+            autoScrollViewPagerStories.setOnTouchListener((v, event) -> {
+                autoScrollViewPagerStories.stopAutoScroll();
+                return false;
+            });
         }
 
         @RequiresApi(api = Build.VERSION_CODES.M)
@@ -549,6 +559,7 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             StoryAdapter storyAdapterVP = new StoryAdapter(arrayEvents, mContext, autoScrollViewPagerStories, idStory/*, typeTabContent*/, addFragmentCallback);
             autoScrollViewPagerStories.setAdapter(storyAdapterVP);
             indicator.setViewPager(autoScrollViewPagerStories);
+            indicator.setVisibility(View.GONE);
 
             //Chỉ khi bindData() xong thì mới click xem thông tin toàn cảnh được ^^
             textViewStory.setOnClickListener(this);
@@ -557,10 +568,42 @@ public class HotNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            autoScrollViewPagerStories.stopAutoScroll();
 //            autoScrollViewPagerStories.setScrollDurationFactor(4);
             autoScrollViewPagerStories.setInterval(5000);
+//            autoScrollViewPagerStories.setOnClickListener(v -> {
+//                Toast.makeText(mContext, "Click!!!", Toast.LENGTH_SHORT).show();
+//                autoScrollViewPagerStories.stopAutoScroll();
+//            });
+//            autoScrollViewPagerStories.setStopScrollWhenTouch(true);
+//            autoScrollViewPagerStories.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//                @Override
+//                public void onPageScrolled(int i, float v, int i1) {
+////                    android.os.Process.killProcess(android.os.Process.myPid());
+////                    Runtime.getRuntime().gc();
+//                }
+//
+//                @Override
+//                public void onPageSelected(int i) {
+//                }
+//
+//                @Override
+//                public void onPageScrollStateChanged(int i) {
+//                    Toast.makeText(mContext, "Scorll up!", Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
 
         public void stopAnimation() {
             autoScrollViewPagerStories.stopAutoScroll();
+//            Runtime.getRuntime().gc();
+//            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+
+        public void visibleIndicator(boolean isVisible) {
+            //true - gone
+            if (isVisible) {
+                indicator.setVisibility(View.VISIBLE);
+            } else {
+                indicator.setVisibility(View.GONE);
+            }
         }
 
         public void startAnimation() {

@@ -71,19 +71,32 @@
             app:layout_constraintTop_toTopOf="@id/card_view_deh" />
 
         <TextView
-            android:id="@+id/text_time_item_child_event_deh"
+            android:id="@+id/text_number_articles_item_child_event_deh"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:maxLines="1"
-            android:text="5 ngày trước"
+            android:text="24 bài báo"
             android:textColor="@color/black"
             android:textSize="12sp"
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent" />
+        <TextView
+            android:id="@+id/text_time_item_child_event_deh"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:layout_marginRight="2dp"
+            android:text="5 giờ trước"
+            android:textColor="@color/lightGreyBold"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="@id/text_number_articles_item_child_event_deh"
+            app:layout_constraintRight_toRightOf="@id/card_view_deh"
+            app:layout_constraintTop_toTopOf="@id/text_number_articles_item_child_event_deh"  />
 
         <ImageView
             android:id="@+id/image_more_item_child_event_deh"
@@ -91,9 +104,9 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_dot_horizontal"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/text_time_item_child_event_deh"
+            app:layout_constraintBottom_toBottomOf="@id/text_number_articles_item_child_event_deh"
             app:layout_constraintRight_toRightOf="@id/card_view_deh"
-            app:layout_constraintTop_toTopOf="@id/text_time_item_child_event_deh" />
+            app:layout_constraintTop_toTopOf="@id/text_number_articles_item_child_event_deh" />
 
         <View
             android:id="@+id/view_story_bound_deh"

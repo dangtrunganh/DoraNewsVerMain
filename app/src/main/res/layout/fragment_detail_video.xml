@@ -101,16 +101,15 @@
 
                 <ImageView
                     android:id="@+id/image_up_down_description_detail_video"
-                    android:layout_width="40dp"
-                    android:layout_height="0dp"
-                    android:padding="6dp"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
                     android:layout_marginRight="5dp"
+                    android:padding="6dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_down"
                     app:layout_constraintBottom_toBottomOf="@id/text_title_video_detail_video"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
 
                 <TextView
                     android:id="@+id/text_number_views_detail_video"
@@ -121,15 +120,25 @@
                     android:lineSpacingExtra="3dp"
                     android:maxLines="1"
                     android:text="214N lượt xem"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text_title_video_detail_video" />
+
+                <View
+                    android:id="@+id/view_show_description_detail_video"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    app:layout_constraintBottom_toBottomOf="@id/text_number_views_detail_video"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TableRow
                     android:id="@+id/table_row_detail_video"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginRight="15dp"
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
@@ -137,73 +146,110 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text_number_views_detail_video">
 
-                    <LinearLayout
+                    <android.support.constraint.ConstraintLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:gravity="center">
 
                         <ImageView
                             android:id="@+id/image_like_detail_video"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_like" />
+                            android:src="@drawable/ic_like"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/text_number_likes_detail_video"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="6,6 N" />
-                    </LinearLayout>
+                            android:text="Like"
+                            android:textSize="12sp"
+                            app:layout_constraintLeft_toLeftOf="@id/image_like_detail_video"
+                            app:layout_constraintRight_toRightOf="@id/image_like_detail_video"
+                            app:layout_constraintTop_toBottomOf="@id/image_like_detail_video" />
 
-                    <LinearLayout
+                        <View
+                            android:id="@+id/view_click_like_detail_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+
+                    </android.support.constraint.ConstraintLayout>
+
+                    <android.support.constraint.ConstraintLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:gravity="center">
 
                         <ImageView
                             android:id="@+id/image_dislike_detail_video"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_dislike" />
+                            android:src="@drawable/ic_dislike"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/text_number_dislikes_detail_video"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="80" />
-                    </LinearLayout>
+                            android:text="Dislike"
+                            android:textSize="12sp"
+                            app:layout_constraintLeft_toLeftOf="@id/image_dislike_detail_video"
+                            app:layout_constraintRight_toRightOf="@id/image_dislike_detail_video"
+                            app:layout_constraintTop_toBottomOf="@id/image_dislike_detail_video" />
 
-                    <LinearLayout
+                        <View
+                            android:id="@+id/view_click_dislike_detail_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </android.support.constraint.ConstraintLayout>
+
+                    <android.support.constraint.ConstraintLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:gravity="center">
 
                         <ImageView
                             android:id="@+id/ic_copy_detail_video"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_content_copy" />
+                            android:src="@drawable/ic_content_copy"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/text_copy_detail_video"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Sao chép" />
-                    </LinearLayout>
+                            android:text="Sao chép"
+                            android:textSize="12sp"
+                            app:layout_constraintLeft_toLeftOf="@id/ic_copy_detail_video"
+                            app:layout_constraintRight_toRightOf="@id/ic_copy_detail_video"
+                            app:layout_constraintTop_toBottomOf="@id/ic_copy_detail_video" />
 
-                    <LinearLayout
+                        <View
+                            android:id="@+id/view_click_copy_detail_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </android.support.constraint.ConstraintLayout>
+
+                    <android.support.constraint.ConstraintLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -212,18 +258,31 @@
 
                         <ImageView
                             android:id="@+id/ic_share_detail_video"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_share" />
+                            android:src="@drawable/ic_share"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/text_share_detail_video"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Chia sẻ" />
-                    </LinearLayout>
+                            android:text="Chia sẻ"
+                            android:textSize="12sp"
+                            app:layout_constraintLeft_toLeftOf="@id/ic_share_detail_video"
+                            app:layout_constraintRight_toRightOf="@id/ic_share_detail_video"
+                            app:layout_constraintTop_toBottomOf="@id/ic_share_detail_video" />
+
+                        <View
+                            android:id="@+id/view_click_share_detail_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </android.support.constraint.ConstraintLayout>
 
                 </TableRow>
 
@@ -232,7 +291,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginTop="15dp"
-                    android:background="@color/lightGrey"
+                    android:background="@color/lightGreyDivider"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/table_row_detail_video" />
@@ -275,7 +334,7 @@ Bản tin ngày 25/06/2019 với chủ đề Đi tìm nguyên nhân khiến SKT 
                         android:layout_width="match_parent"
                         android:layout_height="0.5dp"
                         android:layout_marginTop="15dp"
-                        android:background="@color/lightGrey"
+                        android:background="@color/lightGreyDivider"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/text_description_detail_video" />

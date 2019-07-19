@@ -1,5 +1,6 @@
 package com.anhdt.doranewsvermain.adapter.recyclerview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -67,7 +68,7 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
     }
 
     public class EventHorizontalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView textCategory, textTitleEvent, textTime;
+        private TextView textCategory, textTitleEvent, textTime, textNumberOfArticles;
         private ImageView imageCoverEvent, btnMoreFunction;
         private CardView cardViewBound;
         private View viewBoundCurrentEvent, viewBoundImage;
@@ -77,6 +78,7 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
             textCategory = itemView.findViewById(R.id.text_category_item_child_event_deh);
             textTitleEvent = itemView.findViewById(R.id.text_title_item_child_event_deh);
             textTime = itemView.findViewById(R.id.text_time_item_child_event_deh);
+            textNumberOfArticles = itemView.findViewById(R.id.text_number_articles_item_child_event_deh);
             imageCoverEvent = itemView.findViewById(R.id.image_cover_item_child_event_deh);
             btnMoreFunction = itemView.findViewById(R.id.image_more_item_child_event_deh);
             cardViewBound = itemView.findViewById(R.id.card_view_bound_deh);
@@ -87,6 +89,7 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
             itemView.setOnClickListener(this);
         }
 
+        @SuppressLint("SetTextI18n")
         public void bindData(Event event) {
             if (event == null) {
                 return;
@@ -100,6 +103,7 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
             textCategory.setText(event.getCategory().getName());
             textTitleEvent.setText(event.getTitle());
             textTime.setText(event.getReadableTime());
+            textNumberOfArticles.setText(event.getNumArticles() + " bài báo");
 
             if (event.getId().equals(idCurrentEvent)) {
                 cardViewBound.setEnabled(false);

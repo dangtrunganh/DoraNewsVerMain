@@ -64,7 +64,6 @@ public class ReadRealmToolForBookmarkArticle {
                 }
             }
         }
-
         //Cách 2 - query
     }
 

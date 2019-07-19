@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundRecyclerView">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:elevation="5dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_act_privacy"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/cyanBlue"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="80dp">
+
+            <TextView
+                android:id="@+id/text_title_term_of_use"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Điều khoản sử dụng"
+                android:textAllCaps="true"
+                android:textColor="@color/cyanBlue"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_para_1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Thỏa thuận sử dụng và bảo mật này (sau đây gọi là “Thỏa thuận”) được lập ra bởi và giữa bạn (“bạn”) và Cộng đồng phát triển công nghệ thông tin Dora (“Dora” hoặc “chúng tôi”) về việc sử dụng bất kỳ hay tất cả các loại dịch vụ (“Dịch vụ”) của Doratoday.com (“Dora News”) của bạn. Bằng việc sử dụng Dịch vụ, bạn đồng ý chịu ràng buộc bởi những điều khoản và điều kiện này."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_title_term_of_use" />
+
+            <TextView
+                android:id="@+id/text_para_2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Dịch vụ được thiết kế để giúp bạn tiếp cận thông tin tin tức được liên kết từ các trang không do Dora sở hữu hoặc quản lý. Cụ thể, Dịch vụ cung cấp những mô tả ngắn gọn về các bài báo hay nội dung để giúp bạn xác định nội dung chính của bài báo hay nội dung mà bạn quan tâm. Khi bạn lựa chọn một bài báo hay nội dung, bạn sẽ được kết nối tới website chứa bài báo hay nội dung đó (sau đây gọi là “website được kết nối”). Nhắc lại, website được kết nối không chịu sự sở hữu hay quản lý của Dora."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_1" />
+
+            <TextView
+                android:id="@+id/text_para_3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Thuật ngữ “bạn” để chỉ tất cả các cá nhân và/hoặc các tổ chức truy cập vào Dora vì bất kỳ lý do nào."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_2" />
+
+            <TextView
+                android:id="@+id/text_para_4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="I. Thỏa thuận sử dụng"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_3" />
+
+            <TextView
+                android:id="@+id/text_para_5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="I.1. Quyền gắn với Dịch vụ"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_4" />
+
+            <TextView
+                android:id="@+id/text_para_6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Dora sở hữu và duy trì mọi quyền lợi sở hữu trí tuệ đối với Dịch vụ của mình nhưng Dora không tuyên bố là mình có quyền sở hữu trí tuệ đối với các bài báo và nội dung tại các website được kết nối. Các quyền sở hữu trí tuệ này thuộc về các website được kết nối."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_5" />
+
+            <TextView
+                android:id="@+id/text_para_7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Dora cũng không chịu trách nhiệm về các thông tin, dịch vụ và nội dung của những website được kết nối. Bạn là người chịu hoàn toàn trách nhiệm trong việc sử dụng, khai thác, cung cấp thông tin cá nhân, v.v... cho các website này."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_6" />
+
+            <TextView
+                android:id="@+id/text_para_8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="I.2. Sử dụng và chấm dứt sử dụng Dịch vụ"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_7" />
+
+            <TextView
+                android:id="@+id/text_para_9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Bạn chỉ có thể sử dụng nội dung của Dịch vụ cho mục đích cá nhân của riêng bạn (cụ thể là không dùng cho mục đích thương mại nếu không có thỏa thuận đi kèm) và không được sao chép, thay đổi, sửa đổi, tạo ra các tác phẩm phái sinh hoặc thể hiện một cách công khai bất kỳ nội dung nào của Dịch vụ. Chẳng hạn, bạn không được sử dụng Dịch vụ để bán một sản phẩm hay dịch vụ; hay sử dụng Dịch vụ để tăng số lượt truy cập tới trang web của bạn vì mục đích thương mại; hay sử dụng các kết quả từ Dịch vụ rồi định dạng lại và thể hiện công khai chúng, hay sử dụng các công cụ hoặc tài liệu khác để theo dõi hay sao chép bất kỳ nội dung nào từ Dịch vụ mà không có thỏa thuận giữ bạn và chúng tôi. Nếu bạn không chắc liệu dự định sử dụng Dịch vụ của bạn có được phép hay không, xin vui lòng liên hệ với chúng tôi."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_8" />
+
+            <TextView
+                android:id="@+id/text_para_10"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Dora sẽ không chịu trách nhiệm đối với việc gián đoạn, ngừng hoạt động, mất hoặc sai lệch dữ liệu từ những hành động tấn công của cá nhân hay tổ chức nào khác, cũng như về các sự cố kỹ thuật trong khi cung cấp Dịch vụ. Dora cũng không chịu trách nhiệm về các tổn thất phát sinh từ việc sử dụng Dịch vụ hoặc từ sự tương tác giữa bạn với những người dùng khác."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_9" />
+
+            <TextView
+                android:id="@+id/text_para_11"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Dora có quyền đơn phương đình chỉ hoặc chấm dứt Dịch vụ hoặc sự truy cập của bạn tới Dịch vụ."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_10" />
+
+            <TextView
+                android:id="@+id/text_para_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="II. Thỏa thuận bảo mật"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_11" />
+
+            <TextView
+                android:id="@+id/text_para_13"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="II.1. Những thông tin mà chúng tôi thu thập"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_12" />
+
+            <TextView
+                android:id="@+id/text_para_14"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Khi bạn đăng ký làm thành viên, bạn cần cung cấp cho chúng tôi một số thông tin cá nhân, ví dụ như họ tên, địa chỉ email và các thông tin khác do bạn cung cấp. Chúng tôi có thể kết hợp thông tin cá nhân do bạn cung cấp với các thông tin khác ngoài Dịch vụ hoặc từ các bên thứ ba để phân tích các nội dung mà bạn quan tâm."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_13" />
+
+            <TextView
+                android:id="@+id/text_para_15"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Mỗi khi bạn truy cập Dịch vụ, hệ thống của Dora sẽ sử dụng cookies và các kỹ thuật khác để lưu lại những hoạt động của bạn trên Dora News. Server của Dora News cũng sẽ tự động ghi lại thông tin khi bạn truy cập trang này và sử dụng các Dịch vụ bao gồm nhưng không giới hạn URL, địa chỉ IP, loại trình duyệt, ngôn ngữ, ngày giờ truy cập hoặc sử dụng Dịch vụ."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_14" />
+
+            <TextView
+                android:id="@+id/text_para_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="II.2. Sử dụng thông tin"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_15" />
+
+            <TextView
+                android:id="@+id/text_para_17"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Chúng tôi sử dụng thông tin cá nhân của bạn để nâng cao chất lượng của Dịch vụ, để gửi tới bạn các thông báo về dịch vụ mới của Dora News hoặc dịch vụ của bên thứ ba mà chúng tôi tin rằng sẽ hữu ích với bạn."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_16" />
+
+            <TextView
+                android:id="@+id/text_para_18"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Chúng tôi có thể sử dụng thông tin cá nhân của bạn trong việc điều tra, nghiên cứu hoặc phân tích để vận hành và nâng cấp các kỹ thuật của Dora News và Dịch vụ."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_17" />
+
+            <TextView
+                android:id="@+id/text_para_19"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Chúng tôi có thể sử dụng thông tin cá nhân của bạn để xác định xem liệu bạn có thể quan tâm đến các sản phẩm hay dịch vụ của bên thứ ba nào không."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_18" />
+
+            <TextView
+                android:id="@+id/text_para_20"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Về nguyên tắc, chúng tôi không cung cấp cho bên thứ ba thông tin cá nhân của bạn trừ các trường hợp sau:"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_19" />
+
+            <TextView
+                android:id="@+id/text_para_21"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="a. Bạn đồng ý để chúng tôi cung cấp thông tin cá nhân của bạn cho bên thứ ba; và/hoặc"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_20" />
+
+            <TextView
+                android:id="@+id/text_para_22"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="b. Chúng tôi cho rằng việc cung cấp thông tin cá nhân của bạn cho bên thứ ba là cần thiết, ví dụ nhằm tuân theo các yêu cầu pháp lý, ngăn chặn tội phạm hoặc bảo vệ an ninh quốc gia, hay bảo vệ an toàn cá nhân của những người sử dụng hoặc công chúng, v.v...; và/hoặc"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_21" />
+
+            <TextView
+                android:id="@+id/text_para_23"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="c. Bên thứ ba là đối tượng mua lại toàn bộ hay phần lớn pháp nhân sở hữu Dora và Dịch vụ; và/hoặc"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_22" />
+
+            <TextView
+                android:id="@+id/text_para_24"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="28dp"
+                android:layout_marginTop="20dp"
+                android:lineSpacingExtra="5dp"
+                android:text="d. Thông tin cá nhân là thông tin vô danh về khách ghé thăm Dora News. Chúng tôi có thể chia sẻ loại thông tin này cho bên thứ ba để họ có thể tìm hiểu về các loại khách tới thăm Dora và cách họ sử dụng Dịch vụ."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_23" />
+
+            <TextView
+                android:id="@+id/text_para_25"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="II.3. Sửa đổi hoặc xoá thông tin"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_24" />
+
+            <TextView
+                android:id="@+id/text_para_26"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Bạn có thể truy cập thông tin cá nhân của mình và sửa đổi thông tin này nếu chúng chưa đúng hoặc xoá bỏ các thông tin đó. Việc thay đổi và/hoặc xoá bỏ như trên có thể không thực hiện được vào một số thời điểm nhất định khi có sự bất ổn định hoặc hạn chế của hệ thống Dora News. Trong trường hợp này, chúng tôi sẽ nỗ lực để bạn có thể tiếp tục sửa chữa hoặc xoá bỏ thông tin cá nhân sớm nhất có thể nhưng chúng tôi không chịu trách nhiệm về bất cứ vấn đề hoặc thiệt hại nào có thể có do việc chậm trễ này gây ra."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_25" />
+
+            <TextView
+                android:id="@+id/text_para_27"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="II.4. Bảo mật"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_26" />
+
+            <TextView
+                android:id="@+id/text_para_28"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="5dp"
+                android:text="Mật khẩu truy cập tài khoản của tất cả các thành viên của Dora News đều được chúng tôi bảo vệ. Tuy nhiên, an ninh mạng không an toàn tuyệt đối, vì thế Dora không chịu trách nhiệm về những thiệt hại có thể xảy ra."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_para_27" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

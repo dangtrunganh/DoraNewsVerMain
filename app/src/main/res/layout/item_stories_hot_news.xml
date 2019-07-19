@@ -13,7 +13,7 @@
     <cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager
         android:id="@+id/viewpager_item_stories"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="280dp"
         android:background="@android:color/white"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -21,28 +21,32 @@
 
     <me.relex.circleindicator.CircleIndicator
         android:id="@+id/indicator_vp_item_stories"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
-        app:ci_animator="@animator/indicator_animator"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        app:ci_animator="@animator/indicator_animator_2"
         app:ci_animator_reverse="@animator/indicator_animator_reverse"
         app:ci_drawable="@drawable/ic_white_radius_square"
-        app:ci_height="4dp"
+        app:ci_height="2.3dp"
         app:ci_margin="6dp"
-        app:ci_width="10dp"
+        app:ci_width="40dp"
         app:layout_constraintBottom_toBottomOf="@id/viewpager_item_stories"
         app:layout_constraintLeft_toLeftOf="@id/viewpager_item_stories"
         app:layout_constraintRight_toRightOf="@id/viewpager_item_stories" />
 
+    <!--app:ci_animator_reverse="@animator/indicator_animator_reverse"-->
+
     <TextView
         android:id="@+id/text_view_full_story_item_stories"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:gravity="center"
         android:text="Xem toàn dòng sự kiện"
         android:textColor="@color/cyanBlue"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:paddingBottom="4dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewpager_item_stories" />
+
 </android.support.constraint.ConstraintLayout>

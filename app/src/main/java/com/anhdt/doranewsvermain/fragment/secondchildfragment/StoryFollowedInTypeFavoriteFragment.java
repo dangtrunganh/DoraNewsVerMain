@@ -206,7 +206,7 @@ public class StoryFollowedInTypeFavoriteFragment extends BaseFragmentNeedUpdateU
 
                 @Override
                 public void onFailure(Call<News> call, Throwable t) {
-                    Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
                     mShimmerViewContainer.stopShimmerAnimation();
                     mShimmerViewContainer.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);

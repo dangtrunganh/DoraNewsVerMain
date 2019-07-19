@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -78,14 +79,14 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private AddFragmentCallback addFragmentCallback;
 
-    public HotNewsAdapter3(ArrayList<Datum> mArrayDatums, Context mContext, RecyclerView recyclerView, /*FragmentManager fragmentManager, int typeTabContent,*/ AddFragmentCallback addFragmentCallback) {
+    public HotNewsAdapter3(ArrayList<Datum> mArrayDatums, Context mContext, RecyclerView recyclerView,
+            /*FragmentManager fragmentManager, int typeTabContent,*/ AddFragmentCallback addFragmentCallback) {
         //===Tạo footer===
         this.arrayDatums = new ArrayList<>();
         Datum datumFooter = new Datum();
         datumFooter.setFooter(true);
         this.arrayDatums.add(datumFooter);
         //======
-
         this.arrayDatums.addAll(0, mArrayDatums);
         this.mContext = mContext;
 //        this.typeTabContent = typeTabContent;
@@ -102,31 +103,18 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 //                int totalItemCount = linearLayoutManager.getItemCount();
-
-
                 //====list rỗng====
                 if (arrayDatums.size() == 0 || arrayDatums.size() == 1) {
                     return;
                 }
-                //======
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-
                 int positionFirstVisible = linearLayoutManager.findFirstVisibleItemPosition();
-//                Log.e("ff-first", String.valueOf(positionFirstVisible));
                 int positionLastVisible = linearLayoutManager.findLastVisibleItemPosition();
-//                Log.e("ff-last", String.valueOf(positionLastVisible));
                 int size = positionLastVisible - positionFirstVisible;
-
 
                 //Quy hết ra đơn vị pixels
                 float height = recyclerView.getHeight();
-//                float width = recyclerView.getWidth();
-
                 float yBottomRecyclerView = yTopRecyclerView + height;
-
-//                Log.e("mm-yTop", String.valueOf(yTopRecyclerView));
-//                Log.e("mm-yTop-new", String.valueOf(newTopRecyclerView));
-//                Log.e("mm-height", String.valueOf(height));
 
                 for (int i = 0; i <= size; i++) {
                     int position = positionFirstVisible + i;
@@ -145,28 +133,16 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         RecyclerView.ViewHolder viewHolderStory = recyclerView.findViewHolderForAdapterPosition(position);
                         if (viewHolderStory instanceof HotNewsAdapter3.StoryViewHolder) {
                             HotNewsAdapter3.StoryViewHolder storyViewHolder = (StoryViewHolder) viewHolderStory;
-//                            Log.e("11-enter-yTop", "Position: " + String.valueOf(position) + " - " + String.valueOf(yTopView));
-//                            Log.e("11-enter-yTopParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(newTopRecyclerView));
-//                            Log.e("11-enter-yBottom", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomView));
-//                            Log.e("11-enter-yBottomParent", "Position: " + String.valueOf(position) + " - " + String.valueOf(yBottomRecyclerView));
                             if (GeneralTool.checkIfChildOutIParent(yTopView, yBottomView, newTopRecyclerView, yBottomRecyclerView)) {
                                 //Thỏa mãn nằm ngoài
                                 //Chạy animation
                                 //Lấy View Holder ra ^^
-//                                if (!isAnimatingStory) {
-//                                    //có 1 cái đang chạy, isAnimatingStory = true nhưng ko phải nó --> ko dừng đc trừ
-//                                    continue;
-//                                }
                                 storyViewHolder.stopAnimation();
-//                                isAnimatingStory = false;
+                                storyViewHolder.visibleIndicator(false);
                             } else {
                                 //Nằm trong, chạy animation thôi ^^, tại một thời điểm chỉ cho 1 cái chạy
-//                                if (isAnimatingStory) {
-//                                    //Đang có cái khác chạy rồi, reject mn đi
-//                                    continue;
-//                                }
                                 storyViewHolder.startAnimation();
-//                                isAnimatingStory = true;
+                                storyViewHolder.visibleIndicator(true);
                             }
                         }
                     }
@@ -182,10 +158,6 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         });
     }
-
-//    public boolean isFlagFinishLoadData() {
-//        return flagFinishLoadData;
-//    }
 
     public void setLoadMore(ILoadMore loadMore) {
         this.loadMore = loadMore;
@@ -423,7 +395,7 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (article.getSource() != null) {
                 if (article.getSource().getIcon() != null) {
                     if (!article.getSource().getIcon().equals("")) {
-                        Glide.with(itemView.getContext()).load("https://" + article.getSource().getIcon()).
+                        Glide.with(itemView.getContext()).load(/*"https://" + */article.getSource().getIcon()).
                                 apply(new RequestOptions().override(400, 0).
                                         placeholder(R.drawable.image_default).error(R.drawable.image_default))
                                 .into(mImageCoverSource);
@@ -497,7 +469,7 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ArrayList<Article> articleArrayList = new ArrayList<>();
                 articleArrayList.add(article);
                 String jsonListArticles = gson.toJson(articleArrayList);
-                DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position);
+                DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, 0, false);
                 detailNewsFragment.setAddFragmentCallback(addFragmentCallback);
 
                 addFragmentCallback.addFrgCallback(detailNewsFragment);
@@ -611,7 +583,7 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             @Override
             public void onFailure(Call<Stories> call, Throwable t) {
-                Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -623,28 +595,33 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private ArrayList<Event> arrayListEvents;
         private String idStory;
 
+        @SuppressLint("ClickableViewAccessibility")
         public StoryViewHolder(@NonNull View itemView) {
             super(itemView);
             autoScrollViewPagerStories = itemView.findViewById(R.id.viewpager_item_stories);
             textViewStory = itemView.findViewById(R.id.text_view_full_story_item_stories);
 
 
-//            ConstraintLayout constraintLayout = itemView.findViewById(R.id.constraint_layout_item_event_vpg);
-//        constraintLayout.getHeight() = constraintLayout.getWidth();
+//Bỏ            ConstraintLayout constraintLayout = itemView.findViewById(R.id.constraint_layout_item_event_vpg);
+//Bỏ        constraintLayout.getHeight() = constraintLayout.getWidth();
 
-            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-
-            int width = metrics.widthPixels;
-//            int height = metrics.heightPixels;
-//            Log.e("xxx-width", String.valueOf(width));
-//            Log.e("xxx-height", String.valueOf(height));
-//            autoScrollViewPagerStories.getLayoutParams().width = metrics.widthPixels;
-            ViewGroup.LayoutParams layoutParams = autoScrollViewPagerStories.getLayoutParams();
-            layoutParams.width = width;
-            layoutParams.height = (int) (width * 0.9);
-            autoScrollViewPagerStories.setLayoutParams(layoutParams);
+//            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+//
+//            int width = metrics.widthPixels;
+////            int height = metrics.heightPixels;
+////            Log.e("xxx-width", String.valueOf(width));
+////            Log.e("xxx-height", String.valueOf(height));
+////            autoScrollViewPagerStories.getLayoutParams().width = metrics.widthPixels;
+//            ViewGroup.LayoutParams layoutParams = autoScrollViewPagerStories.getLayoutParams();
+//            layoutParams.width = width;
+//            layoutParams.height = (int) (width * 0.65);
+//            autoScrollViewPagerStories.setLayoutParams(layoutParams);
 
             indicator = itemView.findViewById(R.id.indicator_vp_item_stories);
+            autoScrollViewPagerStories.setOnTouchListener((v, event) -> {
+                autoScrollViewPagerStories.stopAutoScroll();
+                return false;
+            });
         }
 
         @RequiresApi(api = Build.VERSION_CODES.M)
@@ -653,7 +630,9 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
             this.idStory = idStory;
             StoryAdapter storyAdapterVP = new StoryAdapter(arrayEvents, mContext, autoScrollViewPagerStories, idStory/*, typeTabContent*/, addFragmentCallback);
             autoScrollViewPagerStories.setAdapter(storyAdapterVP);
+            autoScrollViewPagerStories.setOffscreenPageLimit(arrayEvents.size());
             indicator.setViewPager(autoScrollViewPagerStories);
+            indicator.setVisibility(View.GONE);
 
             //Chỉ khi bindData() xong thì mới click xem thông tin toàn cảnh được ^^
             textViewStory.setOnClickListener(this);
@@ -662,14 +641,42 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //            autoScrollViewPagerStories.stopAutoScroll();
 //            autoScrollViewPagerStories.setScrollDurationFactor(4);
             autoScrollViewPagerStories.setInterval(5000);
+//            autoScrollViewPagerStories.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//                @Override
+//                public void onPageScrolled(int i, float v, int i1) {
+////                    android.os.Process.killProcess(android.os.Process.myPid());
+////                    Runtime.getRuntime().gc();
+//                }
+//
+//                @Override
+//                public void onPageSelected(int i) {
+//
+//                }
+//
+//                @Override
+//                public void onPageScrollStateChanged(int i) {
+//
+//                }
+//            });
         }
 
         public void stopAnimation() {
             autoScrollViewPagerStories.stopAutoScroll();
+//            Runtime.getRuntime().gc();
+//            android.os.Process.killProcess(android.os.Process.myPid());
         }
 
         public void startAnimation() {
             autoScrollViewPagerStories.startAutoScroll();
+        }
+
+        public void visibleIndicator(boolean isVisible) {
+            //true - gone
+            if (isVisible) {
+                indicator.setVisibility(View.VISIBLE);
+            } else {
+                indicator.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -699,7 +706,6 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             (dialog, which) -> dialog.dismiss());
                     alertDialog.show();
                 }
-
 //                Gson gson = new Gson();
 //                String jsonListEvents = gson.toJson(arrayListEvents);
 //                DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(typeTabContent, jsonListEvents, idStory);

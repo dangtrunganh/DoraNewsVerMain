@@ -156,7 +156,6 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
             String mediumSummary = GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM);
             String upperString = mediumSummary.substring(0, 1).toUpperCase() + mediumSummary.substring(1);
             mTextSummary.setText(upperString);
-
 //            mTextSummary.setText(GeneralTool.getSummaryOfArticle(article, ConstParam.MEDIUM));
             if (article.getImage() != null) {
                 if (!article.getImage().equals("")) {
@@ -169,7 +168,7 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
             if (article.getSource() != null) {
                 if (article.getSource().getIcon() != null) {
                     if (!article.getSource().getIcon().equals("")) {
-                        Glide.with(itemView.getContext()).load("https://" + article.getSource().getIcon()).
+                        Glide.with(itemView.getContext()).load(/*"https://" + */article.getSource().getIcon()).
                                 apply(new RequestOptions().override(400, 0).
                                         placeholder(R.drawable.image_default).error(R.drawable.image_default))
                                 .into(mImageCoverSource);
@@ -230,7 +229,7 @@ public class ArticleItemAdapter extends RecyclerView.Adapter<ArticleItemAdapter.
                 //Chuyển sang màn hình Chi tiết các bài báo
                 Gson gson = new Gson();
                 String jsonListArticles = gson.toJson(mCurrentArrayArticles);
-                DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position);
+                DetailNewsFragment detailNewsFragment = DetailNewsFragment.newInstance(jsonListArticles, position, false);
                 detailNewsFragment.setAddFragmentCallback(addFragmentCallback);
 
                 addFragmentCallback.addFrgCallback(detailNewsFragment);

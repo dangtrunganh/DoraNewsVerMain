@@ -3,7 +3,9 @@ package com.anhdt.doranewsvermain.fragment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -25,8 +27,10 @@ import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.recyclerview.ArticleItemAdapter;
+import com.anhdt.doranewsvermain.adapter.recyclerview.ArticleItemAdapter2;
 import com.anhdt.doranewsvermain.adapter.recyclerview.EventAdapterHorizontal;
 import com.anhdt.doranewsvermain.api.ServerAPI;
+import com.anhdt.doranewsvermain.constant.ConstAPIYoutube;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
@@ -72,7 +76,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 
     private ImageView mImageViewCover;
     private ImageView mImageShowStory;
-    private TextView mTextTitleEvent, mTextNameCategory, mTextNumberNews, mTextLoadMoreNews;
+    private TextView mTextTitleEvent, mTextNameCategory, mTextNumberNews/*, mTextLoadMoreNews*/;
     private Toolbar mToolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private RecyclerView recyclerViewArticle;
@@ -84,7 +88,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
     private Button btnFollow;
     private String idStoryForUpdateUI;
 
-    private ArticleItemAdapter articleItemAdapter;
+    private ArticleItemAdapter2 articleItemAdapter;
     private EventAdapterHorizontal eventAdapterHorizontal;
 
     private AddFragmentCallback addFragmentCallback;
@@ -101,6 +105,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 //    private boolean isFollowed = false;
 
     private int stateFollow = -1;
+    private Context mContext;
 
     public AddFragmentCallback getAddFragmentCallback() {
         return addFragmentCallback;
@@ -125,6 +130,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
     public void onAttach(Activity activity) {
         Log.d("main-ff", "onAttach()");
         super.onAttach(activity);
+        mContext = getContext();
     }
 
     @Override
@@ -204,22 +210,17 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
         if (view == null) {
             return;
         }
-//        Log.e("x1-mToken", ReadCacheTool.getMToken(getContext()));
-//        Log.e("x1-deviceId", ReadCacheTool.getDeviceId(getContext()));
-//        Log.e("x1-uuid", ReadCacheTool.getUId(getContext()));
-        dialog = new ProgressDialog(getContext());
+        dialog = new ProgressDialog(mContext);
         dialog.setMessage("Loading...");
         dialog.setCancelable(false);
 
         mShimmerViewContainer = view.findViewById(R.id.skeleton_detail_event);
-//        mShimmerViewContainer.setVisibility(View.VISIBLE);
-//        mShimmerViewContainer.startShimmerAnimation();
         mImageViewCover = view.findViewById(R.id.image_cover_detail_event);
         mImageShowStory = view.findViewById(R.id.image_show_all_event_in_stories);
         mTextTitleEvent = view.findViewById(R.id.text_title_detail_event);
         mTextNameCategory = view.findViewById(R.id.text_category_detail_event);
         mTextNumberNews = view.findViewById(R.id.text_number_news_detail_event);
-        mTextLoadMoreNews = view.findViewById(R.id.text_load_more_news);
+//        mTextLoadMoreNews = view.findViewById(R.id.text_load_more_news);
 
         textShowAllEvent = view.findViewById(R.id.text_show_all_event_in_stories);
         constraintLayoutListEventInStory = view.findViewById(R.id.constraint_layout_frg_home);
@@ -231,15 +232,11 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
         recyclerViewArticle.setHasFixedSize(true);
 //11        recyclerViewArticle.setNestedScrollingEnabled(false);
 
-        mTextLoadMoreNews.setOnClickListener(this);
-
+//        mTextLoadMoreNews.setOnClickListener(this);
         mToolbar = view.findViewById(R.id.toolbar_detail_event);
-
-        //====Collasping====Tạm thời bỏ đi======
         collapsingToolbarLayout = view.findViewById(R.id.collab_toolbar_layout_detail_event);
         collapsingToolbarLayout.setTitleEnabled(false);
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-        //====Collasping====Tạm thời bỏ đi======
 
         //Set back icon to toolbar
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_white);
@@ -268,7 +265,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
                 recyclerListEventInStoryHorizontal.setHasFixedSize(true);
 //11                recyclerListEventInStoryHorizontal.setNestedScrollingEnabled(false);
 
-                eventAdapterHorizontal = new EventAdapterHorizontal(new ArrayList<>(), getContext(),
+                eventAdapterHorizontal = new EventAdapterHorizontal(new ArrayList<>(), mContext,
                         /*typeTabHomeOrLatest, */idStory, addFragmentCallback, eventId);
                 recyclerListEventInStoryHorizontal.setAdapter(eventAdapterHorizontal);
 
@@ -327,54 +324,67 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 
             }
         });
-
+        articleItemAdapter = new ArticleItemAdapter2(mContext,
+                new ArrayList<>(), addFragmentCallback, recyclerViewArticle);
+        recyclerViewArticle.setAdapter(articleItemAdapter);
 
         //===Adapter====
 //        articleItemAdapter = new ArticleItemAdapter(getContext(), new ArrayList<>(), typeTabHomeOrLatest, addFragmentCallback);
 //        recyclerViewArticle.setAdapter(articleItemAdapter);
 
-        String uId = ReadCacheTool.getUId(getContext());
+        String uId = ReadCacheTool.getUId(mContext);
         loadData(eventId, uId);
+        setUpLoadMore();
     }
 
-    private void loadDataToRecyclerEventHorizontal(String idStory, String uId) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(RootAPIUrlConst.ROOT_GET_NEWS)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        final ServerAPI apiService = retrofit.create(ServerAPI.class);
-
-        Call<Stories> call = apiService.getDetailStory(idStory, uId);
-
-        call.enqueue(new Callback<Stories>() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
-                Stories stories = response.body();
-                if (stories == null) {
-                    Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                int follow = stories.getFollow();
-                //Kiểm tra biến này để bật/tắt follow
-                arrayListEvent = (ArrayList<Event>) stories.getEvents();
-                if (arrayListEvent == null) {
-                    return;
-                }
-                if (arrayListEvent.size() == 0) {
-                    return;
-                }
-                //load data to recyclerView
-                eventAdapterHorizontal.updateListEvents(arrayListEvent);
-            }
-
-            @Override
-            public void onFailure(Call<Stories> call, Throwable t) {
-                Toast.makeText(getContext(), "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
-            }
+    private void setUpLoadMore() {
+        articleItemAdapter.setLoadMore(() -> {
+            articleItemAdapter.addItemLoading();
+            new Handler().postDelayed(() -> {
+                articleItemAdapter.removeItemLoading();
+                articleItemAdapter.loadMoreArticles();
+            }, 2000); // Time out to load
         });
     }
+
+//    private void loadDataToRecyclerEventHorizontal(String idStory, String uId) {
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(RootAPIUrlConst.ROOT_GET_NEWS)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//
+//        final ServerAPI apiService = retrofit.create(ServerAPI.class);
+//
+//        Call<Stories> call = apiService.getDetailStory(idStory, uId);
+//
+//        call.enqueue(new Callback<Stories>() {
+//            @SuppressLint("SetTextI18n")
+//            @Override
+//            public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
+//                Stories stories = response.body();
+//                if (stories == null) {
+//                    Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                int follow = stories.getFollow();
+//                //Kiểm tra biến này để bật/tắt follow
+//                arrayListEvent = (ArrayList<Event>) stories.getEvents();
+//                if (arrayListEvent == null) {
+//                    return;
+//                }
+//                if (arrayListEvent.size() == 0) {
+//                    return;
+//                }
+//                //load data to recyclerView
+//                eventAdapterHorizontal.updateListEvents(arrayListEvent);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Stories> call, Throwable t) {
+//                Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     private void loadData(String eventId, String uId) {
         Retrofit retrofit = new Retrofit.Builder()
@@ -392,13 +402,12 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             public void onResponse(@NonNull Call<Event> call, @NonNull Response<Event> response) {
                 Event event = response.body();
                 if (event == null) {
-                    Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
                     mShimmerViewContainer.stopShimmerAnimation();
                     mShimmerViewContainer.setVisibility(View.GONE);
                     return;
                 }
-                Log.e("xxy-", event.toString());
-                Glide.with(getContext()).load(event.getImage())
+                Glide.with(mContext).load(event.getImage())
                         .apply(new RequestOptions().override(400, 0).
                                 placeholder(R.drawable.image_default).error(R.drawable.image_default))
                         .into(mImageViewCover);
@@ -407,19 +416,16 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 
                 if (event.getListArticles() != null) {
                     mTextNumberNews.setText(event.getListArticles().size() + " bài báo / " + event.getReadableTime());
-                    Log.e("xxy-1", event.getListArticles().toString());
-
                     ArrayList<Article> articlesArray = (ArrayList<Article>) event.getListArticles();
-
-
                     //=====set up bookmark=====
                     //Không biết như này có được không?
-                    ReadRealmToolForBookmarkArticle.setListBookmark(getContext(), articlesArray);
+                    ReadRealmToolForBookmarkArticle.setListBookmark(mContext, articlesArray);
                     //=========================
-                    articleItemAdapter = new ArticleItemAdapter(getContext(),
-                            articlesArray,
-                            /*typeTabHomeOrLatest,*/ addFragmentCallback, mTextLoadMoreNews, ArticleItemAdapter.LOAD_MORE_DETAIL_EVENT);
-                    recyclerViewArticle.setAdapter(articleItemAdapter);
+//                    articleItemAdapter = new ArticleItemAdapter2(mContext,
+//                            articlesArray, addFragmentCallback, recyclerViewArticle);
+//                    recyclerViewArticle.setAdapter(articleItemAdapter);
+
+                    articleItemAdapter.updateListArticles(articlesArray);
                 }
                 mShimmerViewContainer.stopShimmerAnimation();
                 mShimmerViewContainer.setVisibility(View.GONE);
@@ -433,7 +439,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 
             @Override
             public void onFailure(Call<Event> call, Throwable t) {
-                Toast.makeText(getContext(), "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "Failed to load data - onFailure", Toast.LENGTH_SHORT).show();
                 mShimmerViewContainer.stopShimmerAnimation();
                 mShimmerViewContainer.setVisibility(View.GONE);
             }
@@ -457,9 +463,9 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             final int sdk = android.os.Build.VERSION.SDK_INT;
             stateFollow = RootAPIUrlConst.FOLLOW_INTEGER;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
+                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.border_un_follow_button));
             } else {
-                btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_un_follow_button));
+                btnFollow.setBackground(ContextCompat.getDrawable(mContext, R.drawable.border_un_follow_button));
             }
             btnFollow.setText("Bỏ theo dõi");
         } else {
@@ -467,9 +473,9 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             final int sdk = android.os.Build.VERSION.SDK_INT;
             stateFollow = RootAPIUrlConst.UN_FOLLOW_INTEGER;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
+                btnFollow.setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.border_follow_button));
             } else {
-                btnFollow.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_follow_button));
+                btnFollow.setBackground(ContextCompat.getDrawable(mContext, R.drawable.border_follow_button));
             }
             btnFollow.setText("Theo dõi");
         }
@@ -491,12 +497,12 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             }
 //            Gson gson = new Gson();
 //            String jsonListEvents = gson.toJson(arrayListEvent);
-            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
                 DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabHomeOrLatest*//*, jsonListEvents*//*,*/ idStory);
                 detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailStoryFragment);
             } else {
-                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
                 alertDialog.setTitle("Thông báo");
                 alertDialog.setMessage("Không có kết nối mạng");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -514,12 +520,12 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             }
 //            Gson gson = new Gson();
 //            String jsonListEvents = gson.toJson(arrayListEvent);
-            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
                 DetailStoryFragment detailStoryFragment = DetailStoryFragment.newInstance(/*typeTabHomeOrLatest*//*, jsonListEvents*//*,*/ idStory);
                 detailStoryFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailStoryFragment);
             } else {
-                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
                 alertDialog.setTitle("Thông báo");
                 alertDialog.setMessage("Không có kết nối mạng");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -534,7 +540,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
     }
 
     private void followEvent() {
-        String uId = ReadCacheTool.getUId(getContext());
+        String uId = ReadCacheTool.getUId(mContext);
         if (stateFollow == RootAPIUrlConst.FOLLOW_INTEGER) {
             //Trạng thái hiện tại đang là Follow
             //Khi Click vào sẽ Unfollow - Chú ý là UNFOLLOW!!!
@@ -544,7 +550,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             //Trạng thái hiện tại đang là UnFollow, click vào sẽ là Follow
             //Trạng thái hiện tại đang là Follow
             //Khi Click vào sẽ follow - Chú ý là FOLLOW!!!
-            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
                 dialog.show();
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(RootAPIUrlConst.URL_GET_ROOT_LOG_IN)
@@ -562,7 +568,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
                     public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
                         Stories stories = response.body();
                         if (stories == null) {
-                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                             return;
                         }
@@ -578,12 +584,12 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 
                     @Override
                     public void onFailure(Call<Stories> call, Throwable t) {
-                        Toast.makeText(getContext(), "Theo dõi thất bại!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Theo dõi thất bại!", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 });
             } else {
-                AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
                 alertDialog.setTitle("Thông báo");
                 alertDialog.setMessage("Không có kết nối mạng");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -592,13 +598,13 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             }
 
         } else {
-            Toast.makeText(getContext(), "State is undefined!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "State is undefined!", Toast.LENGTH_SHORT).show();
         }
 
     }
 
     public void initDialog(String uId) {
-        alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog = new AlertDialog.Builder(mContext).create();
         alertDialog.setTitle("");
         alertDialog.setMessage("Bỏ theo dõi?");
         alertDialog.setCanceledOnTouchOutside(false); //Vo hieu hoa khong cho kich ra ngoai de tat dialog
@@ -608,7 +614,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
             //Noi dung xu ly khi click vao button, mac dinh dialog se close sau khi click vao
 
             //Kiểm tra state mạng========
-            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+            if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
                 ///====
                 dialog.show();
                 Retrofit retrofit = new Retrofit.Builder()
@@ -625,7 +631,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
                     public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
                         Stories stories = response.body();
                         if (stories == null) {
-                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                             return;
                         }
@@ -641,7 +647,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 
                     @Override
                     public void onFailure(Call<Stories> call, Throwable t) {
-                        Toast.makeText(getContext(), "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Bỏ theo dõi thất bại!", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 });

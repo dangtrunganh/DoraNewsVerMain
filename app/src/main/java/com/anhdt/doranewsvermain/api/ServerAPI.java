@@ -1,14 +1,13 @@
 package com.anhdt.doranewsvermain.api;
 
 import com.anhdt.doranewsvermain.model.categoryresult.CategoryResult;
-import com.anhdt.doranewsvermain.model.newsresult.Datum;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.News;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.model.newssourceresult.GeneralDataNewsSource;
 import com.anhdt.doranewsvermain.model.notificationresult.DataNotification;
-import com.anhdt.doranewsvermain.model.searchresult.DatumSearchResult;
 import com.anhdt.doranewsvermain.model.userresult.UserResult;
+import com.anhdt.doranewsvermain.model.videoresult.VideoResult;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -68,6 +67,11 @@ public interface ServerAPI {
                               @Query("storyid") String storyId,
                               @Query("type") String typeFollow); //1 or 0
 
+    @GET("video")
+    Call<VideoResult> getListVideos(@Query("reload") String reload,
+                                    @Query("deviceid") String deviceId,
+                                    @Query("uid") String uId); //1 or 0
+
     @GET("follow/stories")
     Call<News> getListStoriesFollowed(@Query("uid") String uId); //Return list stories followed
 
@@ -89,4 +93,15 @@ public interface ServerAPI {
 
     @POST("search/articles")
     Call<News> searchArticles(@Body RequestBody body);
+
+
+    //=====GET====API======youtube=========
+//    @GET("search")
+//    Call<VideoResult> getListVideos(@Query("part") String part,
+//                                    @Query("order") String order,
+//                                    @Query("channelId") String channelId,
+//                                    @Query("maxResults") String maxResults,
+//                                    @Query("key") String key,
+//                                    @Query("pageToken") String pageToken,
+//                                    @Query("publishedAfter") String publishedAfter);
 }

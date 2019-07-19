@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/text_fr_title_detail_news"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="left"
+                android:lineSpacingExtra="5dp"
+                android:text="Đây là title nè"
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/text_source_summary_demo"
+                android:layout_width="15dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginStart="15dp"
+                android:paddingBottom="10dp"
+                android:text="⋅"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/text_source_summary"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_source_summary" />
+
+            <TextView
+                android:id="@+id/text_source_summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="left"
+                android:paddingBottom="10dp"
+                android:text="Tóm tắt tự động bởi "
+                android:textColor="#9a9a9a"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintLeft_toRightOf="@id/text_source_summary_demo"
+                app:layout_constraintTop_toBottomOf="@id/text_fr_title_detail_news" />
+
+            <TextView
+                android:id="@+id/text_source_summary_dora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingBottom="10dp"
+                android:text="Dora AI"
+                android:textColor="@color/cyanBlue"
+                android:textSize="16sp"
+                android:textStyle="italic|bold"
+                app:layout_constraintBottom_toBottomOf="@id/text_source_summary"
+                app:layout_constraintLeft_toRightOf="@id/text_source_summary"
+                app:layout_constraintTop_toTopOf="@id/text_source_summary" />
+
+            <TableRow
+                android:id="@+id/table_row_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="left"
+                android:paddingBottom="10dp"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_fr_title_detail_news">
+
+                <TextView
+                    android:id="@+id/text_category_fr_detail_news"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="left"
+                    android:lineSpacingExtra="5dp"
+                    android:text="Pháp luật"
+                    android:textAllCaps="true"
+                    android:textColor="@color/cyanBlue"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_source_fr_detail_news"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="left"
+                    android:lineSpacingExtra="5dp"
+                    android:text="Theo Dân trí - 10 phút trước"
+                    android:textSize="15sp"
+                    android:textStyle="italic" />
+
+            </TableRow>
+
+            <ImageView
+                android:id="@+id/image_cover_fr_detail_news"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_default"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_source_summary" />
+
+            <View
+                android:id="@+id/view_coverage_fr_detail_news"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#8C262626"
+                app:layout_constraintBottom_toBottomOf="@id/image_cover_fr_detail_news"
+                app:layout_constraintLeft_toLeftOf="@id/image_cover_fr_detail_news"
+                app:layout_constraintRight_toRightOf="@id/image_cover_fr_detail_news"
+                app:layout_constraintTop_toTopOf="@id/image_cover_fr_detail_news" />
+
+            <ImageView
+                android:id="@+id/image_play_fr_detail_news"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="@id/image_cover_fr_detail_news"
+                app:layout_constraintLeft_toLeftOf="@id/image_cover_fr_detail_news"
+                app:layout_constraintRight_toRightOf="@id/image_cover_fr_detail_news"
+                app:layout_constraintTop_toTopOf="@id/image_cover_fr_detail_news"
+                app:srcCompat="@drawable/ic_play_pause_toggle" />
+
+            <TextView
+                android:id="@+id/text_content_fr_detail_news"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:lineSpacingExtra="8dp"
+                android:text="Đây là content bài báo nhé"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image_cover_fr_detail_news" />
+
+            <!--<TextView-->
+            <!--android:id="@+id/text_source_summary"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="10dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:layout_marginEnd="20dp"-->
+            <!--android:text="(Tóm tắt bởi Dora - AI)"-->
+            <!--android:textColor="#9a9a9a"-->
+            <!--android:textSize="16sp"-->
+            <!--android:textStyle="italic"-->
+            <!--app:layout_constraintRight_toRightOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@id/text_content_fr_detail_news" />-->
+
+            <!--android:text="(Tóm tắt bởi Dora-AI)"-->
+
+            <Button
+                android:id="@+id/btn_read_more_fr_detail_news"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="80dp"
+                android:layout_weight="10"
+                android:background="@drawable/border_read_original"
+                android:text="Đọc chi tiết"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_content_fr_detail_news" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.constraint.ConstraintLayout>

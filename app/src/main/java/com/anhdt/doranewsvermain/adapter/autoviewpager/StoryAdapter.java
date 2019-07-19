@@ -59,12 +59,12 @@ public class StoryAdapter extends PagerAdapter {
         this.addFragmentCallback = addFragmentCallback;
 
 //        ViewPager view = new ViewPager(mContext);
-        this.viewPager.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-//            int posi = this.viewPager.getCurrentItem();
-//            Log.e("posi-", String.valueOf(posi));
-//            View view = viewPager.findViewWithTag(String.valueOf(posi));
-//            view.
-        });
+//        this.viewPager.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+////            int posi = this.viewPager.getCurrentItem();
+////            Log.e("posi-", String.valueOf(posi));
+////            View view = viewPager.findViewWithTag(String.valueOf(posi));
+////            view.
+//        });
     }
 
     @Override
@@ -77,24 +77,28 @@ public class StoryAdapter extends PagerAdapter {
     @Override
     public View instantiateItem(@NonNull ViewGroup container, int position) {
         View itemView = inflater.inflate(
-                R.layout.item_event_in_vpg_stories, container, false);
+                R.layout.item_event_in_vpg_stories_2, container, false);
 
         ImageView newsBackgroundLayout = itemView.findViewById(R.id.lnl_background_text_event_item_event_in_vpg);
-        TextView tvSum = itemView.findViewById(R.id.text_sum_content_item_event_in_vpg);
+//        TextView tvSum = itemView.findViewById(R.id.text_sum_content_item_event_in_vpg);
         TextView tvCategory = itemView.findViewById(R.id.text_category_item_event_in_vpg);
         TextView tvNumberArticles = itemView.findViewById(R.id.text_number_articles_item_event_in_vpg);
         TextView tvTimeReadable = itemView.findViewById(R.id.text_time_item_event_in_vpg);
         TextView tvTitleEvent = itemView.findViewById(R.id.text_title_event_item_event_in_vpg);
-        ConstraintLayout constraintLayout = itemView.findViewById(R.id.constraint_layout_item_event_vpg);
+//        ConstraintLayout constraintLayout = itemView.findViewById(R.id.constraint_layout_item_event_vpg);
 
         //Tạo chiều rộng của Viewpager = width màn hình
         //Tạo chiều cao của ViewPager = height * 0.9
-        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-        int width = metrics.widthPixels;
-        ViewGroup.LayoutParams layoutParams = constraintLayout.getLayoutParams();
-        layoutParams.width = width;
-        layoutParams.height = (int) (width * 0.9);
-        constraintLayout.setLayoutParams(layoutParams);
+
+        //=======change====set cứng============
+//        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+//        int width = metrics.widthPixels;
+//        ViewGroup.LayoutParams layoutParams = constraintLayout.getLayoutParams();
+//        layoutParams.width = width;
+//        layoutParams.height = (int) (width * 0.65);
+//        constraintLayout.setLayoutParams(layoutParams);
+        //=======change====set cứng============
+
 
         Event event = arrayEvents.get(position);
 
@@ -115,38 +119,38 @@ public class StoryAdapter extends PagerAdapter {
         tvTitleEvent.setText(event.getTitle());
 
         //Summary
-        BackgroundColorSpan backgroundColorSpanBlack = new BackgroundColorSpan(Color.parseColor("#B3000000"));
-//        BackgroundColorSpan backgroundColorSpanNull = new BackgroundColorSpan(Color.parseColor("#00000000"));
+//        BackgroundColorSpan backgroundColorSpanBlack = new BackgroundColorSpan(Color.parseColor("#B3000000"));
+////        BackgroundColorSpan backgroundColorSpanNull = new BackgroundColorSpan(Color.parseColor("#00000000"));
+//
+//        String summaryContent = event.getContent();
+//        SpannableString str = new SpannableString(summaryContent);
+//        if (!summaryContent.equals("")) {
+//            str.setSpan(backgroundColorSpanBlack, 0, summaryContent.length(), 0);
+//        }
 
-        String summaryContent = event.getContent();
-        SpannableString str = new SpannableString(summaryContent);
-        if (!summaryContent.equals("")) {
-            str.setSpan(backgroundColorSpanBlack, 0, summaryContent.length(), 0);
-        }
-
-        Animation mAnimation;
-        //Nếu cần tắt animation đi
-        mAnimation = AnimationUtils.loadAnimation(mContext, R.anim.move_summary);
-        mAnimation.setFillAfter(true);
-        tvSum.setText(str);
-        tvSum.setTextColor(0xffffffff);
-        tvSum.setAnimation(mAnimation);
-        mAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-//                tvSum.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-//                tvSum.setTextColor(0x00000000);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
+//        Animation mAnimation;
+//        //Nếu cần tắt animation đi
+//        mAnimation = AnimationUtils.loadAnimation(mContext, R.anim.move_summary);
+//        mAnimation.setFillAfter(true);
+//        tvSum.setText(str);
+//        tvSum.setTextColor(0xffffffff);
+//        tvSum.setAnimation(mAnimation);
+//        mAnimation.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+////                tvSum.setVisibility(View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+////                tvSum.setTextColor(0x00000000);
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//
+//            }
+//        });
 
         container.addView(itemView);
         itemView.setOnClickListener(v -> {

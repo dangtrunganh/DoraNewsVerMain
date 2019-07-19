@@ -8,9 +8,15 @@
     <!--android:startColor="#56317a"-->
     <!--android:type="linear" />-->
 
+    <!--<gradient-->
+        <!--android:angle="90"-->
+        <!--android:endColor="#c33764"-->
+        <!--android:startColor="#1d2671"-->
+        <!--android:type="linear" />-->
+
     <gradient
         android:angle="90"
-        android:endColor="#c33764"
-        android:startColor="#1d2671"
+        android:endColor="#1aa6c6"
+        android:startColor="#127b94"
         android:type="linear" />
 </shape>

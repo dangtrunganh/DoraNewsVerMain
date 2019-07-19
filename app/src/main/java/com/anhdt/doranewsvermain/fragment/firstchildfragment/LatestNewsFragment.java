@@ -1,5 +1,8 @@
 package com.anhdt.doranewsvermain.fragment.firstchildfragment;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -9,6 +12,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.ToxicBakery.viewpager.transforms.DefaultTransformer;
+import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.activity.SettingsActivity;
 import com.anhdt.doranewsvermain.adapter.viewpagercategory.CategoryViewPagerAdapter;
@@ -40,6 +45,7 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
     private CategoryViewPagerAdapter categoryViewPagerAdapter;
 
     private AddFragmentCallback addFragmentCallback;
+    private Context mContext;
 
     private ArrayList<UpdateUIFollowBookmarkChild> observers = new ArrayList<>();
 
@@ -56,6 +62,12 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
 
     public LatestNewsFragment() {
 
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mContext = getContext();
     }
 
     public void attach(UpdateUIFollowBookmarkChild updateUIFollowBookmarkChild) {
@@ -76,12 +88,12 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
         if (view == null) {
             return;
         }
+
         imageSettings = view.findViewById(R.id.circle_button_person_latest_frg);
         imageSettings.setOnClickListener(this);
         imageNotifications = view.findViewById(R.id.iv_search_latest_frg);
         imageNotifications.setOnClickListener(this);
         viewPagerCategories = view.findViewById(R.id.view_pager_category);
-        viewPagerCategories.setOffscreenPageLimit(1);
         tabLayoutCategories = view.findViewById(R.id.tab_layout_category);
         toolbar = view.findViewById(R.id.actionbar_latest_news);
 
@@ -120,6 +132,10 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
         categoryViewPagerAdapter.setArrayFragments(fragments);
         categoryViewPagerAdapter.setArrayCategories(arrayCategories);
         viewPager.setAdapter(categoryViewPagerAdapter);
+//        viewPagerCategories.setOffscreenPageLimit(arrayCategories.size());
+        viewPagerCategories.setOffscreenPageLimit(1);
+//        viewPager.setPageTransformer(true, new RotateUpTransformer());
+//        viewPager.setPageTransformer(true, new DefaultTransformer());
     }
 
     private ArrayList<Category> getListCategoriesChosen() {
@@ -182,7 +198,7 @@ public class LatestNewsFragment extends BaseFragmentNeedUpdateUI implements View
         switch (v.getId()) {
             case R.id.circle_button_person_latest_frg:
                 //Mở màn settings
-                startActivity(new Intent(getContext(), SettingsActivity.class));
+                startActivity(new Intent(mContext, SettingsActivity.class));
                 Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
             case R.id.iv_search_latest_frg:
