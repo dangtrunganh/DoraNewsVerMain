@@ -30,16 +30,22 @@ import com.anhdt.doranewsvermain.adapter.recyclerview.ArticleItemAdapter;
 import com.anhdt.doranewsvermain.adapter.recyclerview.ArticleItemAdapter2;
 import com.anhdt.doranewsvermain.adapter.recyclerview.EventAdapterHorizontal;
 import com.anhdt.doranewsvermain.api.ServerAPI;
+import com.anhdt.doranewsvermain.config.ConfigSettings;
 import com.anhdt.doranewsvermain.constant.ConstAPIYoutube;
+import com.anhdt.doranewsvermain.constant.ConstParamLogging;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.model.Logging;
+import com.anhdt.doranewsvermain.model.OSGroup;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.LogTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
 import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForLogging;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -56,11 +62,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.anhdt.doranewsvermain.config.ConfigSettings.TIME_SESSION;
+
 public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements View.OnClickListener {
     private static String ARG_TYPE_TAB = "ARG_TYPE_TAB";
     private static String ARG_EVENT_ID = "ARG_EVENT_ID";
     private static String ARG_EVENT_TITLE = "ARG_EVENT_TITLE";
     private static String ARG_LIST_OF_STORY = "ARG_LIST_OF_STORY";
+    private static String ARG_CATEGORY_ID = "ARG_CATEGORY_ID";
 
     //    private static String ARG_TYPE_SINGLE_OR_IN = "ARG_TYPE_SINGLE_OR_IN";
     private static String ARG_LONG_EVENT_ID = "ARG_LONG_EVENT_ID";
@@ -93,8 +102,14 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
 
     private AddFragmentCallback addFragmentCallback;
 
+    private String ipAddress;
+    private String versionAndroid;
+    private String userAgent;
+    private OSGroup osGroup;
+
     //    private int typeTabHomeOrLatest;
     private String eventId;
+    private String categoryId;
 
     //    private String eventTitle;
     private String idStory; //Chỉ những TYPE_IN thì mới kiểm tra lấy thông tin idStory
@@ -115,13 +130,14 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
         this.addFragmentCallback = addFragmentCallback;
     }
 
-    public static DetailEventFragment newInstance(/*int typeTab,*/ String eventId/*, String eventTitle*/, String idStory, String jsonListOfStory) {
+    public static DetailEventFragment newInstance(/*int typeTab,*/ String eventId/*, String eventTitle*/, String idStory, String jsonListOfStory, String categoryId) {
         Bundle args = new Bundle();
         DetailEventFragment fragment = new DetailEventFragment();
 //        args.putInt(ARG_TYPE_TAB, typeTab);
         args.putString(ARG_EVENT_ID, eventId);
         args.putString(ARG_LONG_EVENT_ID, idStory);
         args.putString(ARG_LIST_OF_STORY, jsonListOfStory);
+        args.putString(ARG_CATEGORY_ID, categoryId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -210,6 +226,8 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
         if (view == null) {
             return;
         }
+        getInfoLogging();
+
         dialog = new ProgressDialog(mContext);
         dialog.setMessage("Loading...");
         dialog.setCancelable(false);
@@ -249,6 +267,7 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
         Bundle bundle = getArguments();
 //        typeTabHomeOrLatest = bundle.getInt(ARG_TYPE_TAB);
         eventId = bundle.getString(ARG_EVENT_ID);
+        categoryId = bundle.getString(ARG_CATEGORY_ID);
 //        eventTitle = bundle.getString(ARG_EVENT_TITLE);
         idStory = bundle.getString(ARG_LONG_EVENT_ID);
         String jsonListEventsOfStory = bundle.getString(ARG_LIST_OF_STORY);
@@ -265,15 +284,20 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
                 recyclerListEventInStoryHorizontal.setHasFixedSize(true);
 //11                recyclerListEventInStoryHorizontal.setNestedScrollingEnabled(false);
 
-                eventAdapterHorizontal = new EventAdapterHorizontal(new ArrayList<>(), mContext,
-                        /*typeTabHomeOrLatest, */idStory, addFragmentCallback, eventId);
-                recyclerListEventInStoryHorizontal.setAdapter(eventAdapterHorizontal);
+//                eventAdapterHorizontal = new EventAdapterHorizontal(new ArrayList<>(), mContext,
+//                        /*typeTabHomeOrLatest, */idStory, addFragmentCallback, eventId);
+//                recyclerListEventInStoryHorizontal.setAdapter(eventAdapterHorizontal);
 
                 //===Lấy ra List Event từ json===
                 Gson gson = new Gson();
                 arrayListEvent = gson.fromJson(jsonListEventsOfStory, new TypeToken<List<Event>>() {
                 }.getType());
-                eventAdapterHorizontal.updateListEvents(arrayListEvent);
+
+                eventAdapterHorizontal = new EventAdapterHorizontal(arrayListEvent, mContext,
+                        /*typeTabHomeOrLatest, */idStory, addFragmentCallback, eventId);
+                recyclerListEventInStoryHorizontal.setAdapter(eventAdapterHorizontal);
+
+//                eventAdapterHorizontal.updateListEvents(arrayListEvent);
                 textShowAllEvent.setOnClickListener(this);
                 mImageShowStory.setOnClickListener(this);
             } else {
@@ -335,7 +359,110 @@ public class DetailEventFragment extends BaseFragmentNeedUpdateUI implements Vie
         String uId = ReadCacheTool.getUId(mContext);
         loadData(eventId, uId);
         setUpLoadMore();
+
+        //====send==logging====
+        //====send====on===click====event======
+//        ipAddress = LogTool.getIpAddress(mContext);
+//        versionAndroid = GeneralTool.getVersionAndroid();
+//        userAgent = GeneralTool.getNameOfDevice();
+        cacheLog();
+
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(RootAPIUrlConst.IP_ADDRESS_LOGGING)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        final ServerAPI apiService = retrofit.create(ServerAPI.class);
+//        String sessionId = LogTool.getSessionId(mContext);
+//        String ipAddress = LogTool.getIpAddress(mContext);
+//        String versionAndroid = GeneralTool.getVersionAndroid();
+//        String userAgent = GeneralTool.getNameOfDevice();
+//
+//        Log.e("ELO-sessionId", sessionId);
+//        Log.e("ELO-ipAddress", ipAddress);
+//        Log.e("ELO-versionAndroid", versionAndroid);
+//        Log.e("ELO-userAgent", userAgent);
+//
+//        Call<Void> call = apiService.getLoggingClickEvent(sessionId, ipAddress,
+//                ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent, eventId);
+//        call.enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//
+//            }
+//        });
     }
+
+    private void getInfoLogging() {
+        ipAddress = LogTool.getIpAddress(mContext);
+        versionAndroid = GeneralTool.getVersionAndroid();
+        userAgent = GeneralTool.getNameOfDevice();
+        osGroup = new OSGroup(ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent);
+    }
+
+    private void cacheLog() {
+        long currentTime = LogTool.getTimeCreate();
+        String sessionId;
+        if (currentTime - ConfigSettings.lastTimeCreated < TIME_SESSION) {
+            sessionId = ConfigSettings.lastSessionId;
+        } else {
+            sessionId = LogTool.getSessionId(mContext);
+            ConfigSettings.lastSessionId = sessionId;
+        }
+        ConfigSettings.lastTimeCreated = LogTool.getTimeCreate();
+
+        Logging logging = new Logging(sessionId,
+                -1,
+                ipAddress,
+                osGroup,
+                ConstParamLogging.EVENT_ID_START_APP,
+                eventId,
+                categoryId, ConfigSettings.lastTimeCreated);
+        ReadRealmToolForLogging.addLoggingToRealm(mContext, logging);
+        ConfigSettings.numberOfLogging++;
+
+        if (ConfigSettings.numberOfLogging >= ConfigSettings.NUMBER_LOGGING_TO_SEND) {
+            LogTool.sendLogging(mContext);
+            ReadRealmToolForLogging.deleteAllLogging(mContext);
+            ConfigSettings.numberOfLogging = 0;
+        }
+    }
+
+
+//    private void sendLoggingStartApp(ArrayList<Logging> loggings) {
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(RootAPIUrlConst.IP_ADDRESS_LOGGING)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        final ServerAPI apiService = retrofit.create(ServerAPI.class);
+//        String sessionId = LogTool.getSessionId(mContext);
+//        String ipAddress = LogTool.getIpAddress(mContext);
+//        String versionAndroid = GeneralTool.getVersionAndroid();
+//        String userAgent = GeneralTool.getNameOfDevice();
+//
+//        Log.e("ELO-sessionId", sessionId);
+//        Log.e("ELO-ipAddress", ipAddress);
+//        Log.e("ELO-versionAndroid", versionAndroid);
+//        Log.e("ELO-userAgent", userAgent);
+//
+//        Call<Void> call = apiService.getLoggingClickEvent(sessionId, ipAddress,
+//                ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent, eventId);
+//        call.enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//
+//            }
+//        });
+//    }
 
     private void setUpLoadMore() {
         articleItemAdapter.setLoadMore(() -> {

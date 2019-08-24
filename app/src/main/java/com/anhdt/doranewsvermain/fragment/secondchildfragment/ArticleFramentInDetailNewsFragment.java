@@ -174,6 +174,7 @@ public class ArticleFramentInDetailNewsFragment extends BaseNormalFragment imple
             if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(getContext()))) {
                 Intent intent = new Intent(view1.getContext(), ReadOriginalArticleActivity.class);
                 intent.putExtra(ConstParamTransfer.TRANSFER_URL_FR_DETAIL_ARTICLE_TO_READ_ORIGINAL_ACT, currentArticles.getUrl());
+                intent.putExtra(ConstParamTransfer.TRANSFER_ARTICLE_ID_FR_DETAIL_ARTICLE_TO_READ_ORIGINAL_ACT, currentArticles.getId());
                 startActivity(intent);
             } else {
                 //Mất mạng

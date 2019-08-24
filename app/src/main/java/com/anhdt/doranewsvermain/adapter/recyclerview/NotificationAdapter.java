@@ -187,7 +187,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 //Click tổng thể, bật chi tiết event lên
                 if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
-                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                    String catId = "default_cat_id";
+                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY, catId);
                     detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                     addFragmentCallback.addFrgCallback(detailEventFragment);
                 } else {

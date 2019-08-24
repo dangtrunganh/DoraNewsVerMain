@@ -3,6 +3,7 @@ package com.anhdt.doranewsvermain.service.voice;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.constant.ConstParam;
@@ -88,6 +89,7 @@ public class VoicePlayerManager implements MediaPlayer.OnPreparedListener, Media
                 mPlayer.setDataSource(getURrlVoice(article));
             } catch (IOException e) {
                 Toast.makeText(mContext, "Quá 2000 ký tự, lỗi!", Toast.LENGTH_SHORT).show();
+                Log.e("Error", "VoicePlayerManager - Quá 2000 ký tự, lỗi!!");
 //                nextSong();
             }
             //Mỗi khi chạy bài hát mới sẽ update thông tin lại trên thanh control music, bắn list sang service để nó làm
@@ -192,6 +194,7 @@ public class VoicePlayerManager implements MediaPlayer.OnPreparedListener, Media
     //Dung de ra lenh cho Service update
     public interface OnListenerService {
         void updateArticle(Article article);
+
         void updateButtonWhenFinishing(Article article);
     }
 }

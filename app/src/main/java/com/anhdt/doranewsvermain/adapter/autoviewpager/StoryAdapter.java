@@ -48,7 +48,7 @@ public class StoryAdapter extends PagerAdapter {
 //    private int typeTabContent;
     private AddFragmentCallback addFragmentCallback;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+//    @RequiresApi(api = Build.VERSION_CODES.M)
     public StoryAdapter(ArrayList<Event> arrayEvents, Context context, AutoScrollViewPager viewPager, String idStory, /*int typeTabContent,*/ AddFragmentCallback addFragmentCallback) {
         this.arrayEvents = arrayEvents;
         this.mContext = context;
@@ -99,7 +99,6 @@ public class StoryAdapter extends PagerAdapter {
 //        constraintLayout.setLayoutParams(layoutParams);
         //=======change====set cứng============
 
-
         Event event = arrayEvents.get(position);
 
 //        CustomView customView = new CustomView(mContext, itemView);
@@ -114,7 +113,7 @@ public class StoryAdapter extends PagerAdapter {
             }
         }
         tvCategory.setText(event.getCategory().getName());
-        tvNumberArticles.setText(String.valueOf(event.getNumArticles()) + " bài báo");
+        tvNumberArticles.setText(event.getNumArticles() + " bài báo");
         tvTimeReadable.setText(event.getReadableTime());
         tvTitleEvent.setText(event.getTitle());
 
@@ -164,7 +163,9 @@ public class StoryAdapter extends PagerAdapter {
             String jsonListEvent = new Gson().toJson(arrayEvents);
 
             if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
+                String catId = event.getCategory().getId();
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/,
+                        idStory, jsonListEvent, catId);
                 detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailEventFragment);
             } else {

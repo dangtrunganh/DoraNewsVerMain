@@ -174,8 +174,9 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
             public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
                 Stories stories = response.body();
                 if (stories == null) {
-                    Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
-                    Log.e("ee-idStory", idStory);
+//                    Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                    Log.e("Error", "DetailStoryFragment - Call API successfully, but data is null!");
+//                    Log.e("ee-idStory", idStory);
                     if (idStory.equals("")) {
                         Log.e("ee-idStory", "empty");
                     }
@@ -279,7 +280,8 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                     public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
                         Stories stories = response.body();
                         if (stories == null) {
-                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                            Log.e("Error", "DetailStoryFragment - Call API successfully, but data is null!");
                             dialog.dismiss();
                             return;
                         }
@@ -343,7 +345,8 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
                     public void onResponse(@NonNull Call<Stories> call, @NonNull Response<Stories> response) {
                         Stories stories = response.body();
                         if (stories == null) {
-                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                            Log.e("Error-", "DetailStoryFragment - Call API successfully, but data is null!");
                             dialog.dismiss();
                             return;
                         }
@@ -373,7 +376,8 @@ public class DetailStoryFragment extends BaseFragmentNeedUpdateUI implements Vie
 
             //=========
         } else {
-            Toast.makeText(getContext(), "State is undefined!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "State is undefined!", Toast.LENGTH_SHORT).show();
+            Log.e("Error", "DetailStoryFragment - State is undefined!");
         }
 
     }

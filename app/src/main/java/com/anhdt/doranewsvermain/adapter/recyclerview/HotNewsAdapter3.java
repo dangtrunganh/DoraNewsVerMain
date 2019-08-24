@@ -529,7 +529,9 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             //Là sự kiện hiển thị chi tiết bài báo đơn lẻ, nên sẽ truyền idStory là DEFAULT
             if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                String catId = event.getCategory().getId();
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/,
+                        DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY, catId);
                 detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailEventFragment);
             } else {
@@ -624,7 +626,6 @@ public class HotNewsAdapter3 extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.M)
         public void bindData(ArrayList<Event> arrayEvents, String idStory) {
             this.arrayListEvents = arrayEvents;
             this.idStory = idStory;

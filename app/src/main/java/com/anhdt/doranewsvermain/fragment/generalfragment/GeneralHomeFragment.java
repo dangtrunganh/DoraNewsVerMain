@@ -93,7 +93,8 @@ public class GeneralHomeFragment extends BaseFragment implements AddFragmentCall
 //                }
                 FragmentTransaction ftDetailEvent = fragmentManager.beginTransaction();
                 ftDetailEvent.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME,*/ idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                String catId = "default_cat_id";
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME,*/ idEvent, idStory, DetailEventFragment.DEFAULT_LIST_OF_STORY, catId);
                 detailEventFragment.setAddFragmentCallback(this);
                 ftDetailEvent.add(R.id.main_container_frg_home, detailEventFragment);
                 ftDetailEvent.addToBackStack(null);
