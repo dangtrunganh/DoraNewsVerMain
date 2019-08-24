@@ -22,6 +22,7 @@ public class ConstParamTransfer {
 
     //====Từ DetaillArticle sang ReadOriginalArticleActivity====
     public static final String TRANSFER_URL_FR_DETAIL_ARTICLE_TO_READ_ORIGINAL_ACT = "TRANSFER_URL_FR_DETAIL_ARTICLE_TO_READ_ORIGINAL_ACT";
+    public static final String TRANSFER_ARTICLE_ID_FR_DETAIL_ARTICLE_TO_READ_ORIGINAL_ACT = "TRANSFER_ARTICLE_ID_FR_DETAIL_ARTICLE_TO_READ_ORIGINAL_ACT";
 
 
     //====Từ SplashActivity sang PickCategoryActivity====

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHorizontal.EventHorizontalViewHolder> {
     private ArrayList<Event> arrayListEvents;
+    private ArrayList<Event> actualArrayListEvents;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
 //    private int typeTabContent; //Cần biến này để biết được Fragment General nào sẽ xử lý chính
@@ -37,11 +38,19 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
     public EventAdapterHorizontal(ArrayList<Event> arrayListEvents, Context mContext/*, int typeTabContent*/,
                                   String idStory, AddFragmentCallback addFragmentCallback, String idCurrentEvent) {
         this.arrayListEvents = arrayListEvents;
+        this.actualArrayListEvents = new ArrayList<>();
         this.mContext = mContext;
 //        this.typeTabContent = typeTabContent;
         this.idStory = idStory;
         this.addFragmentCallback = addFragmentCallback;
         this.idCurrentEvent = idCurrentEvent;
+        this.actualArrayListEvents.addAll(arrayListEvents);
+        for (Event event : arrayListEvents) {
+            if (event.getId().equals(idCurrentEvent)) {
+                actualArrayListEvents.remove(event);
+                break;
+            }
+        }
     }
 
     @NonNull
@@ -56,15 +65,15 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
 
     @Override
     public void onBindViewHolder(@NonNull EventHorizontalViewHolder eventHorizontalViewHolder, int position) {
-        eventHorizontalViewHolder.bindData(arrayListEvents.get(position));
+        eventHorizontalViewHolder.bindData(actualArrayListEvents.get(position));
     }
 
     @Override
     public int getItemCount() {
-        if (arrayListEvents == null) {
+        if (actualArrayListEvents == null) {
             return 0;
         }
-        return arrayListEvents.size();
+        return actualArrayListEvents.size();
     }
 
     public class EventHorizontalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -82,8 +91,8 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
             imageCoverEvent = itemView.findViewById(R.id.image_cover_item_child_event_deh);
             btnMoreFunction = itemView.findViewById(R.id.image_more_item_child_event_deh);
             cardViewBound = itemView.findViewById(R.id.card_view_bound_deh);
-            viewBoundCurrentEvent = itemView.findViewById(R.id.view_story_bound_deh);
-            viewBoundImage = itemView.findViewById(R.id.view_story_bound_image_deh);
+//            viewBoundCurrentEvent = itemView.findViewById(R.id.view_story_bound_deh);
+//            viewBoundImage = itemView.findViewById(R.id.view_story_bound_image_deh);
 
             btnMoreFunction.setOnClickListener(this);
             itemView.setOnClickListener(this);
@@ -105,15 +114,17 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
             textTime.setText(event.getReadableTime());
             textNumberOfArticles.setText(event.getNumArticles() + " bài báo");
 
-            if (event.getId().equals(idCurrentEvent)) {
-                cardViewBound.setEnabled(false);
-                viewBoundCurrentEvent.setVisibility(View.VISIBLE);
-                viewBoundImage.setVisibility(View.VISIBLE);
-            } else {
-                cardViewBound.setEnabled(true);
-                viewBoundCurrentEvent.setVisibility(View.GONE);
-                viewBoundImage.setVisibility(View.GONE);
-            }
+//            if (event.getId().equals(idCurrentEvent)) {
+//                itemView.setVisibility(View.GONE);
+////                cardViewBound.setEnabled(false);
+////                viewBoundCurrentEvent.setVisibility(View.VISIBLE);
+////                viewBoundImage.setVisibility(View.VISIBLE);
+//            } else {
+////                itemView.setVisibility(View.VISIBLE);
+////                cardViewBound.setEnabled(true);
+////                viewBoundCurrentEvent.setVisibility(View.GONE);
+////                viewBoundImage.setVisibility(View.GONE);
+//            }
         }
 
         @Override
@@ -121,15 +132,17 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
             int position = getAdapterPosition();
             //Sự kiện khi click vào nút more nhỏ
             if (v.getId() == R.id.image_more_item_child_event_deh) {
-                Toast.makeText(mContext, "Clicked button more for each event!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "Clicked button more for each event!", Toast.LENGTH_SHORT).show();
             } else {
                 //Click vào tổng thế view
                 //Bật lên màn chi tiết của event tiếp theo
-                Event event = arrayListEvents.get(position);
+                Event event = actualArrayListEvents.get(position);
                 String idEvent = event.getId();
                 Gson gson = new Gson();
                 String jsonListEvents = gson.toJson(arrayListEvents);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent, idStory, jsonListEvents);
+
+                String catId = event.getCategory().getId();
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent, idStory, jsonListEvents, catId);
 
                 //Cần set lại addFragmentCallback, vì từ DetailEventFragment truyền sang cho EventAdapterHorizontal
                 //Nhưng detailEventFragment là cái hoàn toàn mới, cần callBack để back lại
@@ -141,8 +154,14 @@ public class EventAdapterHorizontal extends RecyclerView.Adapter<EventAdapterHor
     }
 
     public void updateListEvents(ArrayList<Event> events) {
-        arrayListEvents.clear();
-        arrayListEvents.addAll(events);
+        actualArrayListEvents.clear();
+        actualArrayListEvents.addAll(events);
+        for (Event event : events) {
+            if (event.getId().equals(idCurrentEvent)) {
+                actualArrayListEvents.remove(event);
+                break;
+            }
+        }
         notifyDataSetChanged();
     }
 }

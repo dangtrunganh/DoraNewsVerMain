@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
+import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 import com.anhdt.doranewsvermain.model.searchresult.EventSearchResult;
 import com.bumptech.glide.Glide;
@@ -99,6 +100,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private ImageView imageMore;
         private String idStory;
         private String idEvent;
+        private String idCategory;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -145,7 +147,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 //More? Xóa notice?
             } else {
                 //Click tổng thể, bật chi tiết event lên
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(idEvent, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                String catId = "default_cat_id";
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(idEvent, DetailEventFragment.DEFAULT_ID_STORY, DetailEventFragment.DEFAULT_LIST_OF_STORY, catId);
                 detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailEventFragment);
             }

@@ -16,20 +16,35 @@ import android.widget.Toast;
 import com.anhdt.doranewsvermain.R;
 import com.anhdt.doranewsvermain.adapter.recyclerview.ArticleItemAdapter2;
 import com.anhdt.doranewsvermain.adapter.viewpagerarticle.ArticleInViewPagerAdapter;
+import com.anhdt.doranewsvermain.api.ServerAPI;
+import com.anhdt.doranewsvermain.config.ConfigSettings;
+import com.anhdt.doranewsvermain.constant.ConstParamLogging;
 import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragmentNeedUpdateUI;
 import com.anhdt.doranewsvermain.fragment.generalfragment.AddFragmentCallback;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
+import com.anhdt.doranewsvermain.model.Logging;
+import com.anhdt.doranewsvermain.model.OSGroup;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
+import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.LogTool;
 import com.anhdt.doranewsvermain.util.ReadRealmToolForBookmarkArticle;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForLogging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
+
+import static com.anhdt.doranewsvermain.config.ConfigSettings.TIME_SESSION;
 
 public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements UpdateUIFollowBookmarkChild, View.OnClickListener {
     private static final String ARGS_LIST_ARTICLE = "ARGS_LIST_ARTICLE";
@@ -50,6 +65,11 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
     private Article currentArticle;
     private int currentPage = 0;
 //    private ScrollingPagerIndicator indicator;
+
+    private String ipAddress;
+    private String versionAndroid;
+    private String userAgent;
+    private OSGroup osGroup;
 
     private ArrayList<Article> mArrayNews;
     int position = 0;
@@ -90,6 +110,13 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
         return fragment;
     }
 
+    private void getInfoLogging() {
+        ipAddress = LogTool.getIpAddress(mContext);
+        versionAndroid = GeneralTool.getVersionAndroid();
+        userAgent = GeneralTool.getNameOfDevice();
+        osGroup = new OSGroup(ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent);
+    }
+
     @Override
     protected void initializeComponents() {
         View view = getView();
@@ -97,6 +124,8 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
             return;
         }
         //Inflate view
+        getInfoLogging();
+
         textViewArticle = view.findViewById(R.id.text_view_article_detail_news);
         imageBookmark = view.findViewById(R.id.image_bookmark_detail_news);
         viewClickBookmark = view.findViewById(R.id.view_click_bookmark_detail_news);
@@ -162,6 +191,34 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
         setUpViewPager();
     }
 
+    private void cacheLog() {
+        long currentTime = LogTool.getTimeCreate();
+        String sessionId;
+        if (currentTime - ConfigSettings.lastTimeCreated < TIME_SESSION) {
+            sessionId = ConfigSettings.lastSessionId;
+        } else {
+            sessionId = LogTool.getSessionId(mContext);
+            ConfigSettings.lastSessionId = sessionId;
+        }
+        ConfigSettings.lastTimeCreated = LogTool.getTimeCreate();
+//        OSGroup osGroup = new OSGroup(ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent);
+        Logging logging = new Logging(sessionId,
+                currentArticle.getId(),
+                ipAddress,
+                osGroup,
+                ConstParamLogging.EVENT_ID_READ_SUMMARY,
+                "default_event_id",
+                currentArticle.getCategory().getId(), ConfigSettings.lastTimeCreated);
+        ReadRealmToolForLogging.addLoggingToRealm(mContext, logging);
+        ConfigSettings.numberOfLogging++;
+
+        if (ConfigSettings.numberOfLogging >= ConfigSettings.NUMBER_LOGGING_TO_SEND) {
+            LogTool.sendLogging(mContext);
+            ReadRealmToolForLogging.deleteAllLogging(mContext);
+            ConfigSettings.numberOfLogging = 0;
+        }
+    }
+
     private void setUpViewPager() {
 //        if (fragmentManager == null) {
 //            return;
@@ -200,6 +257,38 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
             return;
         }
         textViewArticle.setText("Tin tóm tắt (" + (position + 1) + "/" + size + ")");
+        //====send==logging====
+        //====send====on===click====article==summary======
+        cacheLog();
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(RootAPIUrlConst.IP_ADDRESS_LOGGING)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        final ServerAPI apiService = retrofit.create(ServerAPI.class);
+//        String sessionId = LogTool.getSessionId(mContext);
+//        String ipAddress = LogTool.getIpAddress(mContext);
+//        String versionAndroid = GeneralTool.getVersionAndroid();
+//        String userAgent = GeneralTool.getNameOfDevice();
+//
+//        Log.e("ASLO-sessionId", sessionId);
+//        Log.e("ASLO-ipAddress", ipAddress);
+//        Log.e("ASLO-versionAndroid", versionAndroid);
+//        Log.e("ASLO-userAgent", userAgent);
+//
+//        Call<Void> call = apiService.getLoggingClickArticle(sessionId, currentArticle.getId(), ipAddress,
+//                ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent, ConstParamLogging.EVENT_ID_READ_SUMMARY);
+//        call.enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//
+//            }
+//        });
+        //==========
         vpgNews.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -214,6 +303,37 @@ public class DetailNewsFragment extends BaseFragmentNeedUpdateUI implements Upda
 
                 int page = i + 1;
                 textViewArticle.setText("Tin tóm tắt (" + page + "/" + size + ")");
+                //====send==logging====
+                //====send====on===click====article==summary======
+                cacheLog();
+//                Retrofit retrofit = new Retrofit.Builder()
+//                        .baseUrl(RootAPIUrlConst.IP_ADDRESS_LOGGING)
+//                        .addConverterFactory(GsonConverterFactory.create())
+//                        .build();
+//                final ServerAPI apiService = retrofit.create(ServerAPI.class);
+//                String sessionId = LogTool.getSessionId(mContext);
+//                String ipAddress = LogTool.getIpAddress(mContext);
+//                String versionAndroid = GeneralTool.getVersionAndroid();
+//                String userAgent = GeneralTool.getNameOfDevice();
+//
+//                Log.e("ASLO-sessionId", sessionId);
+//                Log.e("ASLO-ipAddress", ipAddress);
+//                Log.e("ASLO-versionAndroid", versionAndroid);
+//                Log.e("ASLO-userAgent", userAgent);
+//
+//                Call<Void> call = apiService.getLoggingClickArticle(sessionId, currentArticle.getId(), ipAddress,
+//                        ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent, ConstParamLogging.EVENT_ID_READ_SUMMARY);
+//                call.enqueue(new Callback<Void>() {
+//                    @Override
+//                    public void onResponse(Call<Void> call, Response<Void> response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<Void> call, Throwable t) {
+//
+//                    }
+//                });
             }
 
             @Override

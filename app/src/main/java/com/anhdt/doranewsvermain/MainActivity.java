@@ -26,10 +26,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anhdt.doranewsvermain.api.ServerAPI;
 import com.anhdt.doranewsvermain.broadcastreceiver.NetworkChangeReceiver;
+import com.anhdt.doranewsvermain.config.ConfigSettings;
 import com.anhdt.doranewsvermain.constant.ConstLocalCaching;
+import com.anhdt.doranewsvermain.constant.ConstParamLogging;
 import com.anhdt.doranewsvermain.constant.ConstParamTransfer;
 import com.anhdt.doranewsvermain.constant.ConstServiceFirebase;
+import com.anhdt.doranewsvermain.constant.RootAPIUrlConst;
 import com.anhdt.doranewsvermain.fragment.DetailEventFragment;
 import com.anhdt.doranewsvermain.fragment.DetailNewsFragment;
 import com.anhdt.doranewsvermain.fragment.basefragment.BaseFragment;
@@ -42,13 +46,17 @@ import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralLatestNewsFragm
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralSearchFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.GeneralVideoFragment;
 import com.anhdt.doranewsvermain.fragment.generalfragment.UpdateUIFollowBookmarkChild;
+import com.anhdt.doranewsvermain.model.Logging;
+import com.anhdt.doranewsvermain.model.OSGroup;
 import com.anhdt.doranewsvermain.model.newsresult.Article;
 import com.anhdt.doranewsvermain.model.newsresult.Stories;
 import com.anhdt.doranewsvermain.model.notificationresult.NotificationResult;
 import com.anhdt.doranewsvermain.service.voice.VoicePlayerService;
 import com.anhdt.doranewsvermain.service.voice.interfacewithmainactivity.ControlVoice;
 import com.anhdt.doranewsvermain.util.GeneralTool;
+import com.anhdt.doranewsvermain.util.LogTool;
 import com.anhdt.doranewsvermain.util.ReadCacheTool;
+import com.anhdt.doranewsvermain.util.ReadRealmToolForLogging;
 import com.anhdt.doranewsvermain.util.ReadRealmToolForNotification;
 import com.anhdt.doranewsvermain.util.VoiceTool;
 import com.bumptech.glide.Glide;
@@ -60,13 +68,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.view.View.GONE;
+import static com.anhdt.doranewsvermain.config.ConfigSettings.TIME_SESSION;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
         ActionNetworkStateChange, VoicePlayerService.OnListenerActivity, ControlVoice,
         UpdateUIFollowBookmarkChild {
     private static final String TAG = MainActivity.class.getName();
+    private static final int TYPE_STOP = 100;
+    private static final int TYPE_DESTROY = 101;
     private BottomNavigationView navigation;
     private TextView textConnectionState;
 
@@ -126,6 +142,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ServiceConnection mConnection;
     private boolean mIsConnect;
     //========
+
+    private String ipAddress;
+    private String versionAndroid;
+    private String userAgent;
+    private OSGroup osGroup;
 
 //    private boolean noticeIsClosed = false;
 
@@ -282,9 +303,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("main-", "onCreate()");
+        Log.d("main-x", "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getInfoLogging();
+
         initViews();
         receiver = new NetworkChangeReceiver(this);
         final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
@@ -292,6 +316,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //=====bind service=====
         boundService();
+    }
+
+    private void getInfoLogging() {
+        ipAddress = LogTool.getIpAddress(getApplicationContext());
+        versionAndroid = GeneralTool.getVersionAndroid();
+        userAgent = GeneralTool.getNameOfDevice();
+        osGroup = new OSGroup(ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent);
+    }
+
+    private void cacheLog(int typeLog) {
+        long currentTime = LogTool.getTimeCreate();
+        String sessionId;
+        if (currentTime - ConfigSettings.lastTimeCreated < TIME_SESSION) {
+            sessionId = ConfigSettings.lastSessionId;
+        } else {
+            sessionId = LogTool.getSessionId(getApplicationContext());
+            ConfigSettings.lastSessionId = sessionId;
+        }
+        ConfigSettings.lastTimeCreated = LogTool.getTimeCreate();
+
+        switch (typeLog) {
+            case TYPE_STOP:
+                Logging logging = new Logging(sessionId,
+                        -1,
+                        ipAddress,
+                        osGroup,
+                        ConstParamLogging.EVENT_ID_STOP_APP,
+                        "default_event_id",
+                        "default_cat_id", ConfigSettings.lastTimeCreated);
+                ReadRealmToolForLogging.addLoggingToRealm(this, logging);
+                ConfigSettings.numberOfLogging++;
+
+                if (ConfigSettings.numberOfLogging >= ConfigSettings.NUMBER_LOGGING_TO_SEND) {
+                    LogTool.sendLogging(this);
+                    ReadRealmToolForLogging.deleteAllLogging(this);
+                    ConfigSettings.numberOfLogging = 0;
+                }
+                break;
+            case TYPE_DESTROY:
+                Logging loggingDestroy = new Logging(sessionId,
+                        -1,
+                        ipAddress,
+                        osGroup,
+                        ConstParamLogging.EVENT_ID_STOP_APP,
+                        "default_event_id",
+                        "default_cat_id", ConfigSettings.lastTimeCreated);
+                ReadRealmToolForLogging.addLoggingToRealm(this, loggingDestroy);
+                ConfigSettings.numberOfLogging++;
+
+                if (ConfigSettings.numberOfLogging >= ConfigSettings.NUMBER_LOGGING_TO_SEND) {
+                    LogTool.sendLogging(this);
+                    ReadRealmToolForLogging.deleteAllLogging(this);
+                    ConfigSettings.numberOfLogging = 0;
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void boundService() {
@@ -328,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onStart() {
-        Log.d("main-", "onStart()");
+        Log.d("main-x", "onStart()");
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver((mMessageReceiver),
                 new IntentFilter("MyData")
@@ -337,33 +419,95 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-        Log.d("main-", "onResume()");
+        Log.d("main-x", "onResume()");
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        Log.d("main-", "onPause()");
+        Log.d("main-x", "onPause()");
         super.onPause();
     }
 
 
     @Override
     protected void onStop() {
-        Log.d("main-", "onStop()");
+        Log.d("main-x", "onStop()");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+
+        cacheLog(TYPE_STOP);
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(RootAPIUrlConst.IP_ADDRESS_LOGGING)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        final ServerAPI apiService = retrofit.create(ServerAPI.class);
+//        String sessionId = LogTool.getSessionId(getApplicationContext());
+//        String ipAddress = LogTool.getIpAddress(getApplicationContext());
+//        String versionAndroid = GeneralTool.getVersionAndroid();
+//        String userAgent = GeneralTool.getNameOfDevice();
+//
+//        Log.e("SLO-sessionId", sessionId);
+//        Log.e("SLO-ipAddress", ipAddress);
+//        Log.e("SLO-versionAndroid", versionAndroid);
+//        Log.e("SLO-userAgent", userAgent);
+//
+//        Call<Void> call = apiService.getLoggingStartApp(sessionId, ipAddress,
+//                ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent, ConstParamLogging.EVENT_ID_STOP_APP);
+//        call.enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//
+//            }
+//        });
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.d("main-", "onDestroy()");
+        Log.d("main-x", "onDestroy()");
         if (!mIsConnect) {
             unbindService(mConnection);
             listCurrentOnServiceArticles = new ArrayList<>();
             activeAddFragmentCallback.clearListArticlesPlayedOnTopEachFragment();
         }
+        //=====
+        //====send====on===stop====app======
+        cacheLog(TYPE_DESTROY);
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(RootAPIUrlConst.IP_ADDRESS_LOGGING)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        final ServerAPI apiService = retrofit.create(ServerAPI.class);
+//        String sessionId = LogTool.getSessionId(getApplicationContext());
+//        String ipAddress = LogTool.getIpAddress(getApplicationContext());
+//        String versionAndroid = GeneralTool.getVersionAndroid();
+//        String userAgent = GeneralTool.getNameOfDevice();
+//
+//        Log.e("DLO-sessionId", sessionId);
+//        Log.e("DLO-ipAddress", ipAddress);
+//        Log.e("DLO-versionAndroid", versionAndroid);
+//        Log.e("DLO-userAgent", userAgent);
+//
+//        Call<Void> call = apiService.getLoggingStartApp(sessionId, ipAddress,
+//                ConstParamLogging.OS_CODE_ANDROID, versionAndroid, userAgent, ConstParamLogging.EVENT_ID_DESTROY_APP);
+//        call.enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//
+//            }
+//        });
+        //=====
         super.onDestroy();
     }
 
@@ -509,7 +653,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Bật lên chi tiết màn hình đó
 //                noticeIsClosed = true;
                 constraintLayoutViewNotice.setVisibility(View.GONE);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME, */idEventFromBroadcast, idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY);
+                String catId = "default_cat_id";
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*ConstGeneralTypeTab.TYPE_TAB_HOME, */idEventFromBroadcast,
+                        idStoryFromBroadcast, DetailEventFragment.DEFAULT_LIST_OF_STORY, catId);
                 detailEventFragment.setAddFragmentCallback(activeAddFragmentCallback);
                 activeAddFragmentCallback.addFrgCallback(detailEventFragment);
 //                if (activeFragment == generalHomeFragment) {

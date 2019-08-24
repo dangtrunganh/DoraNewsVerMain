@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +18,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.anhdt.doranewsvermain.MainActivity;
 import com.anhdt.doranewsvermain.R;
@@ -72,6 +70,8 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
 
     private int type;
 
+    private ServerAPI apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +105,12 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
             uId = intent.getStringExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_PICK_CATEGORY);
             type = intent.getIntExtra(ARGS_TYPE_PICK_CATEGORY, TYPE_NO_CANCEL);
         }
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(RootAPIUrlConst.ROOT_GET_NEWS)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        apiService = retrofit.create(ServerAPI.class);
     }
 
     private void initViews() {
@@ -177,11 +183,6 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
     private void getListCategoryFromAPI(final boolean flag) {
         //flag = true: Đã có trong local list các category đã chọn
         //flag = false: Không có trong local
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(RootAPIUrlConst.ROOT_GET_NEWS)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ServerAPI apiService = retrofit.create(ServerAPI.class);
         Call<CategoryResult> call = apiService.getResultCategory();
         call.enqueue(new Callback<CategoryResult>() {
             @SuppressLint("SetTextI18n")
@@ -281,7 +282,7 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
         intentResult.putExtra(ConstParamTransfer.TRANSFER_U_ID_FR_SPLASH_TO_MAIN, uId);
         intentResult.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        loadDataLatestNewsScreen((ArrayList<Category>) categoriesChosen, intentResult);
+        sendCategoriesToServer((ArrayList<Category>) categoriesChosen, intentResult);
 //        startActivity(intentResult);
 //        finish();
     }
@@ -308,62 +309,108 @@ public class PickCategoryActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    private void loadDataLatestNewsScreen(ArrayList<Category> categoryArrayList, Intent intentResult) {
+    private void sendCategoriesToServer(ArrayList<Category> categoryArrayList, Intent intentResult) {
         //Không có mạng hoặc là onFailure thì ko lưu vào trong local --> get lên sẽ là null
         //Không có mạng thì sẽ ko có intent bắn về
         if (GeneralTool.isNetworkAvailable(this)) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RootAPIUrlConst.ROOT_GET_NEWS)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            final ServerAPI apiService = retrofit.create(ServerAPI.class);
-            String uId = ReadCacheTool.getUId(this);
-            String deviceId = ReadCacheTool.getDeviceId(this);
+            //=======Gửi info đến server======
+            String picklist = "";
             for (int i = 0; i < categoryArrayList.size(); i++) {
-                //Load từng cái và lưu xuống db
                 Category category = categoryArrayList.get(i);
-                int currentIndex = i;
-                Call<News> call = apiService.getNewsInEachCategory(String.valueOf(RELOAD_INIT_CURRENT_PAGE),
-                        deviceId,
-                        category.getId(),
-                        uId
-                );
-                call.enqueue(new Callback<News>() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onResponse(@NonNull Call<News> call, @NonNull Response<News> response) {
-                        News news = response.body();
-                        if (news == null) {
-                            if (currentIndex == categoryArrayList.size() - 1) {
-                                dialog.dismiss();
-                                startActivity(intentResult);
-                                finish();
-                            }
-                            return;
-                        }
-                        ReadCacheTool.storeNewsByCategory(PickCategoryActivity.this, category.getId(), (ArrayList<Datum>) news.getData());
-                        if (currentIndex == categoryArrayList.size() - 1) {
-                            dialog.dismiss();
-                            startActivity(intentResult);
-                            finish();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<News> call, Throwable t) {
-                        if (currentIndex == categoryArrayList.size() - 1) {
-                            dialog.dismiss();
-                            startActivity(intentResult);
-                            finish();
-                        }
-                    }
-                });
+                if (i == categoryArrayList.size() - 1) {
+                    picklist = picklist + category.getId();
+                } else {
+                    picklist = picklist + category.getId() + ",";
+                }
             }
+            if (picklist.equals("")) {
+                picklist = "\"" + "\"";
+            }
+            Log.e("lop-category", picklist);
+            Call<CategoryResult> call = apiService.sendCategoriesPicked(uId, picklist);
+
+            //show url request
+            Log.e("urlx-", call.request().url().toString());
+            call.enqueue(new Callback<CategoryResult>() {
+                @Override
+                public void onResponse(Call<CategoryResult> call, Response<CategoryResult> response) {
+                    CategoryResult mGeneralSendcategory = response.body();
+                    if (mGeneralSendcategory == null) {
+//                    Toast.makeText(getApplicationContext(), "Failed to send data - null", Toast.LENGTH_SHORT).show();
+//                        dialog.dismiss();
+                        getLatestNews(categoryArrayList, intentResult);
+                        return;
+                    }
+                    ArrayList<Category> mListSendCategory = (ArrayList<Category>) mGeneralSendcategory.getData();
+                    if (mListSendCategory == null) {
+//                    Toast.makeText(getApplicationContext(), "Failed to load mListSentSource - null", Toast.LENGTH_SHORT).show();
+//                        dialog.dismiss();
+                        getLatestNews(categoryArrayList, intentResult);
+                        return;
+                    }
+//                    dialog.dismiss();
+                    getLatestNews(categoryArrayList, intentResult);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(Call<CategoryResult> call, Throwable t) {
+//                Toast.makeText(getApplicationContext(), "Failed to send data - onFailure", Toast.LENGTH_SHORT).show();
+//                    dialog.dismiss();
+                    getLatestNews(categoryArrayList, intentResult);
+                }
+            });
+            //================================
         } else {
             //bật màn MainActivity ngay lập tức khi ko có mạng, trong Local sẽ ko có gì cả
             dialog.dismiss();
             startActivity(intentResult);
             finish();
+        }
+    }
+
+    private void getLatestNews(ArrayList<Category> categoryArrayList, Intent intentResult) {
+        String uId = ReadCacheTool.getUId(this);
+        String deviceId = ReadCacheTool.getDeviceId(this);
+        for (int i = 0; i < categoryArrayList.size(); i++) {
+            //Load từng cái và lưu xuống db
+            Category category = categoryArrayList.get(i);
+            int currentIndex = i;
+            Call<News> call = apiService.getNewsInEachCategory(String.valueOf(RELOAD_INIT_CURRENT_PAGE),
+                    deviceId,
+                    category.getId(),
+                    uId
+            );
+            call.enqueue(new Callback<News>() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onResponse(@NonNull Call<News> call, @NonNull Response<News> response) {
+                    News news = response.body();
+                    if (news == null) {
+                        if (currentIndex == categoryArrayList.size() - 1) {
+                            dialog.dismiss();
+                            startActivity(intentResult);
+                            finish();
+                        }
+                        return;
+                    }
+                    ReadCacheTool.storeNewsByCategory(PickCategoryActivity.this, category.getId(), (ArrayList<Datum>) news.getData());
+                    if (currentIndex == categoryArrayList.size() - 1) {
+                        dialog.dismiss();
+                        startActivity(intentResult);
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<News> call, Throwable t) {
+                    if (currentIndex == categoryArrayList.size() - 1) {
+                        dialog.dismiss();
+                        startActivity(intentResult);
+                        finish();
+                    }
+                }
+            });
         }
     }
 }

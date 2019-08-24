@@ -14,7 +14,11 @@ public class ReadRealmToolForBookmarkArticle {
     private static final String FILE_NAME_DB_LIST_ARTICLES = "ListArticles.realm";
     public static void addArticleToRealm(Context mContext, Article article) {
         Realm.init(mContext);
-        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("articles.realm").schemaVersion(1).build();
+        final RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .name("articles.realm")
+                .schemaVersion(3)
+                .deleteRealmIfMigrationNeeded()
+                .build();
         Realm.setDefaultConfiguration(configuration);
 //        Realm articleRealm = Realm.getDefaultInstance();
         Realm articleRealm = Realm.getInstance(configuration);
@@ -35,7 +39,11 @@ public class ReadRealmToolForBookmarkArticle {
         //Trả về size 0 hoặc kết quả - cả list đầu ra
         // Initialize Realm (just once per application)
         Realm.init(mContext);
-        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("articles.realm").schemaVersion(1).build();
+        final RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .name("articles.realm")
+                .schemaVersion(3)
+                .deleteRealmIfMigrationNeeded()
+                .build();
         Realm.setDefaultConfiguration(configuration);
 //        Realm articleRealm = Realm.getDefaultInstance();
         Realm articleRealm = Realm.getInstance(configuration);
@@ -83,7 +91,11 @@ public class ReadRealmToolForBookmarkArticle {
 
     public static void deleteArticleBookmark(Context mContext, Article article) {
         Realm.init(mContext);
-        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("articles.realm").schemaVersion(1).build();
+        final RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .name("articles.realm")
+                .schemaVersion(3)
+                .deleteRealmIfMigrationNeeded()
+                .build();
         Realm.setDefaultConfiguration(configuration);
 //        Realm articleRealm = Realm.getDefaultInstance();
         Realm articleRealm = Realm.getInstance(configuration);

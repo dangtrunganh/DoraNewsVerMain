@@ -187,10 +187,11 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             int position = getAdapterPosition();
             if (v.getId() == R.id.image_more_item_other) {
                 //Thực hiện hành động khi click vào button more
-                Toast.makeText(mContext, "Clicked more option!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "Clicked more option!", Toast.LENGTH_SHORT).show();
             } else {
                 //Thực hiện Hành động khi click vào cả item, -> Mở màn Detail Event Fragment
-                String idEvent = arrayItemDetailStories.get(position).getEvent().getId();
+                Event event = arrayItemDetailStories.get(position).getEvent();
+                String idEvent = event.getId();
 
                 //====Tạo ra List với 5 phần tử gần nhất để truyền cho DetailEventFragment====
                 ArrayList<Event> arrayEventsResult = new ArrayList<>();
@@ -224,7 +225,8 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //                } else {
                 Gson gson = new Gson();
                 String jsonListEvent = gson.toJson(arrayEventsResult);
-                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
+                String catId = event.getCategory().getId();
+                DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent, catId);
                 detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                 addFragmentCallback.addFrgCallback(detailEventFragment);
 //                }
@@ -276,10 +278,11 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             int position = getAdapterPosition();
             if (v.getId() == R.id.image_more_latest_event_item_story) {
                 //Thực hiện hành động khi click vào button more
-                Toast.makeText(mContext, "Clicked more option!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "Clicked more option!", Toast.LENGTH_SHORT).show();
             } else {
                 //Thực hiện Hành động khi click vào cả item, -> Mở màn Detail Event Fragment
-                String idEvent = arrayItemDetailStories.get(position).getEvent().getId();
+                Event event = arrayItemDetailStories.get(position).getEvent();
+                String idEvent = event.getId();
 
                 //====Tạo ra List với 5 phần tử gần nhất để truyền cho DetailEventFragment====
                 ArrayList<Event> arrayEventsResult = new ArrayList<>();
@@ -311,7 +314,8 @@ public class StoryItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 Gson gson = new Gson();
                 String jsonListEvent = gson.toJson(arrayEventsResult);
                 if (GeneralTool.isNetworkAvailable(Objects.requireNonNull(mContext))) {
-                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent);
+                    String catId = event.getCategory().getId();
+                    DetailEventFragment detailEventFragment = DetailEventFragment.newInstance(/*typeTabContent,*/ idEvent/*, titleEvent*/, idStory, jsonListEvent, catId);
                     detailEventFragment.setAddFragmentCallback(addFragmentCallback);
                     addFragmentCallback.addFrgCallback(detailEventFragment);
                 } else {

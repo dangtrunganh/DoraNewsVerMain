@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -202,7 +203,8 @@ public class HomeFragment extends BaseFragmentNeedUpdateUI implements View.OnCli
                 public void onResponse(@NonNull Call<News> call, @NonNull Response<News> response) {
                     News news = response.body();
                     if (news == null) {
-                        Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                        Log.e("Error", "HomeFragment - Call API successfully, but data is null!");
                         mShimmerViewContainer.stopShimmerAnimation();
                         mShimmerViewContainer.setVisibility(View.GONE);
                         swipeContainer.setRefreshing(false);

@@ -1,5 +1,6 @@
 package com.anhdt.doranewsvermain.api;
 
+import com.anhdt.doranewsvermain.model.Logging;
 import com.anhdt.doranewsvermain.model.categoryresult.CategoryResult;
 import com.anhdt.doranewsvermain.model.newsresult.Event;
 import com.anhdt.doranewsvermain.model.newsresult.News;
@@ -8,11 +9,17 @@ import com.anhdt.doranewsvermain.model.newssourceresult.GeneralDataNewsSource;
 import com.anhdt.doranewsvermain.model.notificationresult.DataNotification;
 import com.anhdt.doranewsvermain.model.userresult.UserResult;
 import com.anhdt.doranewsvermain.model.videoresult.VideoResult;
+import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -104,4 +111,43 @@ public interface ServerAPI {
 //                                    @Query("key") String key,
 //                                    @Query("pageToken") String pageToken,
 //                                    @Query("publishedAfter") String publishedAfter);
+
+    @GET("trace")
+    Call<Void> getLoggingClickEvent(@Query("session_id") String sessionId,
+            /*@Query("category_id") String categoryId,*/
+                                    @Query("ip") String ip,
+                                    @Query("os_code") int osCode,
+                                    @Query("os_ver") String osVer,
+                                    @Query("user_agent") String userAgent,
+                                    @Query("event_id") String eventId); //Return list stories followed
+
+//    @GET("trace")
+//    Call<Void> getLoggingClickArticle(@Query("session_id") String sessionId,
+//                                      @Query("article_id") int articleId,
+//                                      @Query("ip") String ip,
+//                                      @Query("os_code") int osCode,
+//                                      @Query("os_ver") String osVer,
+//                                      @Query("user_agent") String userAgent,
+//                                      @Query("event_app") int eventApp); //Return list stories followed
+
+    //    @GET("trace")
+//    Call<Void> getLoggingStartApp(@Query("session_id") String sessionId,
+//                          @Query("ip") String ip,
+//                          @Query("os_code") int osCode,
+//                          @Query("os_ver") String osVer,
+//                          @Query("event_id") String eventId); //Return list stories followed
+    @GET("trace")
+    Call<Void> getLoggingStartApp(@Query("session_id") String sessionId,
+                                  @Query("ip") String ip,
+                                  @Query("os_code") int osCode,
+                                  @Query("os_ver") String osVer,
+                                  @Query("user_agent") String userAgent,
+                                  @Query("event_app") int eventApp); //Return list stories followed
+
+    //=====GET===LOGGING
+//    @Headers({
+//            "Content-Type: application/json"
+//    })
+    @POST("trace")
+    Call<ResponseBody> postRawJSON(@Body final List<Logging> jsonLogging);
 }

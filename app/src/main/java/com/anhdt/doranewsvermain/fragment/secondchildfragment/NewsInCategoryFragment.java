@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -262,7 +263,8 @@ public class NewsInCategoryFragment extends BaseNormalFragment implements Update
                 public void onResponse(@NonNull Call<News> call, @NonNull Response<News> response) {
                     News news = response.body();
                     if (news == null) {
-                        Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, "Error: Call API successfully, but data is null!", Toast.LENGTH_SHORT).show();
+                        Log.e("Error", "NewsInCategoryFragment - Call API successfully, but data is null!");
                         mShimmerViewContainer.stopShimmerAnimation();
                         mShimmerViewContainer.setVisibility(View.GONE);
                         swipeContainer.setRefreshing(false);
